@@ -9,6 +9,16 @@
 <img src="https://miro.medium.com/max/365/1*Jr3NFSKTfQWRUyjblBSKeg.png" height="100">
 </p>
 
+## Contributors
+<div align="center">
+    
+| Contributor | Profile |
+| ------------- | ------------- | 
+| Daniel Flores López | <a href="https://github.com/DanielFloresLopez"><img src="https://img.shields.io/badge/UO282894-Daniel Flores López-yellow"></a> |
+| David Rodríguez Chanca | <a href="https://github.com/DRChanca"><img src="https://img.shields.io/badge/UO-David Rodríguez Chanca-purple"></a> |
+
+</div>
+
 This is a base project for the Software Architecture course in 2024/2025. It is a basic application composed of several components.
 
 - **User service**. Express service that handles the insertion of new users in the system.
