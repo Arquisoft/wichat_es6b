@@ -14,6 +14,8 @@ These include
 * essential functional requirements, 
 * quality goals for the architecture and
 * relevant stakeholders and their expectations
+
+- new elements 
 ****
 endif::arc42help[]
 
