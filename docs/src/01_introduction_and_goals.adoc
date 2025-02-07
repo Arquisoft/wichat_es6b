@@ -15,7 +15,7 @@ These include
 * quality goals for the architecture and
 * relevant stakeholders and their expectations
 
-- nuevos elementso 
+- new elements 
 ****
 endif::arc42help[]
 
