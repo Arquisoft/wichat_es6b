@@ -27,3 +27,15 @@ See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 doc
 
 ****
 endif::arc42help[]
+=== Technical constraints
+|===
+|Constraint|Explanation
+|React|The use of React.js framefork for the frontend.
+|Wikidata|It will be used to generate questions.
+|===
+=== Conventions
+|===
+|Constraint|Explanation
+|Use of English|The documentation will be all written in English as it is the "software-related" language all over the world.
+|Arch42|The documentation will follow the Arch42 template as a way to split and order all the information related with the software product.
+|===
