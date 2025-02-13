@@ -42,7 +42,9 @@ endif::arc42help[]
 | Pregunta generada con información relevante
 
 | ChatGPT| Pregunta del juego y respuesta correcta| Pistas para ayudar al usuario a responder mejor
-|===
+|===  
+
+"comit con la cuenta personal" 
 
 === Technical Context
 
