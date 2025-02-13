@@ -60,18 +60,26 @@ For multiple environments or alternative deployments please copy and adapt this 
 ****
 endif::arc42help[]
 
-_**<Overview Diagram>**_
+image::07-deploymentDiagram.png["Vista de despliegue"]
 
 Motivation::
 
-_<explanation in text form>_
+Taking into account that the development have not started yet, the idea is using a Virtual Machine service like Azure or Oracle to deploy the final product. During 
+production time, each developer will deploy locally the project.
 
 Quality and/or Performance Features::
 
-_<explanation in text form>_
+For now this is unkwown, but we estimate that Azure VM with 2 GiB RAM and 1vCPU could work.
 
 Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
+|===
+| Elemento | Descripción
+| Web Application | Jusst the frontend of the software product, connected with the core of the application
+| Application | Core function. It connects and uses all the external services of the software product
+| Wikidata | Service where questions are collected. SparQL is required to use the API
+| Database | It has yet to be decided
+| LLM | It has yet to be decided, but the idea is to give a prompt with the context of how to answer client questions with hints
+|===
 
 
 === Infrastructure Level 2
