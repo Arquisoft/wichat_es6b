@@ -3,7 +3,40 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
+===Technology decisions
+To develop the application, we have decided to use the following technologies which were the ones provided in the base project:
 
+*JavaScript: will be the programming language used in the project. We chose it for its widespread popularity, broad browser support, and robust ecosystem(It has a wide variety of tools, libraries, frameworks, and an active community), making it ideal for both frontend and backend development with Node.js.
+*ReactJS: allows us to build user interfaces; its component-based architecture and excellent performance make it ideal for web applications like ours. Furthermore, its seamless integration with JavaScript was a key factor in our decision.
+*Docker: We will use Docker to deploy the web application, as this platform allows us to create containers that package the application and its dependencies, ensuring consistent performance and simplifying deployment across different environments. Additionally, Docker facilitates isolated testing, ensuring that the application runs the same way in each environment (development, testing, production) without external interference.
+*GitHub: is used as a version control and collaboration platform, allowing the team to work efficiently and . Additionally, GitHub Actions provides continuous integration and continuous deployment and organized, as tools from GitHub are used, such as pull requests (to review the code before uploading and avoid conflicts) and issues (to track what each team member is doing or has done).
+*WikiData: will be used as a source of structured data, providing access to large volumes of open data that can be easily integrated into the application.
+*EspressJS: is a minimal and flexible framework for Node.js that simplifies the creation of web applications and APIs. Its simplicity and large ecosystem of middleware(intermediaries between the server and the application,they can perform tasks such as authentication, handling HTTP requests, data validation, logging, among others.) make it ideal for developing the backend of our application.
+*MongoDB was selected as our database due to it's scalability and flexibility in handling data. As a non-relational database, it allows for more dynamic and adaptable data storage and retrieval compared to traditional relational databases like MySQL. While MySQL provides structured query language and consistency, MongoDB offers greater flexibility, making it more suitable for our application’s needs, especially when dealing with large volumes of unstructured or semi-structured data, such as the data from WikiData used for questions and answers.
+
+===Top-Level Descomposition
+    We haven't decided the architecture yet(microservices(ystem is built using a microservices architecture, where each service is designed to handle a specific functionality), traditional(frontend, backend, DataBase, API))
+
+=== Approaches to Achieve Top Quality Goals
+    
+    [options="header",cols="1,2"]
+    |===
+    |Quality Goal| Decision Made
+    |Usability| We use ReactJS to build an interactive and modern user interface. Additionally, we follow UX/UI design principles to enhance the user experience.
+    |Security| The application should protect user data and prevent unauthorized access.
+    |Scalability|We use Docker and microservices to enable independent deployment and scalability of each system component. MongoDB facilitates horizontal scalability.
+    |Testability| We apply unit and integration testing. Additionally, we use GitHub Actions for automated testing on each push.
+    |Adaptability| We want our application to reach more people, therefore, we need to make it adaptable to different devices such as mobile phones, laptops, etc., in order to provide the best possible user experience. 
+    |Maintainability| The code should be easy to understand, modify, and extend to facilitate future improvements and allow any new team member to comprehend it without issues. To achieve this, we will implement proper documentation that explains key architectural decisions, the project’s functionality, among other aspects. We will also use GitHub, as version control allows tracking the changes made by each team member. Additionally, we will apply modularization, breaking the code into small, reusable and isolated functions and modules.
+    |Performance| To improve the application's performance and avoid system overload, we will use the minimum number of API calls possible to reduce response time. 
+    |===
+
+===Organizational Decision 
+
+    *Language: We have chosen English as the language for this project, which will make it accessible to everyone.
+    *GitHub Projects: We will use it to track the team's work in general and in a more visual way.
+    *Meetings: We will hold them weekly during the lab class, except on special occasions when key decisions for the application need to be made.
+    *Tasks: each task assigned to a member must be associated with an issue to track what each member has done or is currently doing
 ifdef::arc42help[]
 [role="arc42help"]
 ****
