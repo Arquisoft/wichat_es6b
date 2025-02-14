@@ -25,3 +25,24 @@ See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 do
 
 ****
 endif::arc42help[]
+[options="header",cols="1,2,2"]
+|===
+| **Risk** | **Explanation** | **Measure**
+| Lack of experience with the technologies used | We lack extensive experience with technologies like React, Node.js, MongoDB, which might complicate their usage. | Research these technologies and learn how to use them correctly.
+| Lack of time | There are deadlines for each deliverable, and we may run out of time. | Stay consistent and do as much as possible daily.
+| Teamwork challenges | Working in a team can be difficult, especially since we've never done a large project like this. | Maintain good communication and collaboration.
+| Unproductive meetings | Spending too much time in meetings without making progress can cause issues. | Prepare briefly for meetings to focus on specific topics.
+| Member abandonment | If a team member quits, their tasks will need to be reassigned, increasing the workload. | Assign tasks to multiple people and offer support to avoid abandonment.
+| External service failure | An external service like Wikidata or Azure may fail temporarily. | Stay updated on service changes and work to restore functionality quickly.
+|===
+
+[options="header",cols="1,2,2"]
+|===
+| **Technical Debt** | **Explanation** | **Solution**
+| Insufficient documentation | Lack of proper documentation can make future system understanding and maintenance challenging. | Ensure thorough and clear documentation is created.
+| Suboptimal database design | A poorly designed database can create scalability issues as the system grows. | Plan and design the database carefully before implementation or modification.
+| Dependence on AI-generated code | AI-generated code may have inaccuracies, potentially leading to difficulties when revisiting or updating it. | Review, adjust, and validate AI-generated code before integration.
+| LLM performance issues | The language model may cause slow response times and irrelevant answers, impacting user experience. | Optimize prompts and continuously monitor the model's performance for improvements.
+|===
+
+
