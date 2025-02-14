@@ -31,7 +31,7 @@ Comunicación con ChatGPT: SSH.
 
 Interfaz de usuario: React.
 
-Cliente: Node.js.
+BackEnd: Node.js.
 
 A medida que se avance en el desarrollo, se definirán más detalles sobre los protocolos y canales de comunicación.
 
