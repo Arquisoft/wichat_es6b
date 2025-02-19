@@ -21,8 +21,8 @@ To develop the application, we have decided to use the following technologies wh
 
 We have chosen to adopt a microservices architecture because we believe it is the best approach for our project. In this design paradigm, the application is segmented into small, autonomous services that typically interact via APIs.Currently, we have the following microservices:
 
-*Authentication service: It is used for user authentication.
-*Question service: It is used to generate questions from the Wikidata API.
+* Authentication service: It is used for user authentication.
+* Question service: It is used to generate questions from the Wikidata API.
 
 === Approaches to Achieve Top Quality Goals
 
