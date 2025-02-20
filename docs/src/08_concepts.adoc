@@ -5,20 +5,21 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Architectural Patterns and Principles
 
-El sistema sigue el modelo MVC (Modelo-Vista-Controlador), lo que permite una separación clara de responsabilidades:
+The system follows a microservices architecture, ensuring modularity and scalability:
 
-Modelo: Maneja los datos y la lógica de negocio.
+Service Layering:
 
-Vista: Se encarga de la interfaz de usuario.
-
-Controlador: Gestiona la comunicación entre la vista y el modelo.
-
-Este enfoque facilita la escalabilidad y el mantenimiento del código, además de mejorar la reutilización de componentes.
+Independent Services: Each microservice is responsible for a specific domain, handling its own data and business logic.
+API Gateway: Manages communication between services and external clients, ensuring secure and efficient data flow.
+Frontend Integration: The user interface consumes APIs from multiple microservices, allowing for a flexible and decoupled design.
+This approach enhances scalability, maintainability, and component reusability, facilitating independent development and deployment of services.
 
 === Key Architectural Decisions
 
-Inicio desde cero con referencia a proyectos anteriores: Se decidió comenzar el desarrollo del sistema desde cero, aprovechando el conocimiento y las experiencias de los proyectos del año pasado. Esto permitió diseñar una arquitectura más eficiente y flexible sin las restricciones de versiones anteriores.
+Starting from Scratch with Reference to Previous Projects:
+The decision was made to develop the system from scratch, leveraging the knowledge and experiences from last year's projects. This allowed for the design of a more efficient and flexible architecture without the constraints of previous versions.
 
-Uso de tecnologías modernas: Se han elegido tecnologías como React para la interfaz, Node.js para el backend y MongoDB como base de datos, garantizando un desarrollo ágil y adaptable a las necesidades del proyecto.
+Use of Modern Technologies:
+Technologies such as React for the interface, Node.js for the backend, and MongoDB as the database have been chosen, ensuring an agile development process adaptable to the project's needs.
 
-A medida que avance el desarrollo, se documentarán más decisiones clave y sus justificaciones.
+As development progresses, more key decisions and their justifications will be documented.
