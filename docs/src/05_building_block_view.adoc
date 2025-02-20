@@ -71,14 +71,18 @@ _**<Overview Diagram>**_
 
 Motivation::
 
-_<text explanation>_
+The system consists of a game (Saber y ganar) in which the user interacts with the application to answer questions.
 
 
 Contained Building Blocks::
-_<Description of contained building block (black boxes)>_
+| **Name**        | **Responsibility**                                                |
+|-------------------|---------------------------------------------------------------------|
+| **Usuario**       | Interacts with the application via the frontend.                   |
+| **Frontend (React)** | Provides the user interface where users interact with the system. |
+| **Backend (Node.js)** | Manages business logic, handles frontend requests, and communicates with the database. |
+| **MongoDB**       | NoSQL database used for storing user, race, and registration data. |
+| **Docker**        | Containerization platform used to ensure portability and scalability of services. |
 
-Important Interfaces::
-_<Description of important interfaces>_
 
 ifdef::arc42help[]
 [role="arc42help"]
