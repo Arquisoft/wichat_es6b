@@ -6,6 +6,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 
 === Technology Decisions
+
 To develop the application, we have decided to use the following technologies which were the ones provided in the base project:
 
 * JavaScript: will be the programming language used in the project. We chose it for its widespread popularity, broad browser support, and robust ecosystem(It has a wide variety of tools, libraries, frameworks, and an active community), making it ideal for both frontend and backend development with Node.js.
@@ -17,7 +18,11 @@ To develop the application, we have decided to use the following technologies wh
 * MongoDB was selected as our database due to it's scalability and flexibility in handling data. As a non-relational database, it allows for more dynamic and adaptable data storage and retrieval compared to traditional relational databases like MySQL. While MySQL provides structured query language and consistency, MongoDB offers greater flexibility, making it more suitable for our application’s needs, especially when dealing with large volumes of unstructured or semi-structured data, such as the data from WikiData used for questions and answers.
 
 === Top-Level Descomposition
-We haven't decided the architecture yet(microservices(ystem is built using a microservices architecture, where each service is designed to handle a specific functionality), traditional(frontend, backend, DataBase, API))
+
+We have chosen to adopt a microservices architecture because we believe it is the best approach for our project. In this design paradigm, the application is segmented into small, autonomous services that typically interact via APIs.Currently, we have the following microservices:
+
+* Authentication service: It is used for user authentication.
+* Question service: It is used to generate questions from the Wikidata API.
 
 === Approaches to Achieve Top Quality Goals
 
