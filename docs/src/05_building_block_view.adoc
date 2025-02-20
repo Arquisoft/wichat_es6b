@@ -83,9 +83,3 @@ Contained Building Blocks::
 | **Docker**          | Containerization platform ensuring portability and scalability of services.  
 |===
 
-
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-
