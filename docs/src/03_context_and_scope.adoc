@@ -10,30 +10,31 @@ ifndef::imagesdir[:imagesdir: ../images]
 |===
 | Communication Partner | Inputs | Outputs
 
-| Cliente| Nombre de usuario, contraseña
-| Puntuación del juego, preguntas obtenidas de Wikidata
+| **Client** | Username, password | Game score, questions retrieved from Wikidata  
 
-| Base de Datos| Nombre de usuario, contraseña, puntuación de cada partida| Validación de credenciales, almacenamiento de puntuaciones
+| **Database** | Username, password, score of each game | Credential validation, score storage  
 
-| Wikidata| Solicitud de información sobre la pregunta del juego
-| Pregunta generada con información relevante
+| **Wikidata** | Request for information about the game question | Generated question with relevant information  
 
-| ChatGPT| Pregunta del juego y respuesta correcta| Pistas para ayudar al usuario a responder mejor
+| **ChatGPT** | Game question and correct answer | Hints to help the user answer better  
 |===
+
+
+image::../images/contextAndScope.png[Diagram Business Context]
 
 === Technical Context
 
-El desarrollo de la parte técnica aún está en proceso. Sin embargo, se han considerado las siguientes tecnologías:
+The development of the technical part is still in progress. However, the following technologies have been considered:
 
-Base de datos: MongoDB.
+|===
+| Technology            | Description                                      
+| **Database**        | MongoDB                                          
+| **Communication with ChatGPT** | SSH                                   
+| **User Interface**  | React                                            
+| **Server**          | Node.js                                          
+| **Future Development** | More details on protocols and communication channels will be defined as development progresses. 
+|===
 
-Comunicación con ChatGPT: SSH.
-
-Interfaz de usuario: React.
-
-Cliente: Node.js.
-
-A medida que se avance en el desarrollo, se definirán más detalles sobre los protocolos y canales de comunicación.
 
 
 
