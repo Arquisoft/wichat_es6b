@@ -36,8 +36,3 @@ The development of the technical part is still in progress. However, the followi
 |===
 
 
-
-
-<optionally: Explanation of technical interfaces>
-
-<Mapping Input/Output to Channels>
