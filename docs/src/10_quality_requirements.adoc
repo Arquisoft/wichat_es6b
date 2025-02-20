@@ -80,16 +80,15 @@ endif::arc42help[]
 
 
 === Quality Scenarios
-Aquí tienes la traducción con los objetivos de calidad añadidos:
-
 "As quality requirements, we aim to meet our quality objectives: usability, maintainability, efficiency, testability, portability."
 
-[cols="2,3,2", options="header"]
+[cols="2,5,2", options="header"]
 |===
-| **Category**       | **Description**                                                                 | **Priority** |
-| Usability          | Our application must be easy to use and allow intuitive interaction with users.   | High         |
-| Maintainability    | Our application must be easy to maintain, modify, and extend without affecting its functionality. | High         |
-| Efficiency         | Our application must perform tasks optimally, minimizing resource and time usage. | Medium       |
-| Testability        | Our application must be easy to test, allowing for error detection and ensuring quality. | High         |
-| Portability        | Our application must be able to run on different platforms, ensuring its adaptability. | Medium       |
+| **Category**    | **Description**                                                               | **Priority** |
+| Usability      | The application must be easy to use and allow intuitive interaction.        | High         |
+| Maintainability | The application must be easy to modify and extend without breaking functionality. | High         |
+| Efficiency     | The application must perform optimally, minimizing resource and time usage. | Medium       |
+| Testability    | The application must be easy to test to ensure quality and detect errors.  | High         |
+| Portability    | The application must run on different platforms for better adaptability.   | Medium       |
 |===
+
