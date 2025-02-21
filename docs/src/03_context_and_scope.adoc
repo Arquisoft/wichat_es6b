@@ -22,7 +22,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 image::../images/contextAndScope.png[Diagram Business Context]
 
-=== Technical Context
+
 
 The development of the technical part is still in progress. However, the following technologies have been considered:
 
