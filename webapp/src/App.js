@@ -6,49 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-const FallingElements = () => {
-  const elements = Array.from({ length: 10 }); // Generamos 10 elementos
 
-  return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        pointerEvents: "none",
-        overflow: "hidden",
-      }}
-    >
-      {elements.map((_, index) => {
-        const startX = Math.random() * 100; // Posición inicial aleatoria en el eje X
-        const delay = Math.random() * 2; // Diferente tiempo de inicio para cada uno
-
-        return (
-          <motion.div
-            key={index}
-            initial={{ y: "-10vh", x: `${startX}vw`, opacity: 0 }}
-            animate={{ y: "110vh", opacity: 1 }}
-            transition={{
-              duration: 4 + Math.random() * 3, // Velocidad de caída aleatoria
-              ease: "linear",
-              repeat: Infinity,
-              delay: delay,
-            }}
-            style={{
-              position: "absolute",
-              width: "20px",
-              height: "20px",
-              backgroundColor: "#ff758c",
-              borderRadius: "50%",
-            }}
-          />
-        );
-      })}
-    </div>
-  );
-};
 function App() {
   const [showLogin, setShowLogin] = useState(true);
 
