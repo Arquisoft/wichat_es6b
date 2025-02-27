@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import { Typewriter } from "react-simple-typewriter";
 
 function App() {
   const [showLogin, setShowLogin] = useState(true);
@@ -45,7 +46,12 @@ function App() {
       }}
     >
     <Typography component="h3" variant="h4" align="center" sx={{ marginTop: 2 }}>
-        Welcome to the 2025 edition of the Wichat game 
+    <Typewriter 
+    words={["Welcome to the 2025 edition of the Wichat game"]} 
+    cursor
+    cursorStyle="|"
+    typeSpeed={50} 
+  />
     </Typography>
 
     </Container>

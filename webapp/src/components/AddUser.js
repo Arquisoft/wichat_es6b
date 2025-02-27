@@ -25,15 +25,13 @@ const AddUser = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs" sx={{ 
+    <Container component="main" maxWidth="md" sx={{ 
       marginTop: 15, 
       backgroundColor: '#f0f0f0' , 
       borderRadius : 1, 
       padding: 3,
       border: "1px solid black" 
 
-      
-      
       }}>
       <Typography component="h1" variant="h5">
         Add User
