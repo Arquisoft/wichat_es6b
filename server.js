@@ -13,4 +13,4 @@ app.use("/usuarios", usuarioRoutes);
 
 // Iniciar servidor
 const PORT = 8000;
-app.listen(PORT, () => console.log(Servidor corriendo en http://localhost:${PORT}));
+app.listen(PORT, () => console.log("Servidor corriendo en http://localhost:${PORT}"));
