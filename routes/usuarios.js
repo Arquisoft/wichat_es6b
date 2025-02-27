@@ -1,5 +1,5 @@
 const express = require("express");
-const Usuario = require("../model/Usuario");
+const Usuario = require("../model/usuarios");
 const router = express.Router();
 
 // 1. Registrar un usuario
