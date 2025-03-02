@@ -1,19 +1,32 @@
 const mongoose = require('mongoose');
 
+//preguntas
+const questionSchemaSchema = new mongoose.Schema({
+  enunciado:{
+    type: String,
+    required: true,
+},
+respuesta_correcta: {
+    type:String,
+    required: true
+},
+respuesta_falsa1:{
+    type:String,
+    required:true
+},
+respuesta_falsa2:{
+    type:String,
+    required:true
+},respuesta_falsa3:{
+    type:String,
+    required:true
+},correct:{
+    type: Boolean,
+    default: false,
+    required: false
+}
+    });
 
-const monumentSchema = new mongoose.Schema({
-  monumento: {
-      type: String,
-      required: true
-  },
-  pais: {
-      type: String,
-      required: false
-  }
-}, {timestamps: {}});
+const Question = mongoose.model('Question', questionSchema);
 
-const Monumento = mongoose.model('Monument', monumentSchema);
-
-module.exports = {
-  Monumento
-};
+module.exports = Question

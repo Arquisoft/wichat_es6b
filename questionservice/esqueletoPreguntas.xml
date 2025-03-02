@@ -1,108 +1,52 @@
 <textoPreguntas>
 
-    <pregunta  question="pais" type="capital"> 
-        <es>¿Cuál es la capital de {RELLENAR}?</es>
-        <en>What is the capital of {RELLENAR}?</en>
+    <pregunta  question="pais" type="ubicacion"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+       <es>¿Cuál es el pais mostrado en la imagen?</es>
+       <en>What is the country shown in the image?</en>
     </pregunta>
     
-    <pregunta  question="estado" type="capital"> 
-        <es>¿Cuál es la capital del estado de {RELLENAR}?</es>
-        <en>What is the capital of the state of {RELLENAR}?</en>       
+    <pregunta  question="pais" type="paisaeje"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿En qué pais se encuentra este paisaje?</es>
+        <en>In which country is this landscape located?</en>       
     </pregunta>
 
-    <pregunta  question="libro" type="autor"> 
-        <es>¿Cuál es el autor/es del libro llamado {RELLENAR}?</es>
-        <en>What is the author(s) of the book called {RELLENAR}?</en>
+    <pregunta  question="cine" type="actor"> 
+         <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Quién es el actor de la imagen?</es>
+        <en>Who is the actor in the image?</en>
     </pregunta>
 
-    <pregunta  question="libro" type="genero"> 
-        <es>¿Cuál es el genero/s del libro llamado {RELLENAR}?</es>
-        <en>What is the genre(s) of the book called {RELLENAR}?</en>
+     <pregunta  question="musica" type="musico"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Quién es el músico de la imagen?</es>
+        <en>Who is the musician in the image?</en>
     </pregunta>
 
-    <pregunta  question="nombreLibro" type="paisLibro"> 
-        <es>¿De que país es el libro titulado {RELLENAR}?</es>
-        <en>What country is the book titled {RELLENAR} from?</en>
+
+    <pregunta  question="videojuego" type="portada"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Cuál es el videojuego de la imagen?</es>
+        <en>What is the videogame of the image?</en>
     </pregunta>
 
-    <pregunta  question="actores" type="fechaNacimiento"> 
-        <es>¿Cuál es la fecha de nacimiento del actor español {RELLENAR}?</es>
-        <en>What is the date of birth of the Spanish actor {RELLENAR}?</en>
+
+    <pregunta  question="futbol" type="clubFutbol"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Cuál es este equipo de fútbol?</es>
+        <en>Which football team is this?</en>
     </pregunta>
 
-    <pregunta  question="chef" type="startDate"> 
-        <es>¿Cuál es la fecha de nacimiento del chef español {RELLENAR}?</es>
-        <en>What is the date of birth of the Spanish chef {RELLENAR}?</en>
-        </pregunta>
-
-    <pregunta  question="videojuego" type="plataforma"> 
-        <es>¿Cuál es la plataforma/s que desarrollo el videojuego llamado {RELLENAR}?</es>
-        <en>What is the platform/s that developed the video game called {RELLENAR}?</en>
+    <pregunta  question="futbol" type="futbolista"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Quién es el futbolista de la imagen?</es>
+        <en>Who is the footballer in the image?</en>
     </pregunta>
 
-    <pregunta  question="videojuego" type="genero"> 
-        <es>¿Cuál es el genero/s del videojuego llamado {RELLENAR}?</es>
-        <en>What is the genre(s) of the video game called {RELLENAR}?</en>
+    <pregunta  question="futbol" type="estadio"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿De qué equipo de fútbol es este estadio?</es>
+        <en>Which football team does this stadium belong to?</en>
     </pregunta>
-
-    <pregunta  question="clubFutbol" type="estadio"> 
-        <es>¿Cuál es el estadio del club de futbol llamado {RELLENAR}?</es>
-        <en>What is the stadium of the soccer club called {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta  question="tenista" type="lugarNacimiento"> 
-        <es>¿Cuál es el lugar de nacimiento del tenista llamado {RELLENAR}?</es>
-        <en>What is the birthplace of the tennis player named {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta  question="futbolistas" type="fechaNacimiento"> 
-        <es>¿Cuál es la fecha de nacimiento del futbolista llamado {RELLENAR}?</es>
-        <en>What is the date of birth of the footballer named {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta  question="futbolistas" type="startDate"> 
-        <es>¿Cuál es la fecha en la que comenzo su carrera el futbolista llamado {RELLENAR}?</es>
-        <en>WWhat is the date on which the footballer named {RELLENAR} began his career?</en>
-    </pregunta>
-
-    <pregunta  question="presidenteEspaña" type="fechaNacimiento"> 
-        <es>¿Cuál es la fecha de nacimiento del presidente de España llamado {RELLENAR}?</es>
-        <en>What is the date of birth of the president of Spain named {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta  question="personasOviedo" type="fechaNacimiento"> 
-        <es>¿Cuál es la fecha de nacimiento de la personalidad de Oviedo llamado/a {RELLENAR}?</es>
-        <en>What is the date of birth of the Oviedo personality named {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta question="nombreCientifico" type="camposCientifico">
-        <es>¿Cual/es son los campos de estudio del cientifico llamado {RELLENAR}?</es>
-        <en>What are the fields of study of the scientist named {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta question="nombreCientifico" type="interesesCientifico">
-        <es>¿Cual/es son los intereses de estudio del cientifico llamado {RELLENAR}?</es>
-        <en>What are the study interests of the scientist named {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta question="nombreElemento" type="numeroAtomico">
-        <es>¿Cual es el numero atomico del elemento llamado {RELLENAR}?</es>
-        <en>What is the atomic number of the element called  {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta question="dj" type="startDate">
-        <es>¿Cual es la fecha en la que comenzo su carrera el dj llamado {RELLENAR}?</es>
-        <en>What is the author(s) of the book called {RELLENAR}?</en>
-    </pregunta>
-
-    <pregunta question="guitarrista" type="startDate">
-        <es>¿Cual es la fecha en la que comenzo su carrera el guitarrista llamado {RELLENAR}?</es>
-        <en>What is the date the DJ named {RELLENAR} started his career?</en>
-    </pregunta>
-
-    <pregunta question="cantante" type="startDate">
-        <es>¿Cual es la fecha en la que comenzo su carrera el/la cantante llamado {RELLENAR}?</es>
-        <en>What is the date on which the singer named {RELLENAR} began his/her career?</en>        
-    </pregunta>
-
 </textoPreguntas>
