@@ -16,6 +16,15 @@ const AddUser = () => {
       setError('Both username and password are required');
       return;
     }
+
+    if (password.length < 4){
+      setError('The password length cannot be less than 4');
+    }
+
+    if (password.length >= 20){
+      setError('The password cannot have more than 20 characters');
+    }
+
     try {
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
