@@ -12,6 +12,10 @@ const AddUser = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const addUser = async () => {
+    if (!username || !password) {
+      setError('Both username and password are required');
+      return;
+    }
     try {
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
