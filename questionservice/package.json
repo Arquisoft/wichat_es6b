@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "guardarPreguntaBaseDatos.js",
   "scripts": {
-    "start": "node question.js",
+    "start": "node questions.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

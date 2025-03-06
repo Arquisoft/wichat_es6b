@@ -37,6 +37,19 @@ var randomNumber;
 const maxQuestions = 5;
 var numberOfQuestions = 0;
 
+//La funcion getQueriesAndQuestion vuelca el all_questions en generalQueries
+function getQueriesAndQuestions(imagesQueries){
+    var generalQueries = [];
+    for (const lang in imagesQueries) {
+        for (const categoria in imagesQueries[lang]) {
+            for (const [query, pregunta] of imagesQueries[lang][categoria]) {
+                generalQueries.push([categoria, query.trim(), pregunta]);
+            }
+        }
+    }
+    return generalQueries;
+}
+
 // Consultas por tema
 async function getQueriesByThematic(thematic) {
     if (thematic == "Geografia") {
