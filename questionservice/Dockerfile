@@ -19,6 +19,7 @@ RUN npm install --production --ignore-scripts
 # Copiar el código fuente de la aplicación después de instalar las dependencias
 COPY questions.js ./  
 COPY question-model.js ./
+COPY all_questions.js ./
 
 # Exponer el puerto en el que corre la aplicación
 EXPOSE 8003
