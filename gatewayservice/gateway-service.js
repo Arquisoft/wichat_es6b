@@ -56,8 +56,6 @@ app.post('/askllm', async (req, res) => {
   }
 });
 
-// gatewayservice/gateway-service.js (fragmento a añadir)
-
 // Rutas para estadísticas e historial
 app.get('/stats/:username', async (req, res) => {
   try {
@@ -85,6 +83,7 @@ app.post('/savegame', async (req, res) => {
     res.status(error.response?.status || 500).json({ error: error.message });
   }
 });
+
 
 
 // Read the OpenAPI YAML file synchronously

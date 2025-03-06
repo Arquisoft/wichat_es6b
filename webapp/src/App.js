@@ -79,6 +79,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/ranking" element={<Ranking />} />
+          <Route path="/profile/:username" element={<UserProfile />} />
         </Routes>
       </>
     </Router>

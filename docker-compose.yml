@@ -66,6 +66,21 @@ services:
       AUTH_SERVICE_URL: http://authservice:8002
       USER_SERVICE_URL: http://userservice:8001
       LLM_SERVICE_URL: http://llmservice:8003
+  historyservice:
+    container_name: historyservice-wichat_es6b
+    image: ghcr.io/arquisoft/wichat_es6b/historyservice:latest
+    profiles: ["dev", "prod"]
+    build: ./users/historyservice
+    depends_on:
+      - mongodb
+    ports:
+      - "8003:8003"
+    networks:
+      - mynetwork
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/userdb
+
+
 
   webapp:
     container_name: webapp-wichat_es6b

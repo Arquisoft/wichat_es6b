@@ -1,4 +1,3 @@
-// users/historyservice/history-service.js
 const express = require('express');
 const mongoose = require('mongoose');
 const Game = require('./history-model');
