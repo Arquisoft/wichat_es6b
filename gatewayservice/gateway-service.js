@@ -59,7 +59,7 @@ app.post('/askllm', async (req, res) => {
 // Rutas para estadísticas e historial
 app.get('/stats/:username', async (req, res) => {
   try {
-    const response = await axios.get(`http://historyservice:8003/stats/${req.params.username}`);
+    const response = await axios.get(`http://historyservice:8004/stats/${req.params.username}`);
     res.json(response.data);
   } catch (error) {
     res.status(error.response?.status || 500).json({ error: error.message });
@@ -68,7 +68,7 @@ app.get('/stats/:username', async (req, res) => {
 
 app.get('/history/:username', async (req, res) => {
   try {
-    const response = await axios.get(`http://historyservice:8003/history/${req.params.username}`);
+    const response = await axios.get(`http://historyservice:8004/history/${req.params.username}`);
     res.json(response.data);
   } catch (error) {
     res.status(error.response?.status || 500).json({ error: error.message });
@@ -77,7 +77,7 @@ app.get('/history/:username', async (req, res) => {
 
 app.post('/savegame', async (req, res) => {
   try {
-    const response = await axios.post('http://historyservice:8003/savegame', req.body);
+    const response = await axios.post('http://historyservice:8004/savegame', req.body);
     res.status(201).json(response.data);
   } catch (error) {
     res.status(error.response?.status || 500).json({ error: error.message });

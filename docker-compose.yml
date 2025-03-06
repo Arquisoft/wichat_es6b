@@ -66,6 +66,9 @@ services:
       AUTH_SERVICE_URL: http://authservice:8002
       USER_SERVICE_URL: http://userservice:8001
       LLM_SERVICE_URL: http://llmservice:8003
+      HISTORY_SERVICE_URL: http://historyservice:8004
+
+
   historyservice:
     container_name: historyservice-wichat_es6b
     image: ghcr.io/arquisoft/wichat_es6b/historyservice:latest
@@ -79,6 +82,7 @@ services:
       - mynetwork
     environment:
       MONGODB_URI: mongodb://mongodb:27017/userdb
+
 
 
 

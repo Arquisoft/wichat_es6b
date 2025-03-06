@@ -11,6 +11,8 @@ import AddUser from './components/AddUser';
 import Login from './components/Login';
 import Game from './components/Game';
 import Ranking from './components/Ranking';
+import UserProfile from './components/UserProfile';
+
 
 function Home() {
   const [showLogin, setShowLogin] = useState(true);
