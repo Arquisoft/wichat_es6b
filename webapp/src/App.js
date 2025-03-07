@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { Typewriter } from "react-simple-typewriter";
+import axios from "axios";
 
 
 import AddUser from './components/AddUser';
@@ -28,15 +29,37 @@ function App() {
   const [showLogin, setShowLogin] = useState(true);
   const [items, setItems] = useState([]);
 
+  const [data, setData] = useState(null); // Estado para almacenar la respuesta
+  const [loading, setLoading] = useState(true); // Estado para manejar el cargado
+  const [error, setError] = useState(null); // Estado para manejar errores
+
   const handleToggleView = () => {
     setShowLogin(!showLogin);
   };
   useEffect(() => {
-    fetch('http://localhost:8003/api/items') // Llama a tu API
-      .then(response => response.json())
-      .then(data => setItems(data))
-      .catch(error => console.error('Error al obtener los datos:', error));
+    fetchQuestion();
   }, []);
+
+  const fetchQuestion = async () => {
+    try {
+      // Cambia la URL del backend por la correcta si es necesario
+      const response = await axios.get("http://localhost:8003/generateQuestion?language=es&thematic=Geografia");
+      if (!response.ok) {
+        throw new Error('Error en la llamada a la API');
+      }
+      const result = await response.json();
+      setData(result);
+
+    } catch (error) {
+      console.error("Error fetching the question:", error);
+    }finally {
+      setLoading(false); // Cambiamos el estado de loading a false
+    }
+  };
+
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!data) return <p>No hay datos disponibles</p>;
 
   return (
     <Router>
@@ -55,13 +78,10 @@ function App() {
           <Typography component="h3" variant="h4" align="center" sx={{ marginTop: 2 }}>
             <Typewriter words={["Wikidata trial page for wichat6b tests"]} cursor cursorStyle="|" typeSpeed={50} />
           </Typography>
+          
           <div>
             <h2>Objetos en la base de datos:</h2>
-            <ul>
-              {items.map(item => (
-                <li key={item._id}>{item.nombre}: {item.descripcion}</li>
-              ))}
-            </ul>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
           </div>
         </Container>
 

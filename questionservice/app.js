@@ -12,6 +12,8 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
 
+  
+
   // Cargar una nueva pregunta al iniciar
   useEffect(() => {
     fetchQuestion();
