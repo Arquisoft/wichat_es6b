@@ -9,6 +9,19 @@
 <img src="https://miro.medium.com/max/365/1*Jr3NFSKTfQWRUyjblBSKeg.png" height="100">
 </p>
 
+## Contributors
+<div align="center">
+    
+| Contributor | Profile |
+| ------------- | ------------- | 
+| Daniel Flores López | <a href="https://github.com/DanielFloresLopez"><img src="https://img.shields.io/badge/UO282894-Daniel Flores López-yellow"></a> |
+| David Rodríguez Chanca | <a href="https://github.com/DRChanca"><img src="https://img.shields.io/badge/UO289521-David Rodríguez Chanca-purple"></a> |
+| Sergio Pérez Arias | <a href="https://github.com/Sero73"><img src="https://img.shields.io/badge/UO294130-Sergio Pérez Arias-red"></a> |
+| Javier Gutiérrez Esquinas | <a href="https://github.com/JavierGutierrezEsquinas"><img src="https://img.shields.io/badge/UO289715-Javier Gutiérrez Esquinas-blue"></a> |
+| Adrián Martís Blanco | <a href="https://github.com/adriMB200"><img src="https://img.shields.io/badge/UO289369-Adrián Martís Blanco-green"></a> |
+
+</div>
+
 This is a base project for the Software Architecture course in 2024/2025. It is a basic application composed of several components.
 
 - **User service**. Express service that handles the insertion of new users in the system.

@@ -14,8 +14,13 @@ These include
 * essential functional requirements, 
 * quality goals for the architecture and
 * relevant stakeholders and their expectations
+
+- new elements 
 ****
 endif::arc42help[]
+ChattySw has been hired by RTVE to improve an online quiz game inspired by "Saber y Ganar." The previous version was developed by HappySw.
+
+The new version, WIChat, lets users identify locations from images and answer related questions. A key feature is the ability to get hints through a conversational AI model.
 
 === Requirements Overview
 
@@ -44,6 +49,14 @@ See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 docum
 
 ****
 endif::arc42help[]
+- Users must be able to register, log in, and manage their accounts.
+- The system must present images and corresponding quiz questions.
+- Users must be able to submit answers within a set time limit.
+- A conversational AI must provide hints when requested.
+- The system must track user performance and maintain historical data.
+- Questions, answers, and hints must be generated automatically from Wikidata.
+- APIs must be available for accessing user data and quiz content.
+
 
 === Quality Goals
 
@@ -69,6 +82,30 @@ A table with quality goals and concrete scenarios, ordered by priorities
 ****
 endif::arc42help[]
 
+[options="header",cols="1,2"]
+|===
+| **Quality Goal** | **Description**
+
+| *_Reliability_*
+| Ensure that the generated questions and hints are accurate and relevant.
+
+| *_Scalability_*
+| Support a growing number of users and interactions.
+
+| *_Usability_*
+| Provide an intuitive and engaging user experience.
+
+| *_Maintainability_*
+| Allow easy updates and improvements to the system.
+
+| *_Security_*
+| Protect user data and ensure fair gameplay.
+|===
+
+
+
+
+
 === Stakeholders
 
 ifdef::arc42help[]
@@ -93,9 +130,31 @@ Table with role names, person names, and their expectations with respect to the 
 ****
 endif::arc42help[]
 
-[options="header",cols="1,2,2"]
+[options="header",cols="1,2,5"] 
+|=== 
+|Name|Description|Expectations
+
+| *_Development Team_*
+| The development team consists of the students that are members of the group.
+| They should develop a robust application and learn new technologies.
+
+| *_ChattySw_*
+| The company responsible for developing the application.
+| They should develop a satisfactory product efficiently and cost-effectively.
+
+| *_RTVE_*
+| The entity responsible for hiring the application development.
+| They should obtain the best possible product.
+
+| *_Users_*
+| Any person using the application.
+| They expect to enjoy a great user experience and learn from the quiz questions.
+
+| *_HappySw_*
+| Competitor to ChattySw, developer of the previous version of the application.
+| They should compete with ChattySw as the developer of the previous version of the application.
 |===
-|Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
-|===
+
+
+
+

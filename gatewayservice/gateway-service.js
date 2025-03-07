@@ -56,6 +56,36 @@ app.post('/askllm', async (req, res) => {
   }
 });
 
+// Rutas para estadísticas e historial
+app.get('/stats/:username', async (req, res) => {
+  try {
+    const response = await axios.get(`http://historyservice:8004/stats/${req.params.username}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+
+app.get('/history/:username', async (req, res) => {
+  try {
+    const response = await axios.get(`http://historyservice:8004/history/${req.params.username}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+
+app.post('/savegame', async (req, res) => {
+  try {
+    const response = await axios.post('http://historyservice:8004/savegame', req.body);
+    res.status(201).json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+
+
+
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'
 if (fs.existsSync(openapiPath)) {

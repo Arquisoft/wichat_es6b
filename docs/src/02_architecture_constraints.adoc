@@ -27,3 +27,27 @@ See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 doc
 
 ****
 endif::arc42help[]
+=== Motivation
+Constraints, like building codes, budgets, or client needs, must always be considered, but some can be adjusted through discussion or smart solutions. Every decision that collide with the constraints decided will be discussed with the team.
+
+=== Technical constraints
+|===
+|Constraint|Explanation
+|React|The use of React.js framefork for the frontend.
+|Node|The use of Node.js framework for the backend.
+|MongoDB|The database will be MongoDb, a NoSQL database system.
+|Wikidata|It will be used to generate questions.
+|Github|All the shares information will be stored at the repo of the project.
+|===
+=== Organizational  constraints
+|===
+|Constraint|Explanation
+|P2P Review|Every branch for the development will have two roles, the developer and the reviewer, using one of the features of Github, Pull Requests.
+|Meeting reports|Every time the development team have a meeting to discuss something related with the project.
+|===
+=== Conventions
+|===
+|Constraint|Explanation
+|Use of English|The documentation will be all written in English as it is the "software-related" language all over the world.
+|Arch42|The documentation will follow the Arch42 template as a way to split and order all the information related with the software product.
+|===
