@@ -27,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/Arquisoft/wichat_es6b/issues"
   },
-  "homepage": "https://github.com/Arquisoft/wichat_es6b#readme"
+  "homepage": "https://github.com/Arquisoft/wichat_es6b#readme",
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  }
 }
