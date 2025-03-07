@@ -20,11 +20,12 @@ RUN npm install --production --ignore-scripts
 COPY questions.js ./  
 COPY question-model.js ./
 COPY all_questions.js ./
+COPY app.js ./
 
 # Exponer el puerto en el que corre la aplicación
 EXPOSE 8003
 
-# Establecer la variable de entorno (si es necesario)
+# Establecer la variable de entorno (si es necesario)o
 ARG API_ORIGIN_URI="http://localhost:3000"
 ENV REACT_APP_API_ORIGIN_ENDPOINT=$API_ORIGIN_URI
 
