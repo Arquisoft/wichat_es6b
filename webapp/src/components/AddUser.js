@@ -25,7 +25,7 @@ const AddUser = () => {
       setError('The password cannot have more than 20 characters');
     }
 
-    if (username.length > 3){
+    if (username.length < 3){
       setError('The username length cannot be less than 3 characters');
     }
 
