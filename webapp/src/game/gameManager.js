@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Button, Box, Grid, Paper } from '@mui/material';
-import Game from './game'; // Importa la clase Game
+import Game from './game';
 
 const Jugar = () => {
   const [game] = useState(new Game());
@@ -8,6 +8,8 @@ const Jugar = () => {
   const [indice, setIndice] = useState(0);
   const [loading, setLoading] = useState(true);
   const [puntaje, setPuntaje] = useState(0);
+  const [respondidas, setRespondidas] = useState(new Set());
+  const [respuestas, setRespuestas] = useState({});
 
   useEffect(() => {
     const cargarPreguntas = async () => {
@@ -34,10 +36,14 @@ const Jugar = () => {
   };
 
   const handleAnswer = (opcion) => {
-    if (game.checkAnswer(indice, opcion)) {
-      setPuntaje(game.getTotalScore());
+    if (!respondidas.has(indice)) {
+      const correcta = preguntas[indice].responseCorrectOption;
+      setRespuestas((prev) => ({ ...prev, [indice]: opcion }));
+      if (game.checkAnswer(indice, opcion)) {
+        setPuntaje(game.getTotalScore());
+      }
+      setRespondidas(new Set([...respondidas, indice]));
     }
-    handleSiguiente();
   };
 
   if (loading) {
@@ -63,18 +69,33 @@ const Jugar = () => {
         )}
 
         <Grid container spacing={2} sx={{ marginTop: 2, alignContent: 'center' }}>
-          {preguntas[indice].responseOptions.map((opcion, i) => (
-            <Grid item xs={12} sm={6} key={i}>
-              <Button 
-                variant="contained" 
-                fullWidth 
-                sx={{ fontSize: "1rem", padding: 2 }}
-                onClick={() => handleAnswer(opcion)}
-              >
-                {opcion}
-              </Button>
-            </Grid>
-          ))}
+          {preguntas[indice].responseOptions.map((opcion, i) => {
+            const esCorrecta = opcion === preguntas[indice].responseCorrectOption;
+            const fueRespondida = respondidas.has(indice);
+            const esSeleccionada = respuestas[indice] === opcion;
+            return (
+              <Grid item xs={12} sm={6} key={i}>
+                <Button 
+                  variant="contained" 
+                  fullWidth 
+                  sx={{ 
+                    fontSize: "1rem", 
+                    padding: 2, 
+                    backgroundColor: fueRespondida ? (esCorrecta ? 'green' : esSeleccionada ? 'red' : 'grey') : 'default',
+                    color: 'white',
+                    '&:disabled': {
+                      backgroundColor: fueRespondida ? (esCorrecta ? 'green' : esSeleccionada ? 'red' : 'grey') : 'default',
+                      color: 'white'
+                    }
+                  }}
+                  onClick={() => handleAnswer(opcion)}
+                  disabled={fueRespondida}
+                >
+                  {opcion}
+                </Button>
+              </Grid>
+            );
+          })}
         </Grid>
       </Paper>
 
