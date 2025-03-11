@@ -7,7 +7,7 @@ import { Typewriter } from "react-simple-typewriter";
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('pinpion');
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [createdAt, setCreatedAt] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -15,7 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-  const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+  const apiKey =  "AIzaSyCNEG2xtR3K1eoEYwMZYjUdxL9eoOEq50o" || 'None';
 
   const loginUser = async () => {
     try {
@@ -24,9 +24,8 @@ const Login = () => {
       if (apiKey === 'None') {
         setMessage("LLM API key is not set. Cannot contact the LLM.");
       } else {
-        const question = `Please, generate a greeting message for a student called ${username} that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
-        const model = "empathy";
-
+        const question = `Please, generate a greeting message for a student called Juan that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
+        const model = "gemini";
         const messageResponse = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
         setMessage(messageResponse.data.answer);
       }
@@ -45,7 +44,7 @@ const Login = () => {
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 15, backgroundColor: '#f0f0f0', borderRadius: 1, padding: 3 }}>
-      {!loginSuccess ? (
+      {loginSuccess ? (
         <Box>
           <Typewriter words={[message]} cursor cursorStyle="|" typeSpeed={50} />
           <Typography component="p" variant="body1" sx={{ marginTop: 2, textAlign: 'center' }}>
