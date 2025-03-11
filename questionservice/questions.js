@@ -8,7 +8,7 @@ const generatorEndpoint = process.env.REACT_APP_API_ORIGIN_ENDPOINT || 'http://l
 
 const app = express();
 app.disable('x-powered-by');
-const port = 8003;
+const port = 8004;
 
 const frontendUrl = 'http://localhost:3000';  // Asegúrate de que sea el puerto correcto donde está corriendo el frontend
 
