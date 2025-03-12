@@ -118,6 +118,7 @@ const Jugar = () => {
     }
   };
 
+
 //marca pregunta como fallida si se acaba el tiempo
   const handleTimeout = () => {
     const updatedQuestions = [...questions];
