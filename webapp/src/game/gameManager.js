@@ -61,6 +61,13 @@ const Jugar = () => {
         <Typography variant="h5" align="center" gutterBottom>
           {preguntas[indice].responseQuestion}
         </Typography>
+        <Button 
+          variant="outlined" 
+          color="warning" 
+          sx={{ position: "absolute", top: 10, right: 10 }} 
+        >
+          Pedir Pista
+        </Button>
         
         {preguntas[indice].responseImage && (
           <Box display="flex" justifyContent="center" mb={2}>
