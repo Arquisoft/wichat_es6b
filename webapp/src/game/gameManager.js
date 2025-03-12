@@ -117,8 +117,6 @@ const Jugar = () => {
       finishGame();
     }
   };
-
-
 //marca pregunta como fallida si se acaba el tiempo
   const handleTimeout = () => {
     const updatedQuestions = [...questions];
@@ -138,7 +136,6 @@ const Jugar = () => {
       finishGame();
     }
   };
-
 
   // Finalizar el juego
   const finishGame = async () => {
