@@ -68,7 +68,24 @@ const Game = () => {
   }, [navigate]);
 
   //reinicia el tiempo por pregunta
-  
+  useEffect(() => {
+    if (gameFinished || questions.length === 0) return;
+
+    setTimeLeft(maxTime);
+
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime === 1) {
+          clearInterval(timer);
+          handleTimeout();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [indice]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
