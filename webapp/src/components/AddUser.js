@@ -12,6 +12,27 @@ const AddUser = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const addUser = async () => {
+    if (!username || !password) {
+      setError('Both username and password are required');
+      return;
+    }
+
+    if (password.length < 4){
+      setError('The password length cannot be less than 4 characters');
+    }
+
+    if (password.length >= 20){
+      setError('The password cannot have more than 20 characters');
+    }
+
+    if (username.length < 3){
+      setError('The username length cannot be less than 3 characters');
+    }
+
+    if (username.length >= 20){
+      setError('The username cannot have more than 20 characters');
+    }
+
     try {
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
