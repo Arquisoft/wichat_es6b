@@ -9,7 +9,7 @@ import { Typewriter } from "react-simple-typewriter";
 
 import AddUser from './components/AddUser';
 import Login from './components/Login';
-import Game from './components/Game';
+import Game from './game/gameManager';
 import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
 
