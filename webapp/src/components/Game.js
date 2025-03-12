@@ -5,6 +5,8 @@ import axios from 'axios';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
+const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
+
 const preguntas = [
   {
     id: "q1",
@@ -38,6 +40,7 @@ const Game = () => {
   const [score, setScore] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(maxTime);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -63,6 +66,9 @@ const Game = () => {
       answered: false
     })));
   }, [navigate]);
+
+  //reinicia el tiempo por pregunta
+  
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
@@ -93,7 +99,9 @@ const Game = () => {
       finishGame();
     }
   };
-  
+
+  //marca pregunta como fallida si se acaba el tiempo
+
   // Finalizar el juego
   const finishGame = async () => {
     const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
