@@ -9,10 +9,10 @@ class Game {
   async fetchQuestions() {
     this.questions = []; // Reset antes de hacer nuevas llamadas
     const urls = [
-      "http://localhost:8004/generateQuestion?language=es&thematic=Geografia",
-      "http://localhost:8004/generateQuestion?language=es&thematic=Geografia",
-      "http://localhost:8004/generateQuestion?language=es&thematic=Geografia",
-      "http://localhost:8004/generateQuestion?language=es&thematic=Geografia"
+      "http://localhost:8010/generateQuestion?language=es&thematic=Geografia",
+      "http://localhost:8010/generateQuestion?language=es&thematic=Geografia",
+      "http://localhost:8010/generateQuestion?language=es&thematic=Geografia",
+      "http://localhost:8010/generateQuestion?language=es&thematic=Geografia"
     ];
 
     try {

@@ -55,7 +55,7 @@ services:
     profiles: ["dev", "prod"]
     build: ./questionservice
     ports:
-      - "8004:8004"
+      - "8010:8010"
     networks:
       - mynetwork
 
@@ -78,7 +78,7 @@ services:
       AUTH_SERVICE_URL: http://authservice:8002
       USER_SERVICE_URL: http://userservice:8001
       LLM_SERVICE_URL: http://llmservice:8003
-      QUESTION_SERVICE_URL: http://questionservice:8004
+      QUESTION_SERVICE_URL: http://questionservice:8010
 
   webapp:
     container_name: webapp-wichat_es6b

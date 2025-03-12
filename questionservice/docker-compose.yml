@@ -4,6 +4,6 @@ services:
     image: questions
     container_name: questionservice-container
     ports:
-      - "8004:8004"
+      - "8010:8010"
     environment:
-      - REACT_APP_API_ORIGIN_ENDPOINT=http://localhost:8004
+      - REACT_APP_API_ORIGIN_ENDPOINT=http://localhost:8010
