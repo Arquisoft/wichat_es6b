@@ -126,17 +126,15 @@ const Jugar = () => {
       timeSpent: maxTime,
       answered: true
     };
-
     setQuestions(updatedQuestions);
 
     if (indice < questions.length - 1) {
-      setIndice(indice + 1);
+     setIndice(indice + 1);
       setQuestionStartTime(Date.now());
     } else {
       finishGame();
     }
   };
-
   // Finalizar el juego
   const finishGame = async () => {
     const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
