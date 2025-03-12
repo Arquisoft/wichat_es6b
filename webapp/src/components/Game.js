@@ -208,6 +208,9 @@ const Game = () => {
         <Typography variant="h6">
           Puntuación: {score}
         </Typography>
+        <Typography variant="h6" align="center" color={timeLeft <= 3 ? "red" : "black"}>
+          Tiempo restante: {timeLeft}s
+        </Typography>
       </Box>
 
       <Paper sx={{ padding: 3, marginBottom: 2, position: "relative" }}>
@@ -237,7 +240,7 @@ const Game = () => {
                     : undefined
                 }}
                 onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
-                disabled={questions[indice].answered}
+                disabled={questions[indice].answered || timeLeft==0}
               >
                 {opcion}
               </Button>
