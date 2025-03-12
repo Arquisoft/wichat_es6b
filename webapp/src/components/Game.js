@@ -117,7 +117,26 @@ const Game = () => {
     }
   };
 
-  //marca pregunta como fallida si se acaba el tiempo
+//marca pregunta como fallida si se acaba el tiempo
+  const handleTimeout = () => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[indice] = {
+      ...updatedQuestions[indice],
+      userAnswer: null, 
+      timeSpent: maxTime,
+      answered: true
+    };
+
+    setQuestions(updatedQuestions);
+
+    if (indice < preguntas.length - 1) {
+      setIndice(indice + 1);
+      setQuestionStartTime(Date.now());
+    } else {
+      finishGame();
+    }
+  };
+
 
   // Finalizar el juego
   const finishGame = async () => {
