@@ -35,3 +35,24 @@ There you will find links and examples about ADR.
 
 ****
 endif::arc42help[]
+
+The architectural decisions are fully documented in our https://github.com/Arquisoft/wichat_es6b/wiki[repository Wiki Section]. To avoid redundancy, instead of writing the decisions here in the documentation, we will refer o them.
+
+=== https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions[Architectural Decisions]
+
+==== Organizational Decisions
+
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-00---documentation-language[Language]
+
+==== Technology Decisions
+
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-01---programming-language[Programming Language]
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-03---deployment[Deployment]
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-04---database[DataBase]
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-05---user-interface[User Interface]
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-06---backend[Backend]
+
+==== Top-Level Descomposition 
+
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-02---architecure[Architecture]
+

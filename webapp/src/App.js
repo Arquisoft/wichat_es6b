@@ -9,8 +9,10 @@ import { Typewriter } from "react-simple-typewriter";
 
 import AddUser from './components/AddUser';
 import Login from './components/Login';
-import Game from './components/Game';
+import Game from './game/gameManager';
 import Ranking from './components/Ranking';
+import UserProfile from './components/UserProfile';
+
 
 function Home() {
   const [showLogin, setShowLogin] = useState(true);
@@ -79,6 +81,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/ranking" element={<Ranking />} />
+          <Route path="/profile/:username" element={<UserProfile />} />
         </Routes>
       </>
     </Router>

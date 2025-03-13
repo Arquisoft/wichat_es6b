@@ -7,10 +7,11 @@ import { Typewriter } from "react-simple-typewriter";
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('pinpion');
+  const [message, setMessage] = useState('');
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [createdAt, setCreatedAt] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
@@ -24,6 +25,7 @@ const Login = () => {
       if (apiKey === 'None') {
         setMessage("LLM API key is not set. Cannot contact the LLM.");
       } else {
+
         const question = `Please, generate a greeting message for a student called adolf that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
         const model = "gemini";
         const context = "Generate the response in Spanish"; 
@@ -34,20 +36,34 @@ const Login = () => {
       setCreatedAt(response.data.createdAt);
       setLoginSuccess(true);
       setOpenSnackbar(true);
+      
+      // Guardar el nombre de usuario en localStorage
+      localStorage.setItem('username', username);
+      
+      // Redirigir al perfil después de un breve retraso
+      setTimeout(() => {
+        navigate(`/profile/${username}`);
+      }, 2000);
+      
     } catch (error) {
       console.error(error);
+      setError(error.response?.data?.error || 'Error al iniciar sesión');
+      setOpenSnackbar(true);
     }
   };
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
+    setError('');
   };
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 15, backgroundColor: '#f0f0f0', borderRadius: 1, padding: 3 }}>
       {loginSuccess ? (
         <Box>
-          <Typewriter words={[message]} cursor cursorStyle="|" typeSpeed={50} />
+          <Typography variant="h5" component="h1" gutterBottom>
+            <Typewriter words={[message]} cursor cursorStyle="|" typeSpeed={50} />
+          </Typography>
           <Typography component="p" variant="body1" sx={{ marginTop: 2, textAlign: 'center' }}>
             Your account was created on {new Date(createdAt).toLocaleDateString()}.
           </Typography>
@@ -59,6 +75,9 @@ const Login = () => {
             <Button variant="contained" color="secondary" onClick={() => navigate('/game')}>
               Jugar
             </Button>
+            <Button variant="outlined" onClick={() => navigate(`/profile/${username}`)}>
+              Ver mi perfil
+            </Button>
           </Box>
         </Box>
       ) : (
@@ -68,7 +87,19 @@ const Login = () => {
           <TextField margin="normal" fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <Button variant="contained" color="primary" fullWidth onClick={loginUser}>Login</Button>
 
-          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="Login successful" />
+          <Snackbar 
+            open={openSnackbar && !error} 
+            autoHideDuration={6000} 
+            onClose={handleCloseSnackbar} 
+            message="Login successful" 
+          />
+          
+          <Snackbar 
+            open={!!error} 
+            autoHideDuration={6000} 
+            onClose={handleCloseSnackbar} 
+            message={`Error: ${error}`} 
+          />
         </Box>
       )}
     </Container>
