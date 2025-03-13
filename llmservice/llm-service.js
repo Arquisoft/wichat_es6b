@@ -11,9 +11,14 @@ app.use(express.json());
 const llmConfigs = {
   gemini: {
     url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    transformRequest: (question) => ({
-      contents: [{ parts: [{ text: question }] }]
-    }),
+      transformRequest: (question, context = '') => ({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: context ? `${context}\n\n${question}` : question }]
+          }
+        ]
+      }),
     transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
   },
   empathy: {
@@ -43,7 +48,7 @@ function validateRequiredFields(req, requiredFields) {
 }
 
 // Generic function to send questions to LLM
-async function sendQuestionToLLM(question, apiKey, model = 'gemini') {
+async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '') {
   try {
     const config = llmConfigs[model];
     if (!config) {
@@ -51,7 +56,7 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini') {
     }
 
     const url = config.url(apiKey);
-    const requestData = config.transformRequest(question);
+    const requestData = config.transformRequest(question, context);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -73,8 +78,8 @@ app.post('/ask', async (req, res) => {
     // Check if required fields are present in the request body
     validateRequiredFields(req, ['question', 'model', 'apiKey']);
 
-    const { question, model, apiKey } = req.body;
-    const answer = await sendQuestionToLLM(question, apiKey, model);
+    const { question, model, apiKey, context } = req.body;
+    const answer = await sendQuestionToLLM(question, apiKey, model,context);
     res.json({ answer });
 
   } catch (error) {
