@@ -25,10 +25,11 @@ const Login = () => {
       if (apiKey === 'None') {
         setMessage("LLM API key is not set. Cannot contact the LLM.");
       } else {
-        const question = `Please, generate a greeting message for a student called ${username} that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
-        const model = "gemini";
 
-        const messageResponse = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
+        const question = `Please, generate a greeting message for a student called adolf that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
+        const model = "gemini";
+        const context = "Generate the response in Spanish"; 
+        const messageResponse = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey, context });
         setMessage(messageResponse.data.answer);
       }
 
