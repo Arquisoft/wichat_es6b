@@ -1,55 +1,164 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button, Box, Grid, Paper } from '@mui/material';
-import Game from './game';
+import { Container, Typography, Button, Box, Grid, Paper, Snackbar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Game from './game';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-const apiKey = "AIzaSyCNEG2xtR3K1eoEYwMZYjUdxL9eoOEq50o" || 'None';
+
+const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
 
 const Jugar = () => {
-  const [game] = useState(new Game());
-  const [preguntas, setPreguntas] = useState([]);
+  const navigate = useNavigate();
   const [indice, setIndice] = useState(0);
+  const [score, setScore] = useState(0);
+  const [gameStartTime, setGameStartTime] = useState(null);
+  const [questionStartTime, setQuestionStartTime] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(maxTime);
+  const [gameFinished, setGameFinished] = useState(false);
+  const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [puntaje, setPuntaje] = useState(0);
-  const [respondidas, setRespondidas] = useState(new Set());
-  const [respuestas, setRespuestas] = useState({});
-  const [hint, setHint] = useState("");
-  const [usedHint, setUsedHint] = useState({});
-  const [loadingHint, setLoadingHint] = useState(false);
-
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  
+  // Inicializar el juego
   useEffect(() => {
-    const cargarPreguntas = async () => {
-      setLoading(true);
-      const fetchedQuestions = await game.fetchQuestions();
+    const username = localStorage.getItem('username');
+    if (!username) {
+      navigate('/');
+      return;
+    }
+
+    setGameStartTime(Date.now());
+    setQuestionStartTime(Date.now());
+
+    const gameInstance = new Game();
+    gameInstance.fetchQuestions().then(fetchedQuestions => {
       if (fetchedQuestions) {
-        setPreguntas(fetchedQuestions);
+        setQuestions(fetchedQuestions.map(q => ({
+          ...q,
+          userAnswer: null,
+          timeSpent: 0,
+          answered: false
+        })));
       }
       setLoading(false);
+    });
+  }, [navigate]);
+
+  //reinicia el tiempo por pregunta
+  useEffect(() => {
+    if (gameFinished || questions.length === 0) return;
+
+    setTimeLeft(maxTime);
+
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime === 1) {
+          clearInterval(timer);
+          handleTimeout();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [indice, questionStartTime]);
+  
+  // Manejar la selección de respuesta
+  const handleAnswerSelect = (answerIndex) => {
+    const now = Date.now();
+    const timeSpent = (now - questionStartTime) / 1000; // tiempo en segundos
+    
+    // Actualizar la pregunta actual con la respuesta y el tiempo
+    const updatedQuestions = [...questions];
+    updatedQuestions[indice] = {
+      ...updatedQuestions[indice],
+      userAnswer: answerIndex,
+      timeSpent: timeSpent,
+      answered: true
     };
-    cargarPreguntas();
-  }, []);
-
-  const fetchHint = async () => {
-    if (usedHint[indice] || loadingHint) return;
-    setLoadingHint(true);
-
-    try {
-      const question = `Devuelveme una descripcion de ${preguntas[indice].responseCorrectOption} en mas o menos tres frases sin decir exactamente que es, como si de un acertijo se tratara.`;
-      const model = "gemini";
-
-      const response = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
-      setHint(response.data.answer);
-      setUsedHint(prev => ({ ...prev, [indice]: true }));
-    } catch (error) {
-      console.error("Error obteniendo la pista:", error);
-      setHint("No se pudo generar la pista. Inténtalo de nuevo más tarde.");
+    
+    setQuestions(updatedQuestions);
+    
+    // Actualizar puntuación
+    if (answerIndex === questions[indice].respuesta_correcta) {
+      setScore(score + 10);
     }
-    setLoadingHint(false);
+    
+    // Avanzar a la siguiente pregunta o finalizar
+    if (indice < questions.length - 1) {
+      setIndice(indice + 1);
+      setQuestionStartTime(Date.now());
+    } else {
+      finishGame();
+    }
   };
 
+//marca pregunta como fallida si se acaba el tiempo
+  const handleTimeout = () => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[indice] = {
+      ...updatedQuestions[indice],
+      userAnswer: null, 
+      timeSpent: maxTime,
+      answered: true
+    };
+
+    setQuestions(updatedQuestions);
+
+    if (indice < questions.length - 1) {
+      setIndice(indice + 1);
+      setQuestionStartTime(Date.now());
+    } else {
+      finishGame();
+    }
+  };
+
+
+  // Finalizar el juego
+  const finishGame = async () => {
+    const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
+    setGameFinished(true);
+    
+    try {
+      const username = localStorage.getItem('username');
+      
+      // Preparar datos para guardar
+      const gameData = {
+        id: `game_${Date.now()}`,
+        username,
+        points: score,
+        avgtime: totalGameTime / questions.length,
+        questions: questions.map(q => ({
+          questionId: q.id,
+          question: q.pregunta,
+          correct: q.userAnswer === q.respuesta_correcta,
+          timeSpent: q.timeSpent || 0
+        }))
+      };
+      
+      // Guardar el historial del juego
+      await axios.post(`${apiEndpoint}/savegame`, gameData);
+      
+      setSnackbarMessage('¡Juego guardado correctamente!');
+      setSnackbarOpen(true);
+      
+      // Redirigir al perfil después de un breve retraso
+      setTimeout(() => {
+        navigate(`/profile/${username}`);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error guardando el historial del juego:', error);
+      setSnackbarMessage('Error al guardar el juego');
+      setSnackbarOpen(true);
+    }
+  };
+  
   const handleSiguiente = () => {
-    if (indice < preguntas.length - 1) {
+    if (indice < questions.length - 1) {
       setIndice(indice + 1);
     }
   };
@@ -59,93 +168,95 @@ const Jugar = () => {
       setIndice(indice - 1);
     }
   };
-
-  const handleAnswer = (opcion) => {
-    if (!respondidas.has(indice)) {
-      setRespuestas((prev) => ({ ...prev, [indice]: opcion }));
-      if (game.checkAnswer(indice, opcion)) {
-        setPuntaje(game.getTotalScore());
-      }
-      setRespondidas(new Set([...respondidas, indice]));
-    }
+  
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
-  if (loading) {
-    return <Typography variant="h5" align="center">Cargando preguntas...</Typography>;
+  if (!questions.length) {
+    return <Container><Typography>Cargando...</Typography></Container>;
   }
 
   return (
-    <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3, display: 'flex' }}>
-      {hint && (
-        <Box sx={{ width: 200, backgroundColor: '#ddd', padding: 2, marginRight: 2, borderRadius: 2 }}>
-          <Typography variant="h6">Pista:</Typography>
-          <Typography>{hint}</Typography>
-          <Button variant="text" onClick={() => setHint("")}>Cerrar</Button>
-        </Box>
-      )}
-      <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-          Pregunta {indice + 1} de {preguntas.length}
+    <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
+        Pregunta {indice + 1} de {questions.length}
+      </Typography>
+      
+      <Box sx={{ textAlign: 'right', mb: 2 }}>
+        <Typography variant="h6">
+          Puntuación: {score}
         </Typography>
-        <Typography variant="h6" align="center">Puntaje: {puntaje}</Typography>
-
-        <Paper sx={{ padding: 3, marginBottom: 2, position: "relative" }}>
-          <Typography variant="h5" align="center" gutterBottom>
-            {preguntas[indice].responseQuestion}
-          </Typography>
-          <Button 
-            variant="outlined" 
-            color="warning" 
-            sx={{ position: "absolute", top: 10, right: 10 }} 
-            onClick={fetchHint}
-            disabled={usedHint[indice] || loadingHint}
-          >
-            {loadingHint ? "Cargando..." : "Pedir Pista"}
-          </Button>
-          
-          {preguntas[indice].responseImage && (
-            <Box display="flex" justifyContent="center" mb={2}>
-              <img src={preguntas[indice].responseImage} alt="Pregunta" style={{ maxWidth: '100%', maxHeight: '200px' }} />
-            </Box>
-          )}
-
-          <Grid container spacing={2} sx={{ marginTop: 2, alignContent: 'center' }}>
-            {preguntas[indice].responseOptions.map((opcion, i) => {
-              const esCorrecta = opcion === preguntas[indice].responseCorrectOption;
-              const fueRespondida = respondidas.has(indice);
-              const esSeleccionada = respuestas[indice] === opcion;
-              return (
-                <Grid item xs={12} sm={6} key={i}>
-                  <Button 
-                    variant="contained" 
-                    fullWidth 
-                    sx={{ 
-                      fontSize: "1rem", 
-                      padding: 2, 
-                      backgroundColor: fueRespondida ? (esCorrecta ? 'green' : esSeleccionada ? 'red' : 'grey') : 'default',
-                      color: 'white',
-                      '&:disabled': {
-                        backgroundColor: fueRespondida ? (esCorrecta ? 'green' : esSeleccionada ? 'red' : 'grey') : 'default',
-                        color: 'white'
-                      }
-                    }}
-                    onClick={() => handleAnswer(opcion)}
-                    disabled={fueRespondida}
-                  >
-                    {opcion}
-                  </Button>
-                </Grid>
-              );
-            })}
-          </Grid>
+        <Typography variant="h6" align="center" color={timeLeft <= 3 ? "red" : "black"}>
+          Tiempo restante: {timeLeft}s
+        </Typography>
+      </Box>
+      {/* Imagen de la pregunta */}
+      {questions[indice].imagen && (
+        <Paper sx={{ padding: 2, marginBottom: 2, textAlign: "center" }}>
+          <img 
+            src={questions[indice].imagen} 
+            alt="Pregunta" 
+            style={{ maxHeight: 300, width: "auto", display: "block", margin: "0 auto" }} 
+          />
         </Paper>
+      )}
+      <Paper sx={{ padding: 3, marginBottom: 2, position: "relative" }}>
+        <Typography variant="h5" align="center" gutterBottom>
+          {questions[indice].pregunta}
+        </Typography>
 
+        <Button 
+          variant="outlined" 
+          color="warning" 
+          sx={{ position: "absolute", top: 10, right: 10 }} 
+        >
+          Pedir Pista
+        </Button>
+
+        <Grid container spacing={7} sx={{ marginTop: 2, alignContent:'center' }}>
+          {questions[indice].opciones.map((opcion, i) => (
+            <Grid item xs={16} key={i}>
+              <Button 
+                variant="contained" 
+                fullWidth 
+                sx={{ 
+                  fontSize: "1rem", 
+                  padding: 5,
+                  backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
+                    ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
+                    : undefined
+                }}
+                onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
+                disabled={questions[indice].answered || timeLeft==0}
+              >
+                {opcion}
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+
+      {gameFinished ? (
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
+          <Typography variant="h4">¡Juego terminado!</Typography>
+          <Typography variant="h5">Puntuación final: {score}</Typography>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            sx={{ mt: 2 }}
+            onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
+          >
+            Ver mi perfil
+          </Button>
+        </Box>
+      ) : (
         <Box display="flex" justifyContent="space-between">
           <Button 
             variant="contained" 
             color="secondary" 
             onClick={handleAnterior} 
-            disabled={indice === 0}
+            disabled={indice === 0 || questions[indice].answered}
           >
             Anterior Pregunta
           </Button>
@@ -154,12 +265,19 @@ const Jugar = () => {
             variant="contained" 
             color="primary" 
             onClick={handleSiguiente} 
-            disabled={indice === preguntas.length - 1}
+            disabled={indice === questions.length - 1 || questions[indice].answered}
           >
             Siguiente Pregunta
           </Button>
         </Box>
-      </Box>
+      )}
+      
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+      />
     </Container>
   );
 };
