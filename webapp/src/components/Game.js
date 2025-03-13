@@ -85,7 +85,7 @@ const Game = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [indice]);
+  }, [indice, questionStartTime]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
