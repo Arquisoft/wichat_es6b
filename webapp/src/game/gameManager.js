@@ -5,6 +5,7 @@ import axios from 'axios';
 import Game from './game';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+const apiKey = "AIzaSyCNEG2xtR3K1eoEYwMZYjUdxL9eoOEq50o" || 'None';
 
 const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
 
@@ -20,7 +21,28 @@ const Jugar = () => {
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [hint, setHint] = useState("");
+  const [usedHint, setUsedHint] = useState({});
+  const [loadingHint, setLoadingHint] = useState(false);
   
+
+  const fetchHint = async () => {
+    if (usedHint[indice] || loadingHint) return;
+    setLoadingHint(true);
+    try {
+      const question = `Devuelveme una descripcion de ${questions[indice].responseCorrectOption} en mas o menos tres frases sin decir exactamente que es, como si de un acertijo se tratara.`;
+      const model = "gemini";
+      //const response = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
+      //setHint(response.data.answer);
+      setHint("Aqui iria la pista");
+      setUsedHint(prev => ({ ...prev, [indice]: true }));
+    } catch (error) {
+      console.error("Error obteniendo la pista:", error);
+      setHint("No se pudo generar la pista. Inténtalo de nuevo más tarde.");
+    }
+    setLoadingHint(false);
+  };
+
   // Inicializar el juego
   useEffect(() => {
     const username = localStorage.getItem('username');
@@ -207,12 +229,14 @@ const Jugar = () => {
         </Typography>
 
         <Button 
-          variant="outlined" 
-          color="warning" 
-          sx={{ position: "absolute", top: 10, right: 10 }} 
-        >
-          Pedir Pista
-        </Button>
+            variant="outlined" 
+            color="warning" 
+            sx={{ position: "absolute", top: 10, right: 10 }} 
+            onClick={fetchHint}
+            disabled={usedHint[indice] || loadingHint}
+          >
+            {loadingHint ? "Cargando..." : "Pedir Pista"}
+          </Button>
 
         <Grid container spacing={7} sx={{ marginTop: 2, alignContent:'center' }}>
           {questions[indice].opciones.map((opcion, i) => (
