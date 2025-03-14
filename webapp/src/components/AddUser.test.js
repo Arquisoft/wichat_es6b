@@ -56,4 +56,5 @@ describe('AddUser component', () => {
       expect(screen.getByText(/Error: Internal Server Error/i)).toBeInTheDocument();
     });
   });
+
 });
