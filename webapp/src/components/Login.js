@@ -16,7 +16,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-  const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+  const apiKey =  "AIzaSyCNEG2xtR3K1eoEYwMZYjUdxL9eoOEq50o" || 'None';
 
   const loginUser = async () => {
     try {
@@ -25,10 +25,11 @@ const Login = () => {
       if (apiKey === 'None') {
         setMessage("LLM API key is not set. Cannot contact the LLM.");
       } else {
-        const question = `Please, generate a greeting message for a student called ${username} that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
-        const model = "empathy";
 
-        const messageResponse = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
+        const question = `Please, generate a greeting message for a student called adolf that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
+        const model = "gemini";
+        const context = "Generate the response in Spanish"; 
+        const messageResponse = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey, context });
         setMessage(messageResponse.data.answer);
       }
 

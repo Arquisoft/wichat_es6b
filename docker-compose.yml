@@ -61,6 +61,16 @@ services:
       - mynetwork
     environment:
       MONGODB_URI: mongodb://mongodb:27017/userdb
+  
+  questionservice:
+    container_name: questionservice-wichat_es6b
+    image: ghcr.io/arquisoft/wichat_es6b/questionservice:latest
+    profiles: ["dev", "prod"]
+    build: ./questionservice
+    ports:
+      - "8010:8010"
+    networks:
+      - mynetwork
 
   gatewayservice:
     container_name: gatewayservice-wichat_es6b
@@ -73,6 +83,7 @@ services:
       - authservice
       - llmservice
       - historyservice
+      - questionservice
     ports:
       - "8000:8000"
     networks:
@@ -82,6 +93,7 @@ services:
       USER_SERVICE_URL: http://userservice:8001
       LLM_SERVICE_URL: http://llmservice:8003
       HISTOYY_SERVICE: http://historyservice:8004
+      QUESTION_SERVICE_URL: http://questionservice:8010
 
   webapp:
     container_name: webapp-wichat_es6b

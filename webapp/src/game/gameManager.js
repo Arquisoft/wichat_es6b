@@ -2,39 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Container, Typography, Button, Box, Grid, Paper, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Game from './game';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+const apiKey = "AIzaSyCNEG2xtR3K1eoEYwMZYjUdxL9eoOEq50o" || 'None';
 
 const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
 
-const preguntas = [
-  {
-    id: "q1",
-    pregunta: "¿Cuál es la capital de Francia?",
-    opciones: ["Berlín", "Madrid", "París", "Lisboa"],
-    respuesta_correcta: 2,
-  },
-  {
-    id: "q2",
-    pregunta: "¿Cuánto es 5 + 7?",
-    opciones: ["10", "11", "12", "13"],
-    respuesta_correcta: 2,
-  },
-  {
-    id: "q3",
-    pregunta: "¿Quién escribió 'El Quijote'?",
-    opciones: ["Lope de Vega", "Cervantes", "Quevedo", "Góngora"],
-    respuesta_correcta: 1,
-  },
-  {
-    id: "q4",
-    pregunta: "¿Cuál es el planeta más grande del Sistema Solar?",
-    opciones: ["Marte", "Júpiter", "Saturno", "Neptuno"],
-    respuesta_correcta: 1,
-  },
-];
-
-const Game = () => {
+const Jugar = () => {
   const navigate = useNavigate();
   const [indice, setIndice] = useState(0);
   const [score, setScore] = useState(0);
@@ -43,9 +18,31 @@ const Game = () => {
   const [timeLeft, setTimeLeft] = useState(maxTime);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [hint, setHint] = useState("");
+  const [usedHint, setUsedHint] = useState({});
+  const [loadingHint, setLoadingHint] = useState(false);
   
+
+  const fetchHint = async () => {
+    if (usedHint[indice] || loadingHint) return;
+    setLoadingHint(true);
+    try {
+      const question = `Devuelveme una descripcion de ${questions[indice].responseCorrectOption} en mas o menos tres frases sin decir exactamente que es, como si de un acertijo se tratara.`;
+      const model = "gemini";
+      //const response = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
+      //setHint(response.data.answer);
+      setHint("Aqui iria la pista");
+      setUsedHint(prev => ({ ...prev, [indice]: true }));
+    } catch (error) {
+      console.error("Error obteniendo la pista:", error);
+      setHint("No se pudo generar la pista. Inténtalo de nuevo más tarde.");
+    }
+    setLoadingHint(false);
+  };
+
   // Inicializar el juego
   useEffect(() => {
     const username = localStorage.getItem('username');
@@ -53,18 +50,22 @@ const Game = () => {
       navigate('/');
       return;
     }
-    
-    // Inicializar tiempo de juego y preguntas
+
     setGameStartTime(Date.now());
     setQuestionStartTime(Date.now());
-    
-    // Copiar las preguntas y añadir campos para tracking
-    setQuestions(preguntas.map(q => ({
-      ...q,
-      userAnswer: null,
-      timeSpent: 0,
-      answered: false
-    })));
+
+    const gameInstance = new Game();
+    gameInstance.fetchQuestions().then(fetchedQuestions => {
+      if (fetchedQuestions) {
+        setQuestions(fetchedQuestions.map(q => ({
+          ...q,
+          userAnswer: null,
+          timeSpent: 0,
+          answered: false
+        })));
+      }
+      setLoading(false);
+    });
   }, [navigate]);
 
   //reinicia el tiempo por pregunta
@@ -104,12 +105,12 @@ const Game = () => {
     setQuestions(updatedQuestions);
     
     // Actualizar puntuación
-    if (answerIndex === preguntas[indice].respuesta_correcta) {
+    if (answerIndex === questions[indice].respuesta_correcta) {
       setScore(score + 10);
     }
     
     // Avanzar a la siguiente pregunta o finalizar
-    if (indice < preguntas.length - 1) {
+    if (indice < questions.length - 1) {
       setIndice(indice + 1);
       setQuestionStartTime(Date.now());
     } else {
@@ -126,18 +127,15 @@ const Game = () => {
       timeSpent: maxTime,
       answered: true
     };
-
     setQuestions(updatedQuestions);
 
-    if (indice < preguntas.length - 1) {
-      setIndice(indice + 1);
+    if (indice < questions.length - 1) {
+     setIndice(indice + 1);
       setQuestionStartTime(Date.now());
     } else {
       finishGame();
     }
   };
-
-
   // Finalizar el juego
   const finishGame = async () => {
     const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
@@ -151,7 +149,7 @@ const Game = () => {
         id: `game_${Date.now()}`,
         username,
         points: score,
-        avgtime: totalGameTime / preguntas.length,
+        avgtime: totalGameTime / questions.length,
         questions: questions.map(q => ({
           questionId: q.id,
           question: q.pregunta,
@@ -179,7 +177,7 @@ const Game = () => {
   };
   
   const handleSiguiente = () => {
-    if (indice < preguntas.length - 1) {
+    if (indice < questions.length - 1) {
       setIndice(indice + 1);
     }
   };
@@ -201,7 +199,7 @@ const Game = () => {
   return (
     <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
       <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-        Pregunta {indice + 1} de {preguntas.length}
+        Pregunta {indice + 1} de {questions.length}
       </Typography>
       
       <Box sx={{ textAlign: 'right', mb: 2 }}>
@@ -212,19 +210,30 @@ const Game = () => {
           Tiempo restante: {timeLeft}s
         </Typography>
       </Box>
-
+      {/* Imagen de la pregunta */}
+      {questions[indice].imagen && (
+        <Paper sx={{ padding: 2, marginBottom: 2, textAlign: "center" }}>
+          <img 
+            src={questions[indice].imagen} 
+            alt="Pregunta" 
+            style={{ maxHeight: 300, width: "auto", display: "block", margin: "0 auto" }} 
+          />
+        </Paper>
+      )}
       <Paper sx={{ padding: 3, marginBottom: 2, position: "relative" }}>
         <Typography variant="h5" align="center" gutterBottom>
           {questions[indice].pregunta}
         </Typography>
 
         <Button 
-          variant="outlined" 
-          color="warning" 
-          sx={{ position: "absolute", top: 10, right: 10 }} 
-        >
-          Pedir Pista
-        </Button>
+            variant="outlined" 
+            color="warning" 
+            sx={{ position: "absolute", top: 10, right: 10 }} 
+            onClick={fetchHint}
+            disabled={usedHint[indice] || loadingHint}
+          >
+            {loadingHint ? "Cargando..." : "Pedir Pista"}
+          </Button>
 
         <Grid container spacing={7} sx={{ marginTop: 2, alignContent:'center' }}>
           {questions[indice].opciones.map((opcion, i) => (
@@ -277,7 +286,7 @@ const Game = () => {
             variant="contained" 
             color="primary" 
             onClick={handleSiguiente} 
-            disabled={indice === preguntas.length - 1 || questions[indice].answered}
+            disabled={indice === questions.length - 1 || questions[indice].answered}
           >
             Siguiente Pregunta
           </Button>
@@ -294,4 +303,4 @@ const Game = () => {
   );
 };
 
-export default Game;
+export default Jugar;
