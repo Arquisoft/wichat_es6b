@@ -88,7 +88,7 @@ const Jugar = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [indice, questionStartTime]);
+  }, [indice,questions]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
