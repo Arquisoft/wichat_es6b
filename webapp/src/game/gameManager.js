@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
 import HourglassTimer from "./HourglassTimer";
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; //npm install framer-motion
 import "./OutTimeMessage.css";
 
 
