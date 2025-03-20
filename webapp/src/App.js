@@ -5,14 +5,142 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
 import { Typewriter } from "react-simple-typewriter";
 
 import AddUser from './components/AddUser';
-import Login from './components/Login';
 import Game from './game/gameManager';
 import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
-import './App.css';
+
+// Componente Login mejorado integrado directamente en App.js
+function Login() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Lógica de login
+    console.log({
+      username: username,
+      password: password,
+    });
+  };
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <Typography 
+        component="h1" 
+        variant="h4" 
+        sx={{ 
+          mb: 3, 
+          fontWeight: 600,
+          color: '#2c3e50',
+          textAlign: 'center'
+        }}
+      >
+        Login
+      </Typography>
+      
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="username"
+          label="Username"
+          name="username"
+          autoComplete="username"
+          autoFocus
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          sx={{
+            mb: 2,
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'rgba(0, 0, 0, 0.23)',
+                borderRadius: '8px',
+              },
+              '&:hover fieldset': {
+                borderColor: '#4e54c8',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#6a11cb',
+              },
+            },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: '#6a11cb',
+            },
+          }}
+        />
+        
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Password"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{
+            mb: 3,
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'rgba(0, 0, 0, 0.23)',
+                borderRadius: '8px',
+              },
+              '&:hover fieldset': {
+                borderColor: '#4e54c8',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#6a11cb',
+              },
+            },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: '#6a11cb',
+            },
+          }}
+        />
+        
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{
+            mt: 1,
+            mb: 2,
+            py: 1.5,
+            backgroundColor: '#2575fc',
+            borderRadius: '8px',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(37, 117, 252, 0.2)',
+            '&:hover': {
+              backgroundColor: '#4e54c8',
+              boxShadow: '0 6px 16px rgba(37, 117, 252, 0.3)',
+              transform: 'translateY(-2px)'
+            }
+          }}
+        >
+          LOGIN
+        </Button>
+      </Box>
+    </Box>
+  );
+}
 
 function Home() {
   const [showLogin, setShowLogin] = useState(true);
@@ -26,13 +154,20 @@ function Home() {
       component="main" 
       maxWidth="sm"
       sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderRadius: '16px',
-        padding: '2rem',
+        padding: {
+          xs: '1.5rem',
+          sm: '2.5rem'
+        },
         backdropFilter: 'blur(10px)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
         marginTop: '15vh',
         transition: 'all 0.3s ease-in-out',
+        width: {
+          xs: '90%',
+          sm: '450px'
+        },
         '&:hover': {
           boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
           transform: 'translateY(-5px)'
@@ -46,9 +181,9 @@ function Home() {
         component="div" 
         align="center" 
         sx={{ 
-          marginTop: 3, 
-          fontSize: '0.95rem',
-          transition: 'all 0.2s ease'
+          marginTop: 2, 
+          marginBottom: 1,
+          fontSize: '0.95rem'
         }}
       >
         {showLogin ? (
