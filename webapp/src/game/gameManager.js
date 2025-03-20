@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
 import HourglassTimer from "./HourglassTimer";
+import { motion } from 'framer-motion';
+import "./OutTimeMessage.css";
+
 
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
@@ -26,6 +29,7 @@ const Jugar = () => {
   const [hint, setHint] = useState("");
   const [usedHint, setUsedHint] = useState({});
   const [loadingHint, setLoadingHint] = useState(false);
+  const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   
 
   const fetchHint = async () => {
@@ -121,23 +125,32 @@ const Jugar = () => {
   };
 
 //marca pregunta como fallida si se acaba el tiempo
-  const handleTimeout = () => {
+const handleTimeout = () => {
+  setShowTimeoutMessage(true); // Mostrar mensaje
+
+  setTimeout(() => {
+    setShowTimeoutMessage(false); // Ocultar mensaje tras 1.5s
+
     const updatedQuestions = [...questions];
     updatedQuestions[indice] = {
       ...updatedQuestions[indice],
-      userAnswer: null, 
+      userAnswer: null,
       timeSpent: maxTime,
       answered: true
     };
     setQuestions(updatedQuestions);
 
     if (indice < questions.length - 1) {
-     setIndice(indice + 1);
+      setIndice(indice + 1);
       setQuestionStartTime(Date.now());
     } else {
       finishGame();
     }
-  };
+  }, 1500); // Mantiene el mensaje visible 1.5 segundos antes de cambiar
+};
+
+
+
   // Finalizar el juego
   const finishGame = async () => {
     const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
@@ -199,6 +212,20 @@ const Jugar = () => {
   }
 
   return (
+    <>
+      {/* Mensaje animado de "Tiempo Agotado" */}
+      {showTimeoutMessage && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.5 }}
+          className="timeout-message"
+        >
+          ⏳ ¡Tiempo Agotado!
+        </motion.div>
+      )}
+
     <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
       <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
         Pregunta {indice + 1} de {questions.length}
@@ -300,6 +327,7 @@ const Jugar = () => {
         message={snackbarMessage}
       />
     </Container>
+  </>
   );
 };
 
