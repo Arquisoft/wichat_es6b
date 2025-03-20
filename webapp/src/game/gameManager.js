@@ -3,6 +3,8 @@ import { Container, Typography, Button, Box, Grid, Paper, Snackbar } from '@mui/
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
+import HourglassTimer from "./HourglassTimer";
+
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 const apiKey = "AIzaSyCNEG2xtR3K1eoEYwMZYjUdxL9eoOEq50o" || 'None';
@@ -206,9 +208,7 @@ const Jugar = () => {
         <Typography variant="h6">
           Puntuación: {score}
         </Typography>
-        <Typography variant="h6" align="center" color={timeLeft <= 3 ? "red" : "black"}>
-          Tiempo restante: {timeLeft}s
-        </Typography>
+        <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
       </Box>
       {/* Imagen de la pregunta */}
       {questions[indice].imagen && (
