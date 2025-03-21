@@ -30,7 +30,7 @@ const Jugar = () => {
   const [usedHint, setUsedHint] = useState({});
   const [loadingHint, setLoadingHint] = useState(false);
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
-  
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
 
   const fetchHint = async () => {
     if (usedHint[indice] || loadingHint) return;
@@ -109,10 +109,15 @@ const Jugar = () => {
     };
     
     setQuestions(updatedQuestions);
+    setShowCorrectAnswer(true);
     
+  
     // Actualizar puntuación
     if (answerIndex === questions[indice].respuesta_correcta) {
-      setScore(score + 10);
+      setTimeout(() => {
+        setShowTimeoutMessage(false);
+        setScore(score + 10);
+      }, 1500);
     }
     
     // Avanzar a la siguiente pregunta o finalizar
