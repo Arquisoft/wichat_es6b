@@ -40,10 +40,6 @@ const Login = () => {
       // Guardar el nombre de usuario en localStorage
       localStorage.setItem('username', username);
       
-      // Redirigir al perfil después de un breve retraso
-      setTimeout(() => {
-        navigate(`/profile/${username}`);
-      }, 2000);
       
     } catch (error) {
       console.error(error);
