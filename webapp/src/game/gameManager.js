@@ -231,6 +231,19 @@ const handleTimeout = () => {
         </motion.div>
       )}
 
+      {/* Mensaje animado de "Tiempo Agotado" */}
+      {showCorrectAnswer && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.5 }}
+          className="correct-answer"
+        >
+          +10 
+        </motion.div>
+      )}
+
     <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
       <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
         Pregunta {indice + 1} de {questions.length}
