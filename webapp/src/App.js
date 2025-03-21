@@ -11,24 +11,14 @@ import Box from '@mui/material/Box';
 import { Typewriter } from "react-simple-typewriter";
 
 import AddUser from './components/AddUser';
+// Importante: Importamos el componente Login original para mantener su funcionalidad
+import Login from './components/Login';
 import Game from './game/gameManager';
 import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
+import './App.css';
 
-// Componente Login mejorado integrado directamente en App.js
-function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Lógica de login
-    console.log({
-      username: username,
-      password: password,
-    });
-  };
-
+function StyledLogin() {
   return (
     <Box
       sx={{
@@ -38,105 +28,58 @@ function Login() {
         alignItems: 'center',
       }}
     >
-      <Typography 
-        component="h1" 
-        variant="h4" 
-        sx={{ 
-          mb: 3, 
+      <Box sx={{ 
+        width: '100%',
+        backgroundColor: 'rgba(245, 245, 240, 0.5)',
+        padding: '1.5rem',
+        borderRadius: '12px',
+        '& .MuiTypography-h5': {
+          marginBottom: '1.5rem',
           fontWeight: 600,
-          color: '#2c3e50',
+          color: '#333',
           textAlign: 'center'
-        }}
-      >
-        Login
-      </Typography>
-      
-      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="username"
-          label="Username"
-          name="username"
-          autoComplete="username"
-          autoFocus
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          sx={{
-            mb: 2,
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'rgba(0, 0, 0, 0.23)',
-                borderRadius: '8px',
-              },
-              '&:hover fieldset': {
-                borderColor: '#4e54c8',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#6a11cb',
-              },
-            },
-            '& .MuiInputLabel-root.Mui-focused': {
-              color: '#6a11cb',
-            },
-          }}
-        />
-        
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          sx={{
-            mb: 3,
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'rgba(0, 0, 0, 0.23)',
-                borderRadius: '8px',
-              },
-              '&:hover fieldset': {
-                borderColor: '#4e54c8',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#6a11cb',
-              },
-            },
-            '& .MuiInputLabel-root.Mui-focused': {
-              color: '#6a11cb',
-            },
-          }}
-        />
-        
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{
-            mt: 1,
-            mb: 2,
-            py: 1.5,
-            backgroundColor: '#2575fc',
-            borderRadius: '8px',
-            fontWeight: 600,
-            letterSpacing: '0.5px',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(37, 117, 252, 0.2)',
-            '&:hover': {
-              backgroundColor: '#4e54c8',
-              boxShadow: '0 6px 16px rgba(37, 117, 252, 0.3)',
-              transform: 'translateY(-2px)'
-            }
-          }}
-        >
-          LOGIN
-        </Button>
+        },
+        '& .MuiTextField-root': {
+          marginBottom: '1rem',
+          '&:last-of-type': {
+            marginBottom: '1.5rem'
+          }
+        },
+        '& .MuiInputBase-root': {
+          borderRadius: '8px',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        },
+        '& .MuiOutlinedInput-root': {
+          '& fieldset': {
+            borderColor: 'rgba(0, 0, 0, 0.23)',
+          },
+          '&:hover fieldset': {
+            borderColor: '#4e54c8',
+          },
+          '&.Mui-focused fieldset': {
+            borderColor: '#6a11cb',
+            borderWidth: '2px',
+          },
+        },
+        '& .MuiButton-contained': {
+          backgroundColor: '#2575fc',
+          color: 'white',
+          padding: '12px',
+          borderRadius: '8px',
+          fontWeight: 600,
+          fontSize: '1rem',
+          letterSpacing: '0.5px',
+          height: '50px',
+          transition: 'all 0.3s ease',
+          boxShadow: '0 4px 12px rgba(37, 117, 252, 0.2)',
+          '&:hover': {
+            backgroundColor: '#4e54c8',
+            boxShadow: '0 6px 16px rgba(37, 117, 252, 0.3)',
+            transform: 'translateY(-2px)'
+          }
+        }
+      }}>
+        <Login />
       </Box>
     </Box>
   );
@@ -154,20 +97,22 @@ function Home() {
       component="main" 
       maxWidth="sm"
       sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '16px',
         padding: {
-          xs: '1.5rem',
+          xs: '2rem',
           sm: '2.5rem'
         },
         backdropFilter: 'blur(10px)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        marginTop: '15vh',
+        marginTop: '10vh',
         transition: 'all 0.3s ease-in-out',
         width: {
           xs: '90%',
-          sm: '450px'
+          sm: '500px'
         },
+        display: 'flex',
+        flexDirection: 'column',
         '&:hover': {
           boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
           transform: 'translateY(-5px)'
@@ -175,15 +120,16 @@ function Home() {
       }}
     >
       <CssBaseline />
-      {showLogin ? <Login /> : <AddUser />}
+      {/* Usamos el Login estilizado o el AddUser original */}
+      {showLogin ? <StyledLogin /> : <AddUser />}
       
       <Typography 
         component="div" 
         align="center" 
         sx={{ 
           marginTop: 2, 
-          marginBottom: 1,
-          fontSize: '0.95rem'
+          fontSize: '1rem',
+          fontWeight: 500
         }}
       >
         {showLogin ? (
