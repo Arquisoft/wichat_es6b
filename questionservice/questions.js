@@ -10,15 +10,6 @@ const app = express();
 app.disable('x-powered-by');
 const port = 8010;
 
-const frontendUrl = 'http://localhost:3000';  // Asegúrate de que sea el puerto correcto donde está corriendo el frontend
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', frontendUrl);  // Asegúrate de permitir el acceso desde el frontend
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
 
 var language = 'es'; // Valor por defecto es 'es' (español)
 
@@ -92,7 +83,7 @@ function getAllValues() {
 }
 
 /// Obtener y procesar la pregunta
-async function generarPregunta() {
+async function generateQuestions() {
     // Verificar si queries está vacío
     if (queries.length === 0) {
         throw new Error("No hay preguntas disponibles. Verifica que las queries se estén cargando correctamente.");
@@ -113,7 +104,7 @@ async function generarPregunta() {
             }
         });
 
-        procesarDatos(response.data);  // Procesamos los datos recibidos
+        processData(response.data);  // Procesamos los datos recibidos
 
     } catch (error) {
         console.error('Error al realizar la solicitud:', error);
@@ -121,99 +112,7 @@ async function generarPregunta() {
     }
 }
 
-function procesarDatos(data) {
-    // Limpiar opciones previas
-    options = [];
-    var data = data.results.bindings;
-    var randomIndexes = [];
-    var optionsSelected = [];
-
-    // Obtener 4 índices aleatorios
-    while (randomIndexes.length < 4) {
-        var randomIndex = crypto.randomInt(0, data.length);
-        var option = data[randomIndex].optionLabel.value;
-        var quest = "";
-
-        if ('questionLabel' in data[randomIndex]) {
-            quest = data[randomIndex].questionLabel.value;
-        }
-
-        if (!randomIndexes.includes(randomIndex) && (quest == "" || (!(option.startsWith("Q") || option.startsWith("http"))
-            && !(quest.startsWith("Q") || quest.startsWith("http")))) && !optionsSelected.includes(option)) {
-            randomIndexes.push(randomIndex);
-            optionsSelected.push(option);
-        }
-    }
-
-    // Escoger la opción correcta
-    var correctIndex = crypto.randomInt(0, 4);
-    correctOption = data[randomIndexes[correctIndex]].optionLabel.value;
-
-    if (quest == "") {
-        question = queries[randomNumber][1];
-        image = data[randomIndexes[correctIndex]].imageLabel.value;
-    } else {
-        image = "";
-        questionValue = data[randomIndexes[correctIndex]].questionLabel.value;
-        question = queries[randomNumber][1] + questionValue + "?";
-    }
-
-    // Organizar las opciones
-    for (let i = 0; i < 4; i++) {
-        let optionIndex = randomIndexes[i];
-        let option = data[optionIndex].optionLabel.value;
-        options.push(option);
-    }
-}
-
-
-function procesarDatos(data) {
-    // Limpiar opciones previas
-    options = [];
-    var data = data.results.bindings;
-    var randomIndexes = [];
-    var optionsSelected = [];
-
-    // Obtener 4 índices aleatorios
-    while (randomIndexes.length < 4) {
-        var randomIndex = crypto.randomInt(0, data.length);
-        var option = data[randomIndex].optionLabel.value;
-        var quest = "";
-
-        if ('questionLabel' in data[randomIndex]) {
-            quest = data[randomIndex].questionLabel.value;
-        }
-
-        if (!randomIndexes.includes(randomIndex) && (quest == "" || (!(option.startsWith("Q") || option.startsWith("http"))
-            && !(quest.startsWith("Q") || quest.startsWith("http")))) && !optionsSelected.includes(option)) {
-            randomIndexes.push(randomIndex);
-            optionsSelected.push(option);
-        }
-    }
-
-    // Escoger la opción correcta
-    var correctIndex = crypto.randomInt(0, 4);
-    correctOption = data[randomIndexes[correctIndex]].optionLabel.value;
-
-    if (quest == "") {
-        question = queries[randomNumber][1];
-        image = data[randomIndexes[correctIndex]].imageLabel.value;
-    } else {
-        image = "";
-        questionValue = data[randomIndexes[correctIndex]].questionLabel.value;
-        question = queries[randomNumber][1] + questionValue + "?";
-    }
-
-    // Organizar las opciones
-    for (let i = 0; i < 4; i++) {
-        let optionIndex = randomIndexes[i];
-        let option = data[optionIndex].optionLabel.value;
-        options.push(option);
-    }
-}
-
-
-function procesarDatos(data) {
+function processData(data) {
     // Limpiar opciones previas
     options = [];
     var data = data.results.bindings;
@@ -271,7 +170,7 @@ app.get('/generateQuestion', async (req, res) => {
 
         queries = []; // Limpiar las queries para cargar solo las actuales
         await getQueriesByThematic(req.query.thematic);  // Cargar las queries por temática
-        await generarPregunta();  // Generar una nueva pregunta aleatoria
+        await generateQuestions();  // Generar una nueva pregunta aleatoria
 
         // Crear la respuesta con la pregunta, opciones y la respuesta correcta
         const response = {
@@ -298,7 +197,7 @@ app.get('/nextQuestion', async (req, res) => {
         }
 
         await getQueriesByThematic(req.query.thematic);
-        await generarPregunta();
+        await generateQuestions();
         numberOfQuestions++;
 
         if (numberOfQuestions >= maxQuestions) {
@@ -343,7 +242,7 @@ app.get('/startGame', async (req, res) => {
         }
 
         await getQueriesByThematic(req.query.thematic);
-        await generarPregunta();
+        await generateQuestions();
         numberOfQuestions++;
 
         if (numberOfQuestions >= maxQuestions) {
