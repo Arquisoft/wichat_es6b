@@ -6,6 +6,7 @@ import Game from './game';
 import HourglassTimer from "./HourglassTimer";
 import { motion } from 'framer-motion'; //npm install framer-motion
 import "./OutTimeMessage.css";
+import "./ProgressBar.css";
 
 
 
@@ -31,6 +32,19 @@ const Jugar = () => {
   const [loadingHint, setLoadingHint] = useState(false);
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+
+  const LoadingProgressBar = () => {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h6" gutterBottom>
+          Cargando preguntas...
+        </Typography>
+        <Box className="progress-container">
+          <div className="progress-bar"></div>
+        </Box>
+      </Container>
+    );
+  };
 
   const fetchHint = async () => {
     if (usedHint[indice] || loadingHint) return;
@@ -109,14 +123,14 @@ const Jugar = () => {
     };
     
     setQuestions(updatedQuestions);
-    setShowCorrectAnswer(true);
     
   
     // Actualizar puntuación
     if (answerIndex === questions[indice].respuesta_correcta) {
+      setShowCorrectAnswer(true);
+      setScore(score + 10);
       setTimeout(() => {
-        setShowTimeoutMessage(false);
-        setScore(score + 10);
+        setShowCorrectAnswer(false);
       }, 1500);
     }
     
@@ -213,7 +227,7 @@ const handleTimeout = () => {
   };
 
   if (!questions.length) {
-    return <Container><Typography>Cargando...</Typography></Container>;
+    return <LoadingProgressBar />;
   }
 
   return (
