@@ -37,12 +37,12 @@ const Jugar = () => {
       const correctAnswer = questions[indice].opciones[questions[indice].respuesta_correcta];
 
       const tipoDePregunta = questions[indice].tipo;  
-      const context = getContext(tipoDePregunta);
+      const context = "No digas la respuesta correcta de manera explicita. "+getContext(tipoDePregunta);
 
       console.log("Contexto seleccionado:", context);
 
       console.log("Consultando la pista para:", questionText);
-      const question = `Pregunta: ${questionText}\nOpciones: ${optionsText}\nRespuesta correcta: ${correctAnswer}`;
+      const question = `Respuesta correcta: ${correctAnswer}.`;
       const model = "empathy";
       const response = await axios.post(`${apiEndpoint}/askllm`, {
         question,
