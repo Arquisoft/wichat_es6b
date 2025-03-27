@@ -18,55 +18,6 @@ import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
 import './App.css';
 
-function StyledLogin() {
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Box sx={{ 
-        width: '100%',
-        backgroundColor: 'rgba(245, 245, 240, 0.5)',
-        padding: '1.5rem',
-        borderRadius: '12px',
-        '& .MuiTypography-h5': {
-          marginBottom: '1.5rem',
-          fontWeight: 600,
-          color: '#333',
-          textAlign: 'center'
-        },
-        '& .MuiTextField-root': {
-          marginBottom: '1rem',
-          '&:last-of-type': {
-            marginBottom: '1.5rem'
-          }
-        },
-        '& .MuiInputBase-root': {
-          borderRadius: '8px',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        },
-        '& .MuiOutlinedInput-root': {
-          '& fieldset': {
-            borderColor: 'rgba(0, 0, 0, 0.23)',
-          },
-          '&:hover fieldset': {
-            borderColor: '#4e54c8',
-          },
-          '&.Mui-focused fieldset': {
-            borderColor: '#6a11cb',
-            borderWidth: '2px',
-          },
-        }
-      }}>
-        <Login />
-      </Box>
-    </Box>
-  );
-}
 
 function Home() {
   const [showLogin, setShowLogin] = useState(true);
@@ -107,7 +58,7 @@ function Home() {
     >
       <CssBaseline />
       {/* Usamos el Login estilizado o el AddUser original */}
-      {showLogin ? <StyledLogin /> : <AddUser />}
+      {showLogin ? <Login /> : <AddUser />}
 
       <Typography
         component="div"
