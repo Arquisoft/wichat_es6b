@@ -32,17 +32,22 @@ const Jugar = () => {
     setLoadingHint(true);
     try {
       const questionText = questions[indice].pregunta;
+      const optionsText = questions[indice].opciones.join(', ');
+      const correctAnswer = questions[indice].opciones[questions[indice].respuesta_correcta];
+
+      const context = "Genera una pista en español sobre la respuesta correcta de esta pregunta de un cuestionario, pero sin revelar directamente la respuesta. La pista debe ayudar al jugador a inferir la respuesta sin decirla explícitamente.";
+
       console.log("Consultando la pista para:", questionText);
+      const question = `Pregunta: ${questionText}\nOpciones: ${optionsText}\nRespuesta correcta: ${correctAnswer}`;
       const model = "empathy";
-      const context = "Genera una pista en español sobre esta pregunta de un cuestionario.";
       const response = await axios.post(`${apiEndpoint}/askllm`, {
-        question: questionText,
+        question,
         model,
         apiKey,
         context
       });
       console.log("Respuesta de la API:", response.data); //
-      setHint(prev => ({ ...prev, [indice]: response.data.message || 'Pista no disponible' }));
+      setHint(prev => ({ ...prev, [indice]: response.data.answer || 'Pista no disponible' }));
       setUsedHint(prev => ({ ...prev, [indice]: true }));
     } catch (error) {
       setHint(prevHints => ({

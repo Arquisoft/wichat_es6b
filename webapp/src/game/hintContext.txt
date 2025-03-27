@@ -1,0 +1,1 @@
+Genera una pista en español sobre la respuesta correcta de esta pregunta de un cuestionario, pero sin revelar directamente la respuesta. La pista debe ayudar al jugador a inferir la respuesta sin decirla explícitamente.
