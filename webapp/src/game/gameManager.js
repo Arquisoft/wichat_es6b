@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button, Box, Grid, Paper, Snackbar } from '@mui/material';
+import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-const apiKey = "AIzaSyCNEG2xtR3K1eoEYwMZYjUdxL9eoOEq50o" || 'None';
+const apiKey =  "sk-mkoawLTxACWSbvpg42QCsg" || 'None';
 
 const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
 
@@ -21,27 +21,38 @@ const Jugar = () => {
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [hint, setHint] = useState("");
+  const [hint, setHint] = useState({});
   const [usedHint, setUsedHint] = useState({});
   const [loadingHint, setLoadingHint] = useState(false);
   
 
   const fetchHint = async () => {
+    console.log("gallo");
     if (usedHint[indice] || loadingHint) return;
     setLoadingHint(true);
     try {
-      const question = `Devuelveme una descripcion de ${questions[indice].responseCorrectOption} en mas o menos tres frases sin decir exactamente que es, como si de un acertijo se tratara.`;
-      const model = "gemini";
-      //const response = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
-      //setHint(response.data.answer);
-      setHint("Aqui iria la pista");
+      const questionText = questions[indice].pregunta;
+      console.log("Consultando la pista para:", questionText);
+      const model = "empathy";
+      const context = "Genera una pista en español sobre esta pregunta de un cuestionario.";
+      const response = await axios.post(`${apiEndpoint}/askllm`, {
+        question: questionText,
+        model,
+        apiKey,
+        context
+      });
+      console.log("Respuesta de la API:", response.data); //
+      setHint(prev => ({ ...prev, [indice]: response.data.message || 'Pista no disponible' }));
       setUsedHint(prev => ({ ...prev, [indice]: true }));
     } catch (error) {
-      console.error("Error obteniendo la pista:", error);
-      setHint("No se pudo generar la pista. Inténtalo de nuevo más tarde.");
+      setHint(prevHints => ({
+        ...prevHints,
+        [indice]: "Error obteniendo pista"
+      }));
     }
     setLoadingHint(false);
   };
+
 
   // Inicializar el juego
   useEffect(() => {
@@ -197,116 +208,142 @@ const Jugar = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
-      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-        Pregunta {indice + 1} de {questions.length}
+   <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
+    <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
+      Pregunta {indice + 1} de {questions.length}
+    </Typography>
+    
+    <Box sx={{ textAlign: 'right', mb: 2 }}>
+      <Typography variant="h6">
+        Puntuación: {score}
       </Typography>
-      
-      <Box sx={{ textAlign: 'right', mb: 2 }}>
-        <Typography variant="h6">
-          Puntuación: {score}
-        </Typography>
-        <Typography variant="h6" align="center" color={timeLeft <= 3 ? "red" : "black"}>
-          Tiempo restante: {timeLeft}s
-        </Typography>
-      </Box>
-  
-      <Grid container spacing={2} alignItems="center">
-        {questions[indice].imagen && (
-          <Grid item xs={4}>
-            <Paper sx={{ padding: 2, textAlign: "center" }}>
-              <img 
-                src={questions[indice].imagen} 
-                alt="Pregunta" 
-                style={{ maxHeight: 250, width: "100%", objectFit: "contain" }} 
-              />
-            </Paper>
-          </Grid>
-        )}
-        
-        <Grid item xs={8}>
-          <Paper sx={{ padding: 3, position: "relative" }}>
-            <Typography variant="h5" align="center" gutterBottom>
-              {questions[indice].pregunta}
-            </Typography>
-  
-            <Button 
-              variant="outlined" 
-              color="warning" 
-              sx={{ position: "absolute", top: 10, right: 10 }} 
-              onClick={fetchHint}
-              disabled={usedHint[indice] || loadingHint}
-            >
-              {loadingHint ? "Cargando..." : "Pedir Pista"}
-            </Button>
-  
-            <Grid container spacing={1} sx={{ marginTop: 2 }}>
-              {questions[indice].opciones.map((opcion, i) => (
-                <Grid item xs={12} key={i}>
-                  <Button 
-                    variant="contained" 
-                    fullWidth 
-                    sx={{ 
-                      fontSize: "1rem", 
-                      padding: 2,
-                      backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
-                        ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
-                        : undefined
-                    }}
-                    onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
-                    disabled={questions[indice].answered || timeLeft==0}
-                  >
-                    {opcion}
-                  </Button>
-                </Grid>
-              ))}
-            </Grid>
+      <Typography variant="h6" align="center" color={timeLeft <= 3 ? "red" : "black"}>
+        Tiempo restante: {timeLeft}s
+      </Typography>
+    </Box>
+
+    <Grid container spacing={2} alignItems="center">
+      {questions[indice].imagen && (
+        <Grid item xs={4}>
+          <Paper sx={{ padding: 2, textAlign: "center" }}>
+            <img 
+              src={questions[indice].imagen} 
+              alt="Pregunta" 
+              style={{ maxHeight: 250, width: "100%", objectFit: "contain" }} 
+            />
           </Paper>
         </Grid>
-      </Grid>
-  
-      {gameFinished ? (
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Typography variant="h4">¡Juego terminado!</Typography>
-          <Typography variant="h5">Puntuación final: {score}</Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            sx={{ mt: 2 }}
-            onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
-          >
-            Ver mi perfil
-          </Button>
-        </Box>
-      ) : (
-        <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
-          <Button 
-            variant="contained" 
-            color="secondary" 
-            onClick={handleAnterior} 
-            disabled={indice === 0 || questions[indice].answered}
-          >
-            Anterior Pregunta
-          </Button>
-          
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={handleSiguiente} 
-            disabled={indice === questions.length - 1 || questions[indice].answered}
-          >
-            Siguiente Pregunta
-          </Button>
-        </Box>
       )}
       
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message={snackbarMessage}
-      />
-    </Container>
+      <Grid item xs={8}>
+        <Paper sx={{ padding: 3, position: "relative" }}>
+          <Typography variant="h5" align="center" gutterBottom>
+            {questions[indice].pregunta}
+          </Typography>
+          <Box sx={{ 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      alignItems: 'center', 
+      mb: 2,
+      gap: 2
+    }}>
+      <Button 
+        variant="contained" 
+        color="warning" 
+        onClick={fetchHint}
+        disabled={usedHint[indice] || loadingHint}
+        sx={{ flexShrink: 0 }}
+      >
+        {loadingHint ? "Cargando..." : "Pedir Pista"}
+      </Button>
+      
+      {/* Nueva área para la pista con efecto de aparición */}
+      {hint[indice] && (
+        <Alert 
+          severity="info" 
+          sx={{ 
+            flexGrow: 1,
+            animation: 'fadeIn 0.5s',
+            '@keyframes fadeIn': {
+              '0%': { opacity: 0 },
+              '100%': { opacity: 1 }
+            }
+          }}
+        >
+          <strong>Pista:</strong> {hint[indice]}
+        </Alert>
+      )}
+    </Box>
+        
+
+
+          <Grid container spacing={1} sx={{ marginTop: 2 }}>
+            {questions[indice].opciones.map((opcion, i) => (
+              <Grid item xs={12} key={i}>
+                <Button 
+                  variant="contained" 
+                  fullWidth 
+                  sx={{ 
+                    fontSize: "1rem", 
+                    padding: 2,
+                    backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
+                      ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
+                      : undefined
+                  }}
+                  onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
+                  disabled={questions[indice].answered || timeLeft==0}
+                >
+                  {opcion}
+                </Button>
+              </Grid>
+            ))}
+          </Grid>
+        </Paper>
+      </Grid>
+    </Grid>
+
+    {gameFinished ? (
+      <Box sx={{ textAlign: 'center', mt: 4 }}>
+        <Typography variant="h4">¡Juego terminado!</Typography>
+        <Typography variant="h5">Puntuación final: {score}</Typography>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          sx={{ mt: 2 }}
+          onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
+        >
+          Ver mi perfil
+        </Button>
+      </Box>
+    ) : (
+      <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
+        <Button 
+          variant="contained" 
+          color="secondary" 
+          onClick={handleAnterior} 
+          disabled={indice === 0 || questions[indice].answered}
+        >
+          Anterior Pregunta
+        </Button>
+        
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={handleSiguiente} 
+          disabled={indice === questions.length - 1 || questions[indice].answered}
+        >
+          Siguiente Pregunta
+        </Button>
+      </Box>
+    )}
+    
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={6000}
+      onClose={handleCloseSnackbar}
+      message={snackbarMessage}
+    />
+  </Container>
   );
 };
 

@@ -22,11 +22,12 @@ const llmConfigs = {
     transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
   },
   empathy: {
-    url: () => 'https://empathyai.staging.empathy.co/v1/chat/completions',
-    transformRequest: (question) => ({
+    url: () => 'https://empathyai.prod.empathy.co/v1/chat/completions',
+    transformRequest: (question, context =  'Deberas hablar en gallego' ) => ({
       model: "qwen/Qwen2.5-Coder-7B-Instruct",
+      stream: false,
       messages: [
-        { role: "system", content: "You are a helpful assistant." },
+        { role: "system", content: context },
         { role: "user", content: question }
       ]
     }),
@@ -48,20 +49,18 @@ function validateRequiredFields(req, requiredFields) {
 }
 
 // Generic function to send questions to LLM
-async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '') {
+async function sendQuestionToLLM(question, apiKey, model = 'empathy', context = '') {
   try {
     const config = llmConfigs[model];
     if (!config) {
       throw new Error(`Model "${model}" is not supported.`);
     }
 
-    const url = config.url(apiKey);
+    const url = config.url();
     const requestData = config.transformRequest(question, context);
 
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(config.headers ? config.headers(apiKey) : {})
-    };
+    const headers = config.headers(apiKey); 
+    
 
     const response = await axios.post(url, requestData, { headers });
 
