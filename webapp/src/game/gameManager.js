@@ -3,6 +3,7 @@ import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert } from 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
+import { getContext } from './hintContext.js';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 const apiKey =  "sk-mkoawLTxACWSbvpg42QCsg" || 'None';
@@ -35,7 +36,10 @@ const Jugar = () => {
       const optionsText = questions[indice].opciones.join(', ');
       const correctAnswer = questions[indice].opciones[questions[indice].respuesta_correcta];
 
-      const context = "Genera una pista en español sobre la respuesta correcta de esta pregunta de un cuestionario, pero sin revelar directamente la respuesta. La pista debe ayudar al jugador a inferir la respuesta sin decirla explícitamente.";
+      const tipoDePregunta = questions[indice].tipo;  
+      const context = getContext(tipoDePregunta);
+
+      console.log("Contexto seleccionado:", context);
 
       console.log("Consultando la pista para:", questionText);
       const question = `Pregunta: ${questionText}\nOpciones: ${optionsText}\nRespuesta correcta: ${correctAnswer}`;
@@ -56,6 +60,17 @@ const Jugar = () => {
       }));
     }
     setLoadingHint(false);
+  };
+
+  const loadContext = async () => {
+    try {
+      const response = await fetch('/hintContext.txt'); // Ruta relativa al `public/`
+      if (!response.ok) throw new Error("No se pudo cargar el contexto.");
+      return await response.text();
+    } catch (error) {
+      console.error("Error cargando el contexto:", error);
+      return "Genera una pista en español sobre la respuesta correcta sin revelar directamente la respuesta.";
+    }
   };
 
 
