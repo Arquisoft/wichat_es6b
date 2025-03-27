@@ -60,23 +60,6 @@ function StyledLogin() {
             borderColor: '#6a11cb',
             borderWidth: '2px',
           },
-        },
-        '& .MuiButton-contained': {
-          backgroundColor: '#2575fc',
-          color: 'white',
-          padding: '12px',
-          borderRadius: '8px',
-          fontWeight: 600,
-          fontSize: '1rem',
-          letterSpacing: '0.5px',
-          height: '50px',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 4px 12px rgba(37, 117, 252, 0.2)',
-          '&:hover': {
-            backgroundColor: '#4e54c8',
-            boxShadow: '0 6px 16px rgba(37, 117, 252, 0.3)',
-            transform: 'translateY(-2px)'
-          }
         }
       }}>
         <Login />
@@ -93,15 +76,15 @@ function Home() {
   };
   
   return (
-    <Container 
-      component="main" 
+    <Container
+      component="main"
       maxWidth="sm"
       sx={{
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '16px',
         padding: {
           xs: '2rem',
-          sm: '2.5rem'
+          sm: '2.5rem',
         },
         backdropFilter: 'blur(10px)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
@@ -109,35 +92,38 @@ function Home() {
         transition: 'all 0.3s ease-in-out',
         width: {
           xs: '90%',
-          sm: '500px'
+          sm: '500px',
         },
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center', // Centrar contenido horizontalmente
+        justifyContent: 'center', // Centrar contenido verticalmente
+        minHeight: '60vh', // Asegurar que el contenedor tenga una altura mínima
         '&:hover': {
           boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
-          transform: 'translateY(-5px)'
-        }
+          transform: 'translateY(-5px)',
+        },
       }}
     >
       <CssBaseline />
       {/* Usamos el Login estilizado o el AddUser original */}
       {showLogin ? <StyledLogin /> : <AddUser />}
-      
-      <Typography 
-        component="div" 
-        align="center" 
-        sx={{ 
-          marginTop: 2, 
+
+      <Typography
+        component="div"
+        align="center"
+        sx={{
+          marginTop: 2,
           fontSize: '1rem',
-          fontWeight: 500
+          fontWeight: 500,
         }}
       >
         {showLogin ? (
-          <Link 
-            component="button" 
-            variant="body2" 
-            onClick={handleToggleView} 
-            sx={{ 
+          <Link
+            component="button"
+            variant="body2"
+            onClick={handleToggleView}
+            sx={{
               color: '#6a11cb',
               textDecoration: 'none',
               fontWeight: 500,
@@ -145,8 +131,8 @@ function Home() {
               '&:hover': {
                 color: '#8a3ffc',
                 '&::after': {
-                  width: '100%'
-                }
+                  width: '100%',
+                },
               },
               '&::after': {
                 content: '""',
@@ -156,18 +142,18 @@ function Home() {
                 width: 0,
                 height: '2px',
                 backgroundColor: '#8a3ffc',
-                transition: 'width 0.3s ease'
-              }
+                transition: 'width 0.3s ease',
+              },
             }}
           >
             Don't have an account? Register here.
           </Link>
         ) : (
-          <Link 
-            component="button" 
-            variant="body2" 
-            onClick={handleToggleView} 
-            sx={{ 
+          <Link
+            component="button"
+            variant="body2"
+            onClick={handleToggleView}
+            sx={{
               color: '#6a11cb',
               textDecoration: 'none',
               fontWeight: 500,
@@ -175,8 +161,8 @@ function Home() {
               '&:hover': {
                 color: '#8a3ffc',
                 '&::after': {
-                  width: '100%'
-                }
+                  width: '100%',
+                },
               },
               '&::after': {
                 content: '""',
@@ -186,8 +172,8 @@ function Home() {
                 width: 0,
                 height: '2px',
                 backgroundColor: '#8a3ffc',
-                transition: 'width 0.3s ease'
-              }
+                transition: 'width 0.3s ease',
+              },
             }}
           >
             Already have an account? Login here.

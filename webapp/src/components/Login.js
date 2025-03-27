@@ -77,11 +77,72 @@ const Login = () => {
           </Box>
         </Box>
       ) : (
-        <Box>
-          <Typography component="h1" variant="h5">Login</Typography>
-          <TextField margin="normal" fullWidth label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-          <TextField margin="normal" fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Button variant="contained" color="primary" fullWidth onClick={loginUser}>Login</Button>
+        <Box sx={{ width: '100%' }}>
+          <Typography component="h1" variant="h5" sx={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: 600 }}>
+            Login
+          </Typography>
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '&:hover fieldset': {
+                  borderColor: '#6a11cb',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#6a11cb',
+                  borderWidth: '2px',
+                },
+              },
+            }}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '&:hover fieldset': {
+                  borderColor: '#6a11cb',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#6a11cb',
+                  borderWidth: '2px',
+                },
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={loginUser}
+            sx={{
+              backgroundColor: '#2575fc',
+              color: 'white',
+              padding: '12px',
+              borderRadius: '8px',
+              fontWeight: 600,
+              fontSize: '1rem',
+              letterSpacing: '0.5px',
+              height: '50px',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(37, 117, 252, 0.2)',
+              '&:hover': {
+                backgroundColor: '#4e54c8',
+                boxShadow: '0 6px 16px rgba(37, 117, 252, 0.3)',
+                transform: 'translateY(-2px)',
+              },
+            }}
+          >
+            Login
+          </Button>
 
           <Snackbar 
             open={openSnackbar && !error} 
