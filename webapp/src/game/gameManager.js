@@ -210,54 +210,61 @@ const Jugar = () => {
           Tiempo restante: {timeLeft}s
         </Typography>
       </Box>
-      {/* Imagen de la pregunta */}
-      {questions[indice].imagen && (
-        <Paper sx={{ padding: 2, marginBottom: 2, textAlign: "center" }}>
-          <img 
-            src={questions[indice].imagen} 
-            alt="Pregunta" 
-            style={{ maxHeight: 300, width: "auto", display: "block", margin: "0 auto" }} 
-          />
-        </Paper>
-      )}
-      <Paper sx={{ padding: 3, marginBottom: 2, position: "relative" }}>
-        <Typography variant="h5" align="center" gutterBottom>
-          {questions[indice].pregunta}
-        </Typography>
-
-        <Button 
-            variant="outlined" 
-            color="warning" 
-            sx={{ position: "absolute", top: 10, right: 10 }} 
-            onClick={fetchHint}
-            disabled={usedHint[indice] || loadingHint}
-          >
-            {loadingHint ? "Cargando..." : "Pedir Pista"}
-          </Button>
-
-        <Grid container spacing={7} sx={{ marginTop: 2, alignContent:'center' }}>
-          {questions[indice].opciones.map((opcion, i) => (
-            <Grid item xs={16} key={i}>
-              <Button 
-                variant="contained" 
-                fullWidth 
-                sx={{ 
-                  fontSize: "1rem", 
-                  padding: 5,
-                  backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
-                    ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
-                    : undefined
-                }}
-                onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
-                disabled={questions[indice].answered || timeLeft==0}
-              >
-                {opcion}
-              </Button>
+  
+      <Grid container spacing={2} alignItems="center">
+        {questions[indice].imagen && (
+          <Grid item xs={4}>
+            <Paper sx={{ padding: 2, textAlign: "center" }}>
+              <img 
+                src={questions[indice].imagen} 
+                alt="Pregunta" 
+                style={{ maxHeight: 250, width: "100%", objectFit: "contain" }} 
+              />
+            </Paper>
+          </Grid>
+        )}
+        
+        <Grid item xs={8}>
+          <Paper sx={{ padding: 3, position: "relative" }}>
+            <Typography variant="h5" align="center" gutterBottom>
+              {questions[indice].pregunta}
+            </Typography>
+  
+            <Button 
+              variant="outlined" 
+              color="warning" 
+              sx={{ position: "absolute", top: 10, right: 10 }} 
+              onClick={fetchHint}
+              disabled={usedHint[indice] || loadingHint}
+            >
+              {loadingHint ? "Cargando..." : "Pedir Pista"}
+            </Button>
+  
+            <Grid container spacing={1} sx={{ marginTop: 2 }}>
+              {questions[indice].opciones.map((opcion, i) => (
+                <Grid item xs={12} key={i}>
+                  <Button 
+                    variant="contained" 
+                    fullWidth 
+                    sx={{ 
+                      fontSize: "1rem", 
+                      padding: 2,
+                      backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
+                        ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
+                        : undefined
+                    }}
+                    onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
+                    disabled={questions[indice].answered || timeLeft==0}
+                  >
+                    {opcion}
+                  </Button>
+                </Grid>
+              ))}
             </Grid>
-          ))}
+          </Paper>
         </Grid>
-      </Paper>
-
+      </Grid>
+  
       {gameFinished ? (
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Typography variant="h4">¡Juego terminado!</Typography>
@@ -272,7 +279,7 @@ const Jugar = () => {
           </Button>
         </Box>
       ) : (
-        <Box display="flex" justifyContent="space-between">
+        <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
           <Button 
             variant="contained" 
             color="secondary" 
