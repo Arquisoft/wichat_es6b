@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
 
 const AddUser = () => {
   const [username, setUsername] = useState('');
@@ -36,8 +36,13 @@ const AddUser = () => {
     try {
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
+      setError('');
     } catch (error) {
-      setError(error.response.data.error);
+      if (error.response && error.response.data.error) {
+        setError(error.response.data.error); // Mostrar el mensaje de error del backend
+      } else {
+        setError('An unexpected error occurred');
+      }
     }
   };
 
