@@ -3,6 +3,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const { queries: imagesQueries } = require('./all_questions.js');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const path = require('path');
+const swaggerDocument = YAML.load(__dirname ,'questionservice.yaml');
+
+
 
 const generatorEndpoint = process.env.REACT_APP_API_ORIGIN_ENDPOINT || 'http://localhost:3000';
 
@@ -12,6 +18,8 @@ const port = 8010;
 
 
 var language = 'es'; // Valor por defecto es 'es' (español)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Middleware to parse JSON in request body
 app.use(bodyParser.json());
@@ -157,6 +165,16 @@ function processData(data) {
     }
 }
 
+// const swaggerUi = require('swagger-ui-express');
+// const YAML = require('yamljs');
+// const path = require('path');
+
+// const swaggerDocument = YAML.load(path.join(__dirname, "gatewayservice", "apis", "questionservice.yaml")); // Asegúrate de que el archivo exista
+// console.log("Intentando cargar Swagger YAML desde:", path.join(__dirname, "gatewayservice", "apis", "questionservice.yaml"));
+
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 // Ruta para generar una nueva pregunta aleatoria
 app.get('/generateQuestion', async (req, res) => {
     try {
@@ -219,11 +237,11 @@ app.get('/nextQuestion', async (req, res) => {
 });
 
 
-// Ruta para la raíz
-app.get("/", (req, res) => {
-    res.send("Bienvenido al servicio de generación de preguntas");
+// // Ruta para la raíz
+// app.get("/", (req, res) => {
+//     res.send("Bienvenido al servicio de generación de preguntas");
 
-});
+// });
 
 // Iniciar servidor
 app.listen(port, () => {
