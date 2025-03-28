@@ -1,5 +1,5 @@
 # wichat_es6b
-
+ 
 [![Actions Status](https://github.com/arquisoft/wichat_es6b/workflows/CI%20for%20wichat_es6b/badge.svg)](https://github.com/arquisoft/wichat_es6b/actions)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es6b&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es6b)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es6b&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es6b)
@@ -8,6 +8,7 @@
 <img src="https://blog.wildix.com/wp-content/uploads/2020/06/react-logo.jpg" height="100">
 <img src="https://miro.medium.com/max/365/1*Jr3NFSKTfQWRUyjblBSKeg.png" height="100">
 </p>
+
 
 ## Contributors
 <div align="center">
