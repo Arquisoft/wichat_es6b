@@ -4,6 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
 import { getContext } from './hintContext.js';
+import HourglassTimer from "./HourglassTimer";
+import { motion } from 'framer-motion'; //npm install framer-motion
+import "./OutTimeMessage.css";
+import "./ProgressBar.css";
+
+
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 const apiKey =  "sk-mkoawLTxACWSbvpg42QCsg" || 'None';
@@ -25,7 +31,21 @@ const Jugar = () => {
   const [hint, setHint] = useState({});
   const [usedHint, setUsedHint] = useState({});
   const [loadingHint, setLoadingHint] = useState(false);
-  
+  const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+
+  const LoadingProgressBar = () => {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h6" gutterBottom>
+          Cargando preguntas...
+        </Typography>
+        <Box className="progress-container">
+          <div className="progress-bar"></div>
+        </Box>
+      </Container>
+    );
+  };
 
   const fetchHint = async () => {
     console.log("gallo");
@@ -117,7 +137,7 @@ const Jugar = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [indice, questionStartTime]);
+  }, [indice,questions]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
@@ -135,9 +155,14 @@ const Jugar = () => {
     
     setQuestions(updatedQuestions);
     
+  
     // Actualizar puntuación
     if (answerIndex === questions[indice].respuesta_correcta) {
+      setShowCorrectAnswer(true);
       setScore(score + 10);
+      setTimeout(() => {
+        setShowCorrectAnswer(false);
+      }, 1500);
     }
     
     // Avanzar a la siguiente pregunta o finalizar
@@ -150,23 +175,32 @@ const Jugar = () => {
   };
 
 //marca pregunta como fallida si se acaba el tiempo
-  const handleTimeout = () => {
+const handleTimeout = () => {
+  setShowTimeoutMessage(true); // Mostrar mensaje
+
+  setTimeout(() => {
+    setShowTimeoutMessage(false); // Ocultar mensaje tras 1.5s
+
     const updatedQuestions = [...questions];
     updatedQuestions[indice] = {
       ...updatedQuestions[indice],
-      userAnswer: null, 
+      userAnswer: null,
       timeSpent: maxTime,
       answered: true
     };
     setQuestions(updatedQuestions);
 
     if (indice < questions.length - 1) {
-     setIndice(indice + 1);
+      setIndice(indice + 1);
       setQuestionStartTime(Date.now());
     } else {
       finishGame();
     }
-  };
+  }, 1500); // Mantiene el mensaje visible 1.5 segundos antes de cambiar
+};
+
+
+
   // Finalizar el juego
   const finishGame = async () => {
     const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
@@ -224,25 +258,49 @@ const Jugar = () => {
   };
 
   if (!questions.length) {
-    return <Container><Typography>Cargando...</Typography></Container>;
+    return <LoadingProgressBar />;
   }
 
   return (
-   <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
-    <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-      Pregunta {indice + 1} de {questions.length}
-    </Typography>
-    
-    <Box sx={{ textAlign: 'right', mb: 2 }}>
-      <Typography variant="h6">
-        Puntuación: {score}
-      </Typography>
-      <Typography variant="h6" align="center" color={timeLeft <= 3 ? "red" : "black"}>
-        Tiempo restante: {timeLeft}s
-      </Typography>
-    </Box>
+    <>
+      {/* Mensaje animado de "Tiempo Agotado" */}
+      {showTimeoutMessage && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.5 }}
+          className="timeout-message"
+        >
+          ⏳ ¡Tiempo Agotado!
+        </motion.div>
+      )}
 
-    <Grid container spacing={2} alignItems="center">
+      {/* Mensaje animado de "Tiempo Agotado" */}
+      {showCorrectAnswer && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.5 }}
+          className="correct-answer"
+        >
+          +10 
+        </motion.div>
+      )}
+
+    <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
+        Pregunta {indice + 1} de {questions.length}
+      </Typography>
+      
+      <Box sx={{ textAlign: 'right', mb: 2 }}>
+        <Typography variant="h6">
+          Puntuación: {score}
+        </Typography>
+        <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
+      </Box>
+      {/* Imagen de la pregunta */}
       {questions[indice].imagen && (
         <Grid item xs={4}>
           <Paper sx={{ padding: 2, textAlign: "center" }}>
@@ -322,48 +380,49 @@ const Jugar = () => {
       </Grid>
     </Grid>
 
-    {gameFinished ? (
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
-        <Typography variant="h4">¡Juego terminado!</Typography>
-        <Typography variant="h5">Puntuación final: {score}</Typography>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          sx={{ mt: 2 }}
-          onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
-        >
-          Ver mi perfil
-        </Button>
-      </Box>
-    ) : (
-      <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
-        <Button 
-          variant="contained" 
-          color="secondary" 
-          onClick={handleAnterior} 
-          disabled={indice === 0 || questions[indice].answered}
-        >
-          Anterior Pregunta
-        </Button>
-        
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleSiguiente} 
-          disabled={indice === questions.length - 1 || questions[indice].answered}
-        >
-          Siguiente Pregunta
-        </Button>
-      </Box>
-    )}
-    
-    <Snackbar
-      open={snackbarOpen}
-      autoHideDuration={6000}
-      onClose={handleCloseSnackbar}
-      message={snackbarMessage}
-    />
-  </Container>
+      {gameFinished ? (
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
+          <Typography variant="h4">¡Juego terminado!</Typography>
+          <Typography variant="h5">Puntuación final: {score}</Typography>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            sx={{ mt: 2 }}
+            onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
+          >
+            Ver mi perfil
+          </Button>
+        </Box>
+      ) : (
+        <Box display="flex" justifyContent="space-between">
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            onClick={handleAnterior} 
+            disabled={indice === 0 || questions[indice].answered}
+          >
+            Anterior Pregunta
+          </Button>
+          
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={handleSiguiente} 
+            disabled={indice === questions.length - 1 || questions[indice].answered}
+          >
+            Siguiente Pregunta
+          </Button>
+        </Box>
+      )}
+      
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+      />
+    </Container>
+  </>
   );
 };
 
