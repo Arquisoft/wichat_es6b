@@ -275,8 +275,8 @@ const handleTimeout = () => {
           ⏳ ¡Tiempo Agotado!
         </motion.div>
       )}
-
-      {/* Mensaje animado de "Tiempo Agotado" */}
+  
+      {/* Mensaje animado de "Respuesta Correcta" */}
       {showCorrectAnswer && (
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
@@ -288,141 +288,152 @@ const handleTimeout = () => {
           +10 
         </motion.div>
       )}
-
-    <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
-      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-        Pregunta {indice + 1} de {questions.length}
-      </Typography>
-      
-      <Box sx={{ textAlign: 'right', mb: 2 }}>
-        <Typography variant="h6">
-          Puntuación: {score}
+  
+      <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
+        <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
+          Pregunta {indice + 1} de {questions.length}
         </Typography>
-        <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
-      </Box>
-      {/* Imagen de la pregunta */}
-      {questions[indice].imagen && (
-        <Grid item xs={4}>
-          <Paper sx={{ padding: 2, textAlign: "center" }}>
-            <img 
-              src={questions[indice].imagen} 
-              alt="Pregunta" 
-              style={{ maxHeight: 250, width: "100%", objectFit: "contain" }} 
-            />
-          </Paper>
-        </Grid>
-      )}
-      
-      <Grid item xs={8}>
-        <Paper sx={{ padding: 3, position: "relative" }}>
-          <Typography variant="h5" align="center" gutterBottom>
-            {questions[indice].pregunta}
-          </Typography>
-          <Box sx={{ 
-      display: 'flex', 
-      justifyContent: 'space-between', 
-      alignItems: 'center', 
-      mb: 2,
-      gap: 2
-    }}>
-      <Button 
-        variant="contained" 
-        color="warning" 
-        onClick={fetchHint}
-        disabled={usedHint[indice] || loadingHint}
-        sx={{ flexShrink: 0 }}
-      >
-        {loadingHint ? "Cargando..." : "Pedir Pista"}
-      </Button>
-      
-      {/* Nueva área para la pista con efecto de aparición */}
-      {hint[indice] && (
-        <Alert 
-          severity="info" 
-          sx={{ 
-            flexGrow: 1,
-            animation: 'fadeIn 0.5s',
-            '@keyframes fadeIn': {
-              '0%': { opacity: 0 },
-              '100%': { opacity: 1 }
-            }
-          }}
-        >
-          <strong>Pista:</strong> {hint[indice]}
-        </Alert>
-      )}
-    </Box>
         
-
-
-          <Grid container spacing={1} sx={{ marginTop: 2 }}>
-            {questions[indice].opciones.map((opcion, i) => (
-              <Grid item xs={12} key={i}>
+        <Box sx={{ textAlign: 'right', mb: 2 }}>
+          <Typography variant="h6">
+            Puntuación: {score}
+          </Typography>
+          <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
+        </Box>
+        
+        {/* Nueva estructura: Grid para colocar imagen a la izquierda y preguntas a la derecha */}
+        <Grid container spacing={3}>
+          {/* Imagen de la pregunta (izquierda) */}
+          <Grid item xs={12} md={4}>
+            {questions[indice].imagen ? (
+              <Paper sx={{ padding: 2, textAlign: "center", height: "100%" }}>
+                <img 
+                  src={questions[indice].imagen} 
+                  alt="Pregunta" 
+                  style={{ maxHeight: 300, width: "100%", objectFit: "contain" }} 
+                />
+              </Paper>
+            ) : (
+              <Paper sx={{ padding: 2, textAlign: "center", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Typography variant="body1" color="textSecondary">
+                  No hay imagen para esta pregunta
+                </Typography>
+              </Paper>
+            )}
+          </Grid>
+          
+          {/* Pregunta y opciones (derecha) */}
+          <Grid item xs={12} md={8}>
+            <Paper sx={{ padding: 3, position: "relative" }}>
+              <Typography variant="h5" align="center" gutterBottom>
+                {questions[indice].pregunta}
+              </Typography>
+              
+              {/* Área de pista */}
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mb: 2,
+                gap: 2
+              }}>
                 <Button 
                   variant="contained" 
-                  fullWidth 
-                  sx={{ 
-                    fontSize: "1rem", 
-                    padding: 2,
-                    backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
-                      ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
-                      : undefined
-                  }}
-                  onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
-                  disabled={questions[indice].answered || timeLeft==0}
+                  color="warning" 
+                  onClick={fetchHint}
+                  disabled={usedHint[indice] || loadingHint}
+                  sx={{ flexShrink: 0 }}
                 >
-                  {opcion}
+                  {loadingHint ? "Cargando..." : "Pedir Pista"}
                 </Button>
+                
+                {/* Área para la pista con efecto de aparición */}
+                {hint[indice] && (
+                  <Alert 
+                    severity="info" 
+                    sx={{ 
+                      flexGrow: 1,
+                      animation: 'fadeIn 0.5s',
+                      '@keyframes fadeIn': {
+                        '0%': { opacity: 0 },
+                        '100%': { opacity: 1 }
+                      }
+                    }}
+                  >
+                    <strong>Pista:</strong> {hint[indice]}
+                  </Alert>
+                )}
+              </Box>
+  
+              {/* Opciones de respuesta */}
+              <Grid container spacing={1} sx={{ marginTop: 2 }}>
+                {questions[indice].opciones.map((opcion, i) => (
+                  <Grid item xs={12} key={i}>
+                    <Button 
+                      variant="contained" 
+                      fullWidth 
+                      sx={{ 
+                        fontSize: "1rem", 
+                        padding: 2,
+                        backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
+                          ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
+                          : undefined
+                      }}
+                      onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
+                      disabled={questions[indice].answered || timeLeft === 0}
+                    >
+                      {opcion}
+                    </Button>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
+            </Paper>
           </Grid>
-        </Paper>
-      </Grid>
-    </Grid>
-
-      {gameFinished ? (
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Typography variant="h4">¡Juego terminado!</Typography>
-          <Typography variant="h5">Puntuación final: {score}</Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            sx={{ mt: 2 }}
-            onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
-          >
-            Ver mi perfil
-          </Button>
-        </Box>
-      ) : (
-        <Box display="flex" justifyContent="space-between">
-          <Button 
-            variant="contained" 
-            color="secondary" 
-            onClick={handleAnterior} 
-            disabled={indice === 0 || questions[indice].answered}
-          >
-            Anterior Pregunta
-          </Button>
-          
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={handleSiguiente} 
-            disabled={indice === questions.length - 1 || questions[indice].answered}
-          >
-            Siguiente Pregunta
-          </Button>
-        </Box>
-      )}
-      
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message={snackbarMessage}
-      />
-    </Container>
-  </>
+        </Grid>
+  
+        {gameFinished ? (
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <Typography variant="h4">¡Juego terminado!</Typography>
+            <Typography variant="h5">Puntuación final: {score}</Typography>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              sx={{ mt: 2 }}
+              onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
+            >
+              Ver mi perfil
+            </Button>
+          </Box>
+        ) : (
+          <Box display="flex" justifyContent="space-between" mt={3}>
+            <Button 
+              variant="contained" 
+              color="secondary" 
+              onClick={handleAnterior} 
+              disabled={indice === 0 || questions[indice].answered}
+            >
+              Anterior Pregunta
+            </Button>
+            
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={handleSiguiente} 
+              disabled={indice === questions.length - 1 || questions[indice].answered}
+            >
+              Siguiente Pregunta
+            </Button>
+          </Box>
+        )}
+        
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          message={snackbarMessage}
+        />
+      </Container>
+    </>
   );
 };
 
