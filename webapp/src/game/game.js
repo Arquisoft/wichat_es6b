@@ -13,7 +13,7 @@ class Game {
 
     const urls = Array.from({ length: 4 }, () => {
       const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
-      return { url: `http://localhost:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
+      return { url: `http://20.0.153.228:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
     });
 
     try {

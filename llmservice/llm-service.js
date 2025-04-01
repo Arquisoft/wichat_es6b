@@ -61,7 +61,7 @@ async function sendQuestionToLLM(question, apiKey, model = 'empathy', context = 
 
     const headers = config.headers(apiKey); 
     
-
+	console.log(url); 
     const response = await axios.post(url, requestData, { headers });
 
     return config.transformResponse(response);

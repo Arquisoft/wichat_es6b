@@ -26,7 +26,7 @@ COPY app.js ./
 EXPOSE 8003
 
 # Establecer la variable de entorno (si es necesario)o
-ARG API_ORIGIN_URI="http://localhost:3000"
+ARG API_ORIGIN_URI="http://20.0.153.228:3000"
 ENV REACT_APP_API_ORIGIN_ENDPOINT=$API_ORIGIN_URI
 
 # Ejecutar la aplicación
