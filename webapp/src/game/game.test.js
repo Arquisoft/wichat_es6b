@@ -25,6 +25,7 @@ describe('Game class', () => {
           expect(timeoutMessage).toBeInTheDocument();
       });
     });
+    
     it('should handle error when fetching questions', async () => {
         axios.get.mockRejectedValueOnce(new Error('Network Error')); 
 
