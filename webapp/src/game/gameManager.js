@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert } from '@mui/material';
+import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
@@ -34,6 +34,38 @@ const Jugar = () => {
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
 
+	// Chat functionality
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+
+  const handleChatSubmit = async () => {
+    if (chatInput.trim()) {
+      // Agregar mensaje del usuario al chat
+      setChatMessages([...chatMessages, { sender: 'user', text: chatInput }]);
+      setChatInput("");
+  
+      // Verificar si la pista ya está disponible
+      if (!hint[indice]) {
+        console.log("Pista no disponible, llamando a fetchHint...");
+        await fetchHint(); // Cargar la pista
+      }
+  
+      // Asegurarnos de que hint[indice] esté disponible
+      const hintValue = hint[indice] || "Pista no disponible";
+      console.log("Se devuelve por chat:", hintValue);
+  
+      // Agregar la respuesta del bot al chat
+      setChatMessages(prev => [
+        ...prev,
+        { sender: 'bot', text: `Pista: ${hintValue}` }
+      ]);
+    }
+  };
+  
+  
+  
+  
+
   const LoadingProgressBar = () => {
     return (
       <Container sx={{ textAlign: "center", mt: 5 }}>
@@ -53,7 +85,6 @@ const Jugar = () => {
     setLoadingHint(true);
     try {
       const questionText = questions[indice].pregunta;
-      const optionsText = questions[indice].opciones.join(', ');
       const correctAnswer = questions[indice].opciones[questions[indice].respuesta_correcta];
 
       const tipoDePregunta = questions[indice].tipo;  
@@ -70,8 +101,10 @@ const Jugar = () => {
         apiKey,
         context
       });
-      console.log("Respuesta de la API:", response); //
-      setHint(prev => ({ ...prev, [indice]: response.data.answer || 'Pista no disponible' }));
+      console.log("Respuesta de la API:", response.data);
+      const fetchedHint = response.data.answer || "Pista no disponible";
+      setHint(prev => ({ ...prev, [indice]: fetchedHint }));
+      console.log("Hint actualizado:", fetchedHint);
       setUsedHint(prev => ({ ...prev, [indice]: true }));
     } catch (error) {
       setHint(prevHints => ({
@@ -290,7 +323,111 @@ const handleTimeout = () => {
           +10 
         </motion.div>
       )}
+    
+      {/* Chat con burbujas en blanco y negro */}
+      <Box
+        sx={{
+          position: 'fixed',
+          top: '20%',
+          left: 0,
+          width: 300,
+          height: '70%',
+          backgroundColor: '#fff', // Fondo blanco
+          border: '1px solid #ccc',
+          borderRadius: 2,
+          boxShadow: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 10,
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: '#f0f0f0', // Encabezado gris claro
+            padding: 1,
+            textAlign: 'center',
+            borderBottom: '1px solid #ccc',
+          }}
+        >
+          <Typography variant="h6">WiChat AI</Typography>
+        </Box>
+
+        <Paper
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            padding: 2,
+            backgroundColor: '#fff', // Fondo blanco para mensajes
+          }}
+        >
+          {chatMessages.map((msg, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                marginY: 1,
+              }}
+            >
+              <Typography
+                sx={{
+                  maxWidth: '70%',
+                  padding: 1,
+                  borderRadius: 10,
+                  backgroundColor: '#f9f9f9',
+                  color: '#000',
+                  textAlign: 'left',
+                  boxShadow: 1,
+                }}
+              >
+                <strong>{msg.sender === 'user' ? 'Tú:' : 'WiChat AI:'}</strong> {msg.text}
+              </Typography>
+            </Box>
+          ))}
+        </Paper>
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: 1,
+            backgroundColor: '#f0f0f0', // Fondo gris claro para entrada de texto
+            borderTop: '1px solid #ccc',
+          }}
+        >
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Escribe un mensaje..."
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
+            sx={{
+              backgroundColor: '#fff', // Fondo blanco para la caja de texto
+              borderRadius: 10,
+              marginRight: 1,
+            }}
+          />
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#000', // Botón negro
+              color: '#fff', // Texto blanco
+              borderRadius: 10,
+              '&:hover': {
+                backgroundColor: '#333',
+              },
+            }}
+            onClick={handleChatSubmit}
+          >
+            Enviar
+          </Button>
+        </Box>
+      </Box>
+
+
   
+      {/* Contenedor principal */}
       <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
         <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
           Pregunta {indice + 1} de {questions.length}
@@ -366,7 +503,7 @@ const handleTimeout = () => {
                   </Alert>
                 )}
               </Box>
-  
+      
               {/* Opciones de respuesta */}
               <Grid container spacing={1} sx={{ marginTop: 2 }}>
                 {questions[indice].opciones.map((opcion, i) => (
@@ -437,6 +574,7 @@ const handleTimeout = () => {
       </Container>
     </>
   );
+  
 };
 
 export default Jugar;
