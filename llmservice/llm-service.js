@@ -19,14 +19,18 @@ const llmConfigs = {
           }
         ]
       }),
-    transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
+    transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text,
+    headers: () => ({
+      'Content-Type': 'application/json'
+    })
   },
   empathy: {
-    url: () => 'https://empathyai.staging.empathy.co/v1/chat/completions',
-    transformRequest: (question) => ({
+    url: () => 'https://empathyai.prod.empathy.co/v1/chat/completions',
+    transformRequest: (question, context =  'Deberas hablar en gallego' ) => ({
       model: "qwen/Qwen2.5-Coder-7B-Instruct",
+      stream: false,
       messages: [
-        { role: "system", content: "You are a helpful assistant." },
+        { role: "system", content: context },
         { role: "user", content: question }
       ]
     }),
@@ -58,10 +62,8 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '
     const url = config.url(apiKey);
     const requestData = config.transformRequest(question, context);
 
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(config.headers ? config.headers(apiKey) : {})
-    };
+    const headers= config.headers ? config.headers(apiKey) : { 'Content-Type': 'application/json' };
+    
 
     const response = await axios.post(url, requestData, { headers });
 

@@ -4,7 +4,9 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load(__dirname ,'historyservice.yaml');
 const Game = require('./history-model');
-
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load(__dirname + '/historyservice.yaml');
 const app = express();
 const port = 8004;
 
