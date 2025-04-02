@@ -19,7 +19,10 @@ const llmConfigs = {
           }
         ]
       }),
-    transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
+    transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text,
+    headers: () => ({
+      'Content-Type': 'application/json'
+    })
   },
   empathy: {
     url: () => 'https://empathyai.prod.empathy.co/v1/chat/completions',
@@ -49,17 +52,17 @@ function validateRequiredFields(req, requiredFields) {
 }
 
 // Generic function to send questions to LLM
-async function sendQuestionToLLM(question, apiKey, model = 'empathy', context = '') {
+async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '') {
   try {
     const config = llmConfigs[model];
     if (!config) {
       throw new Error(`Model "${model}" is not supported.`);
     }
 
-    const url = config.url();
+    const url = config.url(apiKey);
     const requestData = config.transformRequest(question, context);
 
-    const headers = config.headers(apiKey); 
+    const headers= config.headers ? config.headers(apiKey) : { 'Content-Type': 'application/json' };
     
 
     const response = await axios.post(url, requestData, { headers });

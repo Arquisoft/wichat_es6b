@@ -12,7 +12,7 @@ import "./ProgressBar.css";
 
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-const apiKey =  "sk-mkoawLTxACWSbvpg42QCsg" || 'None';
+const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
 
 const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
 
@@ -63,14 +63,14 @@ const Jugar = () => {
 
       console.log("Consultando la pista para:", questionText);
       const question = `Respuesta correcta: ${correctAnswer}.`;
-      const model = "empathy";
+      const model = "gemini";
       const response = await axios.post(`${apiEndpoint}/askllm`, {
         question,
         model,
         apiKey,
         context
       });
-      console.log("Respuesta de la API:", response.data); //
+      console.log("Respuesta de la API:", response); //
       setHint(prev => ({ ...prev, [indice]: response.data.answer || 'Pista no disponible' }));
       setUsedHint(prev => ({ ...prev, [indice]: true }));
     } catch (error) {
