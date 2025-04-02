@@ -1,5 +1,7 @@
 import axios from 'axios';
 import Game from './game';
+import { wait } from '@testing-library/user-event/dist/cjs/utils/index.js';
+import { experimentalStyled } from '@mui/material';
 
 jest.mock('axios');
 
@@ -15,9 +17,16 @@ describe('Game class', () => {
         expect(game.score).toBe(0);
     });
 
+    it('debe mostrar mensaje de tiempo agotado', async () => {
+      jest.advanceTimersByTime(31000);
 
+      await waitFor(() => {
+          const timeoutMessage = screen.getByClass('timeout-message');
+          expect(timeoutMessage).toBeInTheDocument();
+      });
+    });
     it('should handle error when fetching questions', async () => {
-        axios.get.mockRejectedValueOnce(new Error('Network Error'));
+        axios.get.mockRejectedValueOnce(new Error('Network Error')); 
 
         const fetchedQuestions = await game.fetchQuestions();
 
