@@ -17,7 +17,7 @@ describe('Game class', () => {
         expect(game.score).toBe(0);
     });
 
-    it('debe mostrar mensaje de tiempo agotado', async () => {
+    it('show timeout message', async () => {
       jest.advanceTimersByTime(31000);
 
       await waitFor(() => {
@@ -25,7 +25,14 @@ describe('Game class', () => {
           expect(timeoutMessage).toBeInTheDocument();
       });
     });
-    
+
+    it('pass to the next question if timeout', async () => {
+      jest.advanceTimersByTime(31000);
+
+      expect(game.questions).toEqual([]);
+      expect(game.score).toBe(0);
+    });
+
     it('should handle error when fetching questions', async () => {
         axios.get.mockRejectedValueOnce(new Error('Network Error')); 
 
@@ -51,6 +58,24 @@ describe('Game class', () => {
         expect(isCorrect).toBe(false);
         expect(game.score).toBe(0);
     });
+
+    it('should  increment score if answer is correct', () => {
+      game.questions = [
+          {
+              id: 'q1',
+              pregunta: '¿Cuál es la capital de España?',
+              opciones: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'],
+              respuesta_correcta: 0,
+              imagen: 'imagen1.jpg',
+              tipo: 'Geografia',
+          },
+      ];
+
+      const isCorrect = game.checkAnswer(0, 0);
+
+      expect(isCorrect).toBe(false);
+      expect(game.score).toBe(10);
+  });
 
     it('should return the total score', () => {
         game.score = 50;
