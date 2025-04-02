@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load(__dirname ,'historyservice.yaml');
 const Game = require('./history-model');
 
 const app = express();

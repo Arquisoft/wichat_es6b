@@ -1,0 +1,205 @@
+openapi: 3.0.0
+info:
+  title: Game History API
+  description: API para gestionar el historial de juegos, estadísticas y guardar registros de partidas.
+  version: "1.0.0"
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://app.swaggerhub.com/apis/JavierEsquinas/historyapi/1.0.0'
+  - description: Development server
+    url: http://localhost:8004
+paths:
+  /savegame:
+    post:
+      summary: Guardar un nuevo registro de juego.
+      operationId: saveGame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: ID único del juego.
+                  example: "game123"
+                username:
+                  type: string
+                  description: Nombre de usuario del jugador.
+                  example: "john_doe"
+                points:
+                  type: integer
+                  description: Puntos obtenidos en el juego.
+                  example: 150
+                avgtime:
+                  type: number
+                  description: Tiempo promedio por pregunta.
+                  example: 12.5
+                questions:
+                  type: array
+                  description: Lista de preguntas respondidas.
+                  items:
+                    type: object
+                    properties:
+                      questionId:
+                        type: string
+                        description: ID de la pregunta.
+                        example: "q1"
+                      correct:
+                        type: boolean
+                        description: Si la respuesta fue correcta.
+                        example: true
+      responses:
+        '201':
+          description: Registro de juego guardado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  points:
+                    type: integer
+                  avgtime:
+                    type: number
+                  questions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        questionId:
+                          type: string
+                        correct:
+                          type: boolean
+        '400':
+          description: Error en la solicitud.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Mensaje de error.
+                    example: Missing required field username
+  /history/{username}:
+    get:
+      summary: Obtener el historial de juegos de un usuario.
+      operationId: getGameHistory
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Nombre de usuario del jugador.
+          schema:
+            type: string
+            example: "john_doe"
+      responses:
+        '200':
+          description: Historial de juegos del usuario.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID del juego.
+                      example: "game123"
+                    username:
+                      type: string
+                      description: Nombre de usuario.
+                      example: "john_doe"
+                    points:
+                      type: integer
+                      description: Puntos obtenidos.
+                      example: 150
+                    avgtime:
+                      type: number
+                      description: Tiempo promedio por pregunta.
+                      example: 12.5
+                    questions:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          questionId:
+                            type: string
+                            description: ID de la pregunta.
+                            example: "q1"
+                          correct:
+                            type: boolean
+                            description: Si la respuesta fue correcta.
+                            example: true
+        '500':
+          description: Error al obtener el historial.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Mensaje de error.
+                    example: Error al conectar con la base de datos.
+  /stats/{username}:
+    get:
+      summary: Obtener estadísticas resumidas de un usuario.
+      operationId: getUserStats
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Nombre de usuario del jugador.
+          schema:
+            type: string
+            example: "john_doe"
+      responses:
+        '200':
+          description: Estadísticas del usuario.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: Nombre de usuario.
+                    example: "john_doe"
+                  totalGames:
+                    type: integer
+                    description: Número total de juegos jugados.
+                    example: 10
+                  totalPoints:
+                    type: integer
+                    description: Puntos totales obtenidos.
+                    example: 1500
+                  correctAnswers:
+                    type: integer
+                    description: Número de respuestas correctas.
+                    example: 25
+                  wrongAnswers:
+                    type: integer
+                    description: Número de respuestas incorrectas.
+                    example: 5
+                  averageTime:
+                    type: number
+                    description: Tiempo promedio por pregunta.
+                    example: 12.5
+        '500':
+          description: Error al obtener las estadísticas.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Mensaje de error.
+                    example: Error al calcular estadísticas.
