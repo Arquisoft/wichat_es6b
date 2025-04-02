@@ -94,30 +94,32 @@ const Jugar = () => {
   };
 
 
-  // Inicializar el juego
   useEffect(() => {
     const username = localStorage.getItem('username');
     if (!username) {
-      navigate('/');
-      return;
+        navigate('/');
+        return;
     }
 
     setGameStartTime(Date.now());
     setQuestionStartTime(Date.now());
 
     const gameInstance = new Game();
-    gameInstance.fetchQuestions().then(fetchedQuestions => {
-      if (fetchedQuestions) {
-        setQuestions(fetchedQuestions.map(q => ({
-          ...q,
-          userAnswer: null,
-          timeSpent: 0,
-          answered: false
-        })));
-      }
-      setLoading(false);
+    
+    gameInstance.fetchQuestions(updatedQuestions => {
+        // Actualizamos el estado cada vez que se recibe un array actualizado
+        setQuestions(updatedQuestions.map(q => q ? {
+            ...q,
+            userAnswer: null,
+            timeSpent: 0,
+            answered: false
+        } : null)); // Mantiene las posiciones vacías como `null` mientras no se hayan rellenado
+    }).then(() => {
+        setLoading(false); // Terminamos la carga cuando todas las preguntas estén listas
     });
-  }, [navigate]);
+  } , [navigate]);
+
+  
 
   //reinicia el tiempo por pregunta
   useEffect(() => {
