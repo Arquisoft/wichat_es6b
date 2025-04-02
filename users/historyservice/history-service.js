@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 const Game = require('./history-model');
 
 const app = express();
@@ -115,6 +117,8 @@ app.get('/stats/:username', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const server = app.listen(port, () => {
   console.log(`History Service listening at http://localhost:${port}`);
