@@ -6,6 +6,7 @@ WORKDIR /usr/src/historyservice
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
+COPY historyservice.yaml ./
 
 # Install app dependencies
 RUN npm install

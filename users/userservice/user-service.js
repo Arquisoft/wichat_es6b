@@ -3,7 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('./user-model')
-
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load(__dirname + '/userservice.yaml');
 const app = express();
 const port = 8001;
 
@@ -47,7 +49,9 @@ app.post('/adduser', async (req, res) => {
         res.json(newUser);
     } catch (error) {
         res.status(400).json({ error: error.message }); 
-    }});
+}});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const server = app.listen(port, () => {
   console.log(`User Service listening at http://localhost:${port}`);
