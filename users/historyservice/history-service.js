@@ -1,7 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Game = require('./history-model');
-
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load(__dirname + '/historyservice.yaml');
 const app = express();
 const port = 8004;
 
@@ -60,42 +62,58 @@ app.get('/stats/:username', async (req, res) => {
     // Agregación para calcular estadísticas
     const stats = await Game.aggregate([
       { $match: { username } },
-      { $unwind: { path: "$questions", preserveNullAndEmptyArrays: true } },
-      { 
+      {
         $group: {
           _id: "$username",
-          totalGames: { $addToSet: "$id" },
-          totalPoints: { $sum: "$points" },
-          correctAnswers: { 
-            $sum: { 
-              $cond: [{ $eq: ["$questions.correct", true] }, 1, 0] 
-            } 
+          totalGames: { $sum: 1 }, // Contar el número total de juegos
+          totalPoints: { $sum: "$points" }, // Sumar puntos totales sin depender de $unwind
+          totalTime: { $sum: "$avgtime" }, // Sumar tiempo total sin depender de $unwind
+        },
+      },
+      {
+        $lookup: {
+          from: "games", // Nombre de la colección
+          localField: "_id",
+          foreignField: "username",
+          as: "questions",
+        },
+      },
+      { $unwind: { path: "$questions", preserveNullAndEmptyArrays: true } },
+      {
+        $group: {
+          _id: "$_id",
+          totalGames: { $first: "$totalGames" },
+          totalPoints: { $first: "$totalPoints" },
+          totalTime: { $first: "$totalTime" },
+          correctAnswers: {
+            $sum: {
+              $cond: [{ $eq: ["$questions.questions.correct", true] }, 1, 0],
+            },
           },
-          wrongAnswers: { 
-            $sum: { 
-              $cond: [{ $eq: ["$questions.correct", false] }, 1, 0] 
-            } 
+          wrongAnswers: {
+            $sum: {
+              $cond: [{ $eq: ["$questions.questions.correct", false] }, 1, 0],
+            },
           },
-          totalTime: { $sum: "$avgtime" }
-        } 
+        },
       },
       {
         $project: {
           _id: 0,
           username: "$_id",
-          totalGames: { $size: "$totalGames" },
+          totalGames: 1,
           totalPoints: 1,
           correctAnswers: 1,
           wrongAnswers: 1,
-          averageTime: { 
+          averageTime: {
             $cond: [
-              { $eq: [{ $size: "$totalGames" }, 0] },
+              { $eq: ["$totalGames", 0] },
               0,
-              { $divide: ["$totalTime", { $size: "$totalGames" }] }
-            ]
-          }
-        }
-      }
+              { $divide: ["$totalTime", "$totalGames"] },
+            ],
+          },
+        },
+      },
     ]);
     
     // Si no hay estadísticas, devolver valores por defecto
@@ -115,6 +133,33 @@ app.get('/stats/:username', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+app.get('/rankings', async (req, res) => {
+  try {
+    const ranking = await Game.aggregate([
+      {
+        $group: {
+          _id: "$username",
+          totalPoints: { $sum: "$points" },
+        },
+      },
+      { $sort: { totalPoints: -1 } }, // Ordenar por puntos en orden descendente
+      { $limit: 10 }, // Limitar a los 10 mejores jugadores
+      {
+        $project: {
+          _id: 0,
+          username: "$_id",
+          totalPoints: 1,
+        },
+      },
+    ]);
+
+    res.json(ranking);
+  } catch (error) {
+    console.error("Error al obtener el ranking:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const server = app.listen(port, () => {
   console.log(`History Service listening at http://localhost:${port}`);
