@@ -14,14 +14,15 @@ import "./ProgressBar.css";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
 
-const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
-
 const Jugar = () => {
+  let maxTime = 40;
+
   const navigate = useNavigate();
   const [indice, setIndice] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
+  const [difficulty, setDifficulty] = useState('Fácil');
   const [timeLeft, setTimeLeft] = useState(maxTime);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -38,6 +39,19 @@ const Jugar = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLocked, setChatLocked] = useState(false);
+
+  const toggleDifficulty = () => {
+    setDifficulty(prevDifficulty => {
+      const newDifficulty = prevDifficulty === 'Fácil' ? 'Difícil' : 'Fácil';
+      if (newDifficulty === 'Fácil') {
+        maxTime = 40;
+      } else {
+        maxTime = 20;
+      }
+      setTimeLeft(maxTime);
+      return newDifficulty;
+    });
+  };
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
@@ -193,7 +207,7 @@ const Jugar = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [indice,questions]);
+  }, [indice,questions,maxTime, gameFinished]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
@@ -460,6 +474,13 @@ const handleTimeout = () => {
             Puntuación: {score}
           </Typography>
           <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
+        </Box>
+
+        {/* Botón para cambiar la dificultad */}
+        <Box sx={{ textAlign: 'center', mt: 3 }}>
+          <Button variant="contained" color="primary" onClick={toggleDifficulty}>
+           Dificultad: {difficulty}
+         </Button>
         </Box>
         
         {/* Nueva estructura: Grid para colocar imagen a la izquierda y preguntas a la derecha */}
