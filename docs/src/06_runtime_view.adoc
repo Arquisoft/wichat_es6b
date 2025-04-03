@@ -94,21 +94,27 @@ else usuario no válido
     User <-- App: Deniega login
 end
 ----
-=== Consulta del Ranking
-[plantuml, ranking, png]
-----
-actor User
-participant App
-participant Gateway
-participant RankingService
-database DBranking
 
-User -> App: Selecciona opción de ver el ranking
-App -> Gateway: Pide el ranking
-Gateway -> RankingService: Pide el ranking
-RankingService -> DBranking: Pide todos los rankings
-RankingService <-- DBranking: Devuelve todos los rankings
-Gateway <-- RankingService: Devuelve todos los rankings
-App <-- Gateway: Devuelve todos los rankings
-User <-- App: Muestra el ranking
+=== Generación de Preguntas
+[plantuml, question_generation, png]
+----
+database DBquestions
+participant CreateService
+participant Gateway
+participant QuestionGeneratorService
+database DBquestiongenerator
+
+loop cada 60 segundos
+    CreateService -> DBquestions: Pide plantilla de pregunta
+    CreateService <-- DBquestions: Devuelve plantilla de pregunta
+    CreateService -> CreateService: Genera una pregunta
+    Gateway <-- CreateService: Envía la pregunta generada
+    Gateway -> QuestionGeneratorService: Envía la pregunta generada
+    QuestionGeneratorService -> DBquestiongenerator: Guarda la pregunta generada
+    alt más de 500 preguntas generadas
+        DBquestiongenerator -> DBquestiongenerator: Borra la pregunta más antigua
+    else pregunta existente
+        DBquestiongenerator -> DBquestiongenerator: Actualiza la pregunta
+    end
+end
 ----
