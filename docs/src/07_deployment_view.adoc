@@ -64,19 +64,32 @@ image::07-deploymentDiagramv2.png["Vista de despliegue"]
 
 Motivation::
 
-Taking into account that the development have not started yet, the idea is using a Virtual Machine service like Azure or Oracle to deploy the final product. During 
-production time, each developer will deploy locally the project.
+Having independent services deployed on the same machine give a lot of flexibility at deciding where the application will be deployed, making possible to have only a virtual machine to run the whole application.
 
 Quality and/or Performance Features::
 
-For now this is unkwown, but we estimate that Azure VM with 2 GiB RAM and 1vCPU could work.
+By our experience, we estimate that Azure VM with 2 GiB RAM and 1vCPU could work perfectly.
 
 Mapping of Building Blocks to Infrastructure::
 |===
-| Elemento | Descripción
-| Web Application | Jusst the frontend of the software product, connected with the core of the application
-| Application | Core function. It connects and uses all the external services of the software product. There are two main modules, frontend (or webApp) and backendl.
+| Element | Description
+|Client| The client will always be a web browser such as Safari or Firefox, by a HTTP request. 
+| WebApp | This is the frontend of the application. THe function of the game does not need to store information, everything is dynamic, so there is no need is having the game in an independent service.
+| Gateway | The gateway service contain all the information required to users: their account, the scores they had and so on. These modules connect to the same database, a mongoDB located at the same machine as the application, but not being part of it.
+| Questions | This service connects with de Wikidata API, and requests some types of questions known by our application.
 | Wikidata | Service where questions are collected. SparQL is required to use the API
-| Database | The database chosen is MongoDB
-| LLM | It has yet to be decided, but the idea is to give a prompt with the context of how to answer client questions with hints
+| LLM | The LLM decided to support hint requests are Mistral and Gemini. The idea is to give a prompt with the context of how to answer client questions with hints.
+|===
+
+Every interaction between services is done by HTTP requests, and they have defined their own ports on the same machine:
+|===
+|Element|Port
+|Webapp | 3000
+|Gateway Service| 8000
+|User Service | 8001
+|Auth Service | 8002
+|LLM Service | 8003
+|History Service | 8004
+|Questions Service | 8010
+|WebApp | 3000
 |===
