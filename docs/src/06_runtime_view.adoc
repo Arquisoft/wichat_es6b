@@ -39,4 +39,173 @@ See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-Right now, we haven't started the implementation yet, so we are unable to define the runtime view. As the project progresses, we will include all the necessary diagrams and information in this section.
+=== Registro en la Aplicación
+[plantuml, registration, png]
+----
+actor User
+participant App
+participant Gateway
+participant UserService
+database DBuser
+
+User -> App: Selecciona opción de registro
+User <-- App: Muestra pantalla de registro
+User -> App: Ingresa datos de registro
+App -> Gateway: Envía los datos
+Gateway -> UserService: Envía los datos
+UserService -> UserService: Comprueba los datos
+
+alt usuario válido
+    UserService -> DBuser: Guarda datos de registro
+    UserService <-- DBuser: Confirma registro
+    Gateway <-- UserService: Confirma registro
+    App <-- Gateway: Confirma registro
+    User <-- App: Confirma registro
+else usuario no válido
+    Gateway <-- UserService: Deniega registro
+    App <-- Gateway: Deniega registro
+    User <-- App: Deniega registro
+end
+----
+
+=== Inicio de Sesión en la Aplicación
+[plantuml, login, png]
+----
+actor User
+participant App
+participant Gateway
+participant AuthService
+database DBuser
+
+User -> App: Ingresa credenciales
+App -> Gateway: Envía los datos
+Gateway -> AuthService: Envía los datos
+AuthService -> DBuser: Comprueba los datos
+
+alt usuario válido
+    AuthService <-- DBuser: Confirma login
+    Gateway <-- AuthService: Confirma login
+    App <-- Gateway: Confirma login
+    User <-- App: Confirma login
+else usuario no válido
+    AuthService <-- DBuser: Deniega login
+    Gateway <-- AuthService: Deniega login
+    App <-- Gateway: Deniega login
+    User <-- App: Deniega login
+end
+----
+
+=== Generación de Preguntas
+[plantuml, question_generation, png]
+----
+database DBquestions
+participant CreateService
+participant Gateway
+participant QuestionGeneratorService
+database DBquestiongenerator
+
+loop cada 60 segundos
+    CreateService -> DBquestions: Pide plantilla de pregunta
+    CreateService <-- DBquestions: Devuelve plantilla de pregunta
+    CreateService -> CreateService: Genera una pregunta
+    Gateway <-- CreateService: Envía la pregunta generada
+    Gateway -> QuestionGeneratorService: Envía la pregunta generada
+    QuestionGeneratorService -> DBquestiongenerator: Guarda la pregunta generada
+    alt más de 500 preguntas generadas
+        DBquestiongenerator -> DBquestiongenerator: Borra la pregunta más antigua
+    else pregunta existente
+        DBquestiongenerator -> DBquestiongenerator: Actualiza la pregunta
+    end
+end
+----
+
+=== Respuesta a una Pregunta
+[plantuml, question_response, png]
+----
+actor User
+participant App
+participant Gateway
+participant GeneratedQuestionService
+database DBquestions
+participant QuestionGeneratorService
+database DBquestiongenerator
+participant RecordService
+database DBrecords
+
+User -> App: Pide una pregunta
+App -> Gateway: Pide una pregunta
+Gateway -> QuestionGeneratorService: Pide una pregunta
+QuestionGeneratorService -> DBquestiongenerator: Pide una pregunta
+QuestionGeneratorService <-- DBquestiongenerator: Devuelve una pregunta generada
+Gateway <-- QuestionGeneratorService: Devuelve una pregunta generada
+App <-- Gateway: Devuelve una pregunta generada
+User <-- App: Muestra pregunta con opciones
+Gateway -> GeneratedQuestionService: Envía la pregunta generada
+GeneratedQuestionService -> DBquestions: Guarda la pregunta generada
+
+alt tiempo no finalizado
+    User -> App: Selecciona opción de respuesta
+    App -> App: Verifica respuesta seleccionada
+    alt respuesta correcta
+        alt última pregunta
+            User <-- App: Muestra mensaje de respuesta correcta y finaliza el juego
+            App -> RecordService: Envía los datos de la partida
+            RecordService -> DBrecords: Guarda los datos de la partida
+            User <-- App: Muestra los datos de la partida
+        else no última pregunta
+            User <-- App: Muestra mensaje de respuesta correcta y continúa el juego
+        end
+    else respuesta incorrecta
+        alt última pregunta
+            User <-- App: Muestra mensaje de respuesta incorrecta y finaliza el juego
+            App -> RecordService: Envía los datos de la partida
+            RecordService -> DBrecords: Guarda los datos de la partida
+            User <-- App: Muestra los datos de la partida
+        else no última pregunta
+            User <-- App: Muestra mensaje de respuesta incorrecta y continúa el juego
+        end
+    end
+else tiempo finalizado
+    App -> RecordService: Envía los datos de la partida
+    RecordService -> DBrecords: Guarda los datos de la partida
+    User <-- App: Muestra los datos de la partida
+end
+----
+
+=== Consulta del Ranking
+[plantuml, ranking, png]
+----
+actor User
+participant App
+participant Gateway
+participant RankingService
+database DBranking
+
+User -> App: Selecciona opción de ver el ranking
+App -> Gateway: Pide el ranking
+Gateway -> RankingService: Pide el ranking
+RankingService -> DBranking: Pide todos los rankings
+RankingService <-- DBranking: Devuelve todos los rankings
+Gateway <-- RankingService: Devuelve todos los rankings
+App <-- Gateway: Devuelve todos los rankings
+User <-- App: Muestra el ranking
+----
+
+=== Consulta del Ranking
+[plantuml, ranking, png]
+----
+actor User
+participant App
+participant Gateway
+participant RankingService
+database DBranking
+
+User -> App: Selecciona opción de ver el ranking
+App -> Gateway: Pide el ranking
+Gateway -> RankingService: Pide el ranking
+RankingService -> DBranking: Pide todos los rankings
+RankingService <-- DBranking: Devuelve todos los rankings
+Gateway <-- RankingService: Devuelve todos los rankings
+App <-- Gateway: Devuelve todos los rankings
+User <-- App: Muestra el ranking
+----
