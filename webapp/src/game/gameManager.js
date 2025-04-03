@@ -37,34 +37,41 @@ const Jugar = () => {
 	// Chat functionality
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
+  const [chatLocked, setChatLocked] = useState(false);
 
   const handleChatSubmit = async () => {
-    if (chatInput.trim()) {
+    if (chatInput.trim() && !chatLocked) {
+      setChatLocked(true);
       // Agregar mensaje del usuario al chat
       setChatMessages([...chatMessages, { sender: 'user', text: chatInput }]);
       setChatInput("");
   
-      // Verificar si la pista ya está disponible
-      if (!hint[indice]) {
-        console.log("Pista no disponible, llamando a fetchHint...");
-        await fetchHint(); // Cargar la pista
-      }
+      console.log("Pide cargar pista");
   
-      // Asegurarnos de que hint[indice] esté disponible
-      const hintValue = hint[indice] || "Pista no disponible";
-      console.log("Se devuelve por chat:", hintValue);
+      // Si no está cargada, llamar a fetchHint para cargarla
+      let actualHint = await fetchHint(chatInput); 
+      console.log("Pista cargada");
   
-      // Agregar la respuesta del bot al chat
-      setChatMessages(prev => [
-        ...prev,
-        { sender: 'bot', text: `Pista: ${hintValue}` }
-      ]);
+      // Introducir un delay antes de mostrar la pista
+      setTimeout(() => {
+        const hintValue = actualHint || "Pista no disponible";
+        console.log("Se devuelve por chat:", hintValue);
+  
+        // Agregar la respuesta del bot al chat
+        setChatMessages(prev => [
+          ...prev,
+          { sender: 'bot', text: `Pista: ${hintValue}` }
+        ]);
+        setChatLocked(false);
+      }, 1000); // Espera de 1 segundo
     }
   };
-  
-  
-  
-  
+
+  const clearChat = () => {
+    // Reiniciar el estado del chat
+    setChatMessages([]);
+    console.log("Chat limpio y listo para la siguiente pregunta");
+  };
 
   const LoadingProgressBar = () => {
     return (
@@ -79,20 +86,26 @@ const Jugar = () => {
     );
   };
 
-  const fetchHint = async () => {
+  const fetchHint = async (questionMade) => {
     console.log("gallo");
-    if (usedHint[indice] || loadingHint) return;
+    
+    if (loadingHint) return; // Mantenemos esta verificación para evitar llamadas simultáneas
     setLoadingHint(true);
+    
+    let fetchedHint = "";
     try {
       const questionText = questions[indice].pregunta;
       const correctAnswer = questions[indice].opciones[questions[indice].respuesta_correcta];
 
       const tipoDePregunta = questions[indice].tipo;  
-      const context = "No digas la respuesta correcta de manera explicita. "+getContext(tipoDePregunta);
+      const context = "No digas la respuesta correcta de manera explicita. Tipo de pregunta: " + getContext(tipoDePregunta) +
+              ". Responde también teniendo en cuenta esto: " + questionMade;
 
       console.log("Contexto seleccionado:", context);
 
       console.log("Consultando la pista para:", questionText);
+      console.log("Texto de la persona: ", questionMade);
+      
       const question = `Respuesta correcta: ${correctAnswer}.`;
       const model = "gemini";
       const response = await axios.post(`${apiEndpoint}/askllm`, {
@@ -101,10 +114,15 @@ const Jugar = () => {
         apiKey,
         context
       });
+
       console.log("Respuesta de la API:", response.data);
-      const fetchedHint = response.data.answer || "Pista no disponible";
+      fetchedHint = response.data.answer || "Pista no disponible";
+
+      // Actualizamos siempre la pista, sobreescribiendo la anterior si es necesario
       setHint(prev => ({ ...prev, [indice]: fetchedHint }));
       console.log("Hint actualizado:", fetchedHint);
+
+      // Mantenemos registro de que ya se usó la pista (puedes adaptarlo según necesidad)
       setUsedHint(prev => ({ ...prev, [indice]: true }));
     } catch (error) {
       setHint(prevHints => ({
@@ -112,8 +130,11 @@ const Jugar = () => {
         [indice]: "Error obteniendo pista"
       }));
     }
+    
     setLoadingHint(false);
-  };
+    return fetchedHint;
+};
+
 
   const loadContext = async () => {
     try {
@@ -187,6 +208,8 @@ const Jugar = () => {
       timeSpent: timeSpent,
       answered: true
     };
+
+    clearChat();
     
     setQuestions(updatedQuestions);
     
@@ -215,6 +238,8 @@ const handleTimeout = () => {
 
   setTimeout(() => {
     setShowTimeoutMessage(false); // Ocultar mensaje tras 1.5s
+
+    clearChat();
 
     const updatedQuestions = [...questions];
     updatedQuestions[indice] = {
@@ -419,6 +444,7 @@ const handleTimeout = () => {
               },
             }}
             onClick={handleChatSubmit}
+            disabled={chatLocked} // Desactiva el botón si el chat está bloqueado
           >
             Enviar
           </Button>
@@ -468,41 +494,7 @@ const handleTimeout = () => {
                 {questions[indice].pregunta}
               </Typography>
               
-              {/* Área de pista */}
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                mb: 2,
-                gap: 2
-              }}>
-                <Button 
-                  variant="contained" 
-                  color="warning" 
-                  onClick={fetchHint}
-                  disabled={usedHint[indice] || loadingHint}
-                  sx={{ flexShrink: 0 }}
-                >
-                  {loadingHint ? "Cargando..." : "Pedir Pista"}
-                </Button>
-                
-                {/* Área para la pista con efecto de aparición */}
-                {hint[indice] && (
-                  <Alert 
-                    severity="info" 
-                    sx={{ 
-                      flexGrow: 1,
-                      animation: 'fadeIn 0.5s',
-                      '@keyframes fadeIn': {
-                        '0%': { opacity: 0 },
-                        '100%': { opacity: 1 }
-                      }
-                    }}
-                  >
-                    <strong>Pista:</strong> {hint[indice]}
-                  </Alert>
-                )}
-              </Box>
+              
       
               {/* Opciones de respuesta */}
               <Grid container spacing={1} sx={{ marginTop: 2 }}>
