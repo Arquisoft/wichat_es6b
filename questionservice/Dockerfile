@@ -21,6 +21,8 @@ COPY questions.js ./
 COPY question-model.js ./
 COPY all_questions.js ./
 COPY app.js ./
+COPY questionservice.yaml ./
+
 
 # Exponer el puerto en el que corre la aplicación
 EXPOSE 8003

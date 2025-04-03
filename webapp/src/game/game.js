@@ -9,7 +9,7 @@ class Game {
   async fetchQuestions() {
     console.log("Fetching questions...");
     this.questions = [];
-    let tipoPreguntas = ["Geografia", "Cultura", "Personajes"];
+    let tipoPreguntas = ["Geografia", "Cultura", "Pintores", "Futbolistas"];
 
     const urls = Array.from({ length: 4 }, () => {
       const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];

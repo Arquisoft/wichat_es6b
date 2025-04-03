@@ -13,6 +13,11 @@
   "dependencies": {
     "axios": "^1.8.2",
     "express": "^4.21.2",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "swagger": "^0.0.1",
+    "swagger-ui": "^5.20.3",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.7.1",
+    "yamljs": "^0.3.0"
   }
 }
