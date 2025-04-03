@@ -158,7 +158,7 @@ const UserProfile = () => {
                     Respuestas Correctas
                   </Typography>
                   <Typography variant="h4" sx={{ fontWeight: 700, color: '#2575fc' }}>
-                    {stats.correctAnswers}
+                    {stats.totalPoints/10}
                   </Typography>
                 </Paper>
               </Grid>
