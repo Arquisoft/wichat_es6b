@@ -60,7 +60,7 @@ For multiple environments or alternative deployments please copy and adapt this 
 ****
 endif::arc42help[]
 
-image::07-deploymentDiagram.png["Vista de despliegue"]
+image::07-deploymentDiagramv2.png["Vista de despliegue"]
 
 Motivation::
 
