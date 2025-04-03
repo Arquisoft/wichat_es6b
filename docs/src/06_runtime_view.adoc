@@ -39,4 +39,31 @@ See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-Right now, we haven't started the implementation yet, so we are unable to define the runtime view. As the project progresses, we will include all the necessary diagrams and information in this section.
+=== Registro en la Aplicación
+[plantuml, registration, png]
+----
+actor User
+participant App
+participant Gateway
+participant UserService
+database DBuser
+
+User -> App: Selecciona opción de registro
+User <-- App: Muestra pantalla de registro
+User -> App: Ingresa datos de registro
+App -> Gateway: Envía los datos
+Gateway -> UserService: Envía los datos
+UserService -> UserService: Comprueba los datos
+
+alt usuario válido
+    UserService -> DBuser: Guarda datos de registro
+    UserService <-- DBuser: Confirma registro
+    Gateway <-- UserService: Confirma registro
+    App <-- Gateway: Confirma registro
+    User <-- App: Confirma registro
+else usuario no válido
+    Gateway <-- UserService: Deniega registro
+    App <-- Gateway: Deniega registro
+    User <-- App: Deniega registro
+end
+----
