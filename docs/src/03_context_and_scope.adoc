@@ -34,7 +34,7 @@ image::../images/contextAndScope.png[Diagram Business Context]
 | **Virtual Machine** | Azure
 |===
 
-image::../images/contextAndScopeTECNICAL.png[Diagram technical Context]
+image::../images/contextAndScopetecnical.png[Diagram technical Context]
 [cols="1,2,3"]
 |===
 
