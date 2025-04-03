@@ -508,6 +508,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#section-specific-requirements">11. Specific Requirements</a></li>
 <li><a href="#section-technical-risks">12. Risks and Technical Debts</a></li>
 <li><a href="#section-glossary">13. Glossary</a></li>
+<li><a href="#_about_the_game">14. About the game</a></li>
 </ul>
 </div>
 </div>
@@ -720,6 +721,10 @@ If you as an architect do not know how the quality of your work will be judged&#
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>Security</em></strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Protect user data and ensure fair gameplay.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Performance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">It will work the 95% of the time excluding maintenance periods</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -792,14 +797,39 @@ These stakeholders determine the extent and the level of detail of your work and
 <td class="tableblock halign-left valign-top"><p class="tableblock">They should obtain the best possible product.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>Users</em></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>Registered Users</em></strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Any person using the application.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">They expect to enjoy a great user experience and learn from the quiz questions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>Admin Users</em></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application would need some administrator to fix any strange behaviour in game.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">They expect to fix some minor problems.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>HappySw</em></strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Competitor to ChattySw, developer of the previous version of the application.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">They should compete with ChattySw as the developer of the previous version of the application.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>Rest of competitors</em></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">There is more than one competitor to that type of games.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">They compete with ChattySW and WiChat on engaging the target audience of the game.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>Hosting suppliers - Azure</em></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application must be deployed for the public use</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">They expect a new client of their services.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>DNS suppliers</em></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application must be found in the web by a domain of RTVE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">They expect a new client of their services.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><em>Saber y Ganar</em></strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The physical version of the game would dictate the rules of its online version</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">It expects to have similar functions as this online game.</p></td>
 </tr>
 </tbody>
 </table>
@@ -853,12 +883,20 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <td class="tableblock halign-left valign-top"><p class="tableblock">Explanation</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Javascript</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The programming language of the project is Javascript, in order to take advantage of some of the frameworks available.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">React</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The use of React.js framefork for the frontend.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Node</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The use of Node.js framework for the backend.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Express</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A framework used by Node.js in order to make a structure for application witout a huge complexity.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MongoDB</p></td>
@@ -871,6 +909,22 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Github</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">All the shares information will be stored at the repo of the project.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LLM integration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">As the system gives hints to the players, a way of comunicating with a LLM (Long Language Model) sush as Gemini or Mistral is needed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In order to deploy all the services and make them accesible online, Docker will be used to ease and automate the deployment process.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">APIs usage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Some of the services will work as an Application Programming Interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time mangement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In order to have a complete experience while using the app, timeouts and timers are needed.</p></td>
 </tr>
 </tbody>
 </table>
@@ -892,8 +946,24 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <td class="tableblock halign-left valign-top"><p class="tableblock">Every branch for the development will have two roles, the developer and the reviewer, using one of the features of Github, Pull Requests.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Issues</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">As the project is held in Github, Github issues are the best way to track all the tasks that need to be done.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Meeting reports</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Every time the development team have a meeting to discuss something related with the project.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Self reports</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">By the end of every sprint, each member has to open an issue to write down what they have done over the sprint, as well as the complications they have found while developing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Timelines</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">As the project has a final deadline, evrything would be finished by May 5th and will not recieve any update after that day.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Azure budget cap</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">As deployment is a mandatory function of the final result, the team have to deal with the budget cap given by Azure as students.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1553,12 +1623,11 @@ when your infrastructure is more complex.</p>
 <dl>
 <dt class="hdlist1">Motivation</dt>
 <dd>
-<p>Taking into account that the development have not started yet, the idea is using a Virtual Machine service like Azure or Oracle to deploy the final product. During
-production time, each developer will deploy locally the project.</p>
+<p>Having independent services deployed on the same machine give a lot of flexibility at deciding where the application will be deployed, making possible to have only a virtual machine to run the whole application.</p>
 </dd>
 <dt class="hdlist1">Quality and/or Performance Features</dt>
 <dd>
-<p>For now this is unkwown, but we estimate that Azure VM with 2 GiB RAM and 1vCPU could work.</p>
+<p>By our experience, we estimate that Azure VM with 2 GiB RAM and 1vCPU could work perfectly.</p>
 </dd>
 <dt class="hdlist1">Mapping of Building Blocks to Infrastructure</dt>
 </dl>
@@ -1570,28 +1639,79 @@ production time, each developer will deploy locally the project.</p>
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Elemento</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Descripción</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Element</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Web Application</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Jusst the frontend of the software product, connected with the core of the application</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The client will always be a web browser such as Safari or Firefox, by a HTTP request.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Application</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Core function. It connects and uses all the external services of the software product. There are two main modules, frontend (or webApp) and backendl.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebApp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This is the frontend of the application. THe function of the game does not need to store information, everything is dynamic, so there is no need is having the game in an independent service.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gateway</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The gateway service contain all the information required to users: their account, the scores they had and so on. These modules connect to the same database, a mongoDB located at the same machine as the application, but not being part of it.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Questions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This service connects with de Wikidata API, and requests some types of questions known by our application.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Wikidata</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Service where questions are collected. SparQL is required to use the API</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The database chosen is MongoDB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LLM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The LLM decided to support hint requests are Mistral and Gemini. The idea is to give a prompt with the context of how to answer client questions with hints.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Every interaction between services is done by HTTP requests, and they have defined their own ports on the same machine:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Element</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Port</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">LLM</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">It has yet to be decided, but the idea is to give a prompt with the context of how to answer client questions with hints</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Webapp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gateway Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Auth Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8002</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LLM Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8003</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">History Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8004</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Questions Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8010</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebApp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3000</p></td>
 </tr>
 </tbody>
 </table>
@@ -2013,6 +2133,45 @@ concrete and measurable.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>SSH</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>The Secure Shell Protocol (SSH Protocol) is a cryptographic network protocol for operating network services securely over an unsecured network. Its most notable applications are remote login and command-line execution.</em></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_about_the_game">14. About the game</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Term</th>
+<th class="tableblock halign-left valign-top">Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Hint Chat - WiChat AI</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>The hint chat is referred to the chat where the players can comunicate with the LLM in order to get information about the correct answer</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>WiChat</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>WiChat is the name of the whole project and the application.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Ranking</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>The ranking page is referred to an online leaderboard of who got the most points overall.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Category</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Although is not shown yet, categories are referred to the type of questions the game has. This can be expanded or filtered as needed.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Time</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Each question has its own time of answering, that could be use in several game modes.</em></p></td>
 </tr>
 </tbody>
 </table>
