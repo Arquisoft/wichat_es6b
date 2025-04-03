@@ -5,7 +5,7 @@ import { Box, Container, Typography, TextField, Button, Snackbar } from '@mui/ma
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const defaultTheme = createTheme();
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://20.0.153.228:8000';
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
 
 const AddUser = () => {
   const [username, setUsername] = useState('');

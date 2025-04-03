@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+
 
 const Ranking = () => {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ const Ranking = () => {
   useEffect(() => {
     const fetchRankings = async () => {
       try {
-        const response = await axios.get('http://localhost:8004/rankings'); 
+        const response = await axios.get(`${apiEndpoint}/rankings`); 
         setRankings(response.data); // Asume que el backend devuelve un array de usuarios ordenados por puntos
         setLoading(false);
       } catch (err) {
