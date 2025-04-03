@@ -6,39 +6,50 @@ class Game {
     this.score = 0;
   }
 
-  async fetchQuestions() {
+  async fetchQuestions(callback) {
     console.log("Fetching questions...");
-    this.questions = [];
-    let tipoPreguntas = ["Geografia", "Cultura", "Personajes"];
-
-    const urls = Array.from({ length: 4 }, () => {
-      const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
-      return { url: `http://localhost:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
+    const tipoPreguntas = ["Geografia", "Cultura", "Personajes"];
+    
+    const urls = Array.from({ length: 10 }, () => {
+        const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
+        return { url: `http://localhost:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
     });
 
+    // Inicializamos un array vacío con el tamaño adecuado
+    const questionsArray = new Array(urls.length).fill(null);
+
     try {
-      for (let [index, { url, tipo }] of urls.entries()) {
-        const response = await axios.get(url);
+        for (let [index, { url, tipo }] of urls.entries()) {
+            const response = await axios.get(url);
 
-        this.questions.push({
-          id: `q${index + 1}`,
-          pregunta: response.data.responseQuestion,
-          opciones: response.data.responseOptions,
-          respuesta_correcta: response.data.responseOptions.indexOf(response.data.responseCorrectOption),
-          imagen: response.data.responseImage, // Agregamos la imagen
-          tipo: tipo // Agregamos el tipo de pregunta
-        });
+            const question = {
+                id: `q${index + 1}`,
+                pregunta: response.data.responseQuestion,
+                opciones: response.data.responseOptions,
+                respuesta_correcta: response.data.responseOptions.indexOf(response.data.responseCorrectOption),
+                imagen: response.data.responseImage,
+                tipo: tipo
+            };
 
-        console.log(`Pregunta ${index} realizada (${tipo})`);
-      }
+            // Rellenamos el array en la posición específica
+            questionsArray[index] = {
+                ...question
+            };
 
-      console.log(this.questions);
-      return this.questions;
+            console.log(`Pregunta ${index + 1} realizada (${tipo})`);
+
+            // Llamamos al callback con el array actualizado
+            if (callback) {
+                callback([...questionsArray]); // Usamos [...questionsArray] para evitar mutaciones externas
+            }
+        }
     } catch (error) {
-      console.error("Error fetching questions:", error);
-      return null;
+        console.error("Error fetching questions:", error);
+        return null;
     }
   }
+
+
 
 
   checkAnswer(questionIndex, selectedOption) {
