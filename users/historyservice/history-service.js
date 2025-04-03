@@ -138,7 +138,6 @@ app.get('/stats/:username', async (req, res) => {
 });
 app.get('/rankings', async (req, res) => {
   try {
-    console.log("entro al ranking");
     const ranking = await Game.aggregate([
       {
         $group: {
