@@ -12,7 +12,7 @@ class Game {
     
     const urls = Array.from({ length: 10 }, () => {
         const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
-        return { url: `http://20.0.153.228:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
+        return { url: `http://localhost:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
     });
 
     // Inicializamos un array vacío con el tamaño adecuado
