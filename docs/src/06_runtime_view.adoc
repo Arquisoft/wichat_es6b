@@ -67,3 +67,30 @@ else usuario no válido
     User <-- App: Deniega registro
 end
 ----
+
+=== Inicio de Sesión en la Aplicación
+[plantuml, login, png]
+----
+actor User
+participant App
+participant Gateway
+participant AuthService
+database DBuser
+
+User -> App: Ingresa credenciales
+App -> Gateway: Envía los datos
+Gateway -> AuthService: Envía los datos
+AuthService -> DBuser: Comprueba los datos
+
+alt usuario válido
+    AuthService <-- DBuser: Confirma login
+    Gateway <-- AuthService: Confirma login
+    App <-- Gateway: Confirma login
+    User <-- App: Confirma login
+else usuario no válido
+    AuthService <-- DBuser: Deniega login
+    Gateway <-- AuthService: Deniega login
+    App <-- Gateway: Deniega login
+    User <-- App: Deniega login
+end
+----
