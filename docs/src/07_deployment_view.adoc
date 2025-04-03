@@ -60,41 +60,23 @@ For multiple environments or alternative deployments please copy and adapt this 
 ****
 endif::arc42help[]
 
-_**<Overview Diagram>**_
+image::07-deploymentDiagramv2.png["Vista de despliegue"]
 
 Motivation::
 
-_<explanation in text form>_
+Taking into account that the development have not started yet, the idea is using a Virtual Machine service like Azure or Oracle to deploy the final product. During 
+production time, each developer will deploy locally the project.
 
 Quality and/or Performance Features::
 
-_<explanation in text form>_
+For now this is unkwown, but we estimate that Azure VM with 2 GiB RAM and 1vCPU could work.
 
 Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
-
-
-=== Infrastructure Level 2
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you can include the internal structure of (some) infrastructure elements from level 1.
-
-Please copy the structure from level 1 for each selected element.
-****
-endif::arc42help[]
-
-==== _<Infrastructure Element 1>_
-
-_<diagram + explanation>_
-
-==== _<Infrastructure Element 2>_
-
-_<diagram + explanation>_
-
-...
-
-==== _<Infrastructure Element n>_
-
-_<diagram + explanation>_
+|===
+| Elemento | Descripción
+| Web Application | Jusst the frontend of the software product, connected with the core of the application
+| Application | Core function. It connects and uses all the external services of the software product. There are two main modules, frontend (or webApp) and backendl.
+| Wikidata | Service where questions are collected. SparQL is required to use the API
+| Database | The database chosen is MongoDB
+| LLM | It has yet to be decided, but the idea is to give a prompt with the context of how to answer client questions with hints
+|===
