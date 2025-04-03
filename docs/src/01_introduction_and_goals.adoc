@@ -100,6 +100,10 @@ endif::arc42help[]
 
 | *_Security_*
 | Protect user data and ensure fair gameplay.
+
+|Performance
+|It will work the 95% of the time excluding maintenance periods
+
 |===
 
 
@@ -146,13 +150,33 @@ endif::arc42help[]
 | The entity responsible for hiring the application development.
 | They should obtain the best possible product.
 
-| *_Users_*
+| *_Registered Users_*
 | Any person using the application.
 | They expect to enjoy a great user experience and learn from the quiz questions.
+
+| *_Admin Users_*
+| The application would need some administrator to fix any strange behaviour in game.
+| They expect to fix some minor problems.
 
 | *_HappySw_*
 | Competitor to ChattySw, developer of the previous version of the application.
 | They should compete with ChattySw as the developer of the previous version of the application.
+
+| *_Rest of competitors_*
+| There is more than one competitor to that type of games.
+| They compete with ChattySW and WiChat on engaging the target audience of the game.
+
+| *_Hosting suppliers - Azure_*
+| The application must be deployed for the public use
+| They expect a new client of their services.
+
+| *_DNS suppliers_*
+| The application must be found in the web by a domain of RTVE
+| They expect a new client of their services.
+
+| *_Saber y Ganar_*
+| The physical version of the game would dictate the rules of its online version
+| It expects to have similar functions as this online game.
 |===
 
 
