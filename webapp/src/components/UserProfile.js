@@ -60,59 +60,188 @@ const UserProfile = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 12, mb: 4 }}>
-      <Paper sx={{ p: 4, borderRadius: 2, backgroundColor: '#f5f5f5' }}>
-        <Typography variant="h4" gutterBottom>
+      <Paper
+        sx={{
+          p: 4,
+          borderRadius: 3,
+          backgroundColor: '#ffffff',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            textAlign: 'center',
+            fontWeight: 600,
+            color: '#333',
+            mb: 4,
+          }}
+        >
           Perfil de {username}
         </Typography>
-
+  
         {stats && (
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" gutterBottom>Estadísticas Generales</Typography>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                fontWeight: 600,
+                color: '#4e54c8',
+                textAlign: 'center',
+                mb: 3,
+              }}
+            >
+              Estadísticas Generales
+            </Typography>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="h6">Partidas Jugadas</Typography>
-                  <Typography variant="h4">{stats.totalGames}</Typography>
+                <Paper
+                  sx={{
+                    p: 3,
+                    textAlign: 'center',
+                    borderRadius: 2,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+                    },
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                    Partidas Jugadas
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: '#2575fc' }}>
+                    {stats.totalGames}
+                  </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="h6">Puntos Totales</Typography>
-                  <Typography variant="h4">{stats.totalPoints}</Typography>
+                <Paper
+                  sx={{
+                    p: 3,
+                    textAlign: 'center',
+                    borderRadius: 2,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+                    },
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                    Puntos Totales
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: '#2575fc' }}>
+                    {stats.totalPoints}
+                  </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="h6">Respuestas Correctas</Typography>
-                  <Typography variant="h4">{stats.correctAnswers}</Typography>
+                <Paper
+                  sx={{
+                    p: 3,
+                    textAlign: 'center',
+                    borderRadius: 2,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+                    },
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                    Respuestas Correctas
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: '#2575fc' }}>
+                    {stats.correctAnswers}
+                  </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="h6">Tiempo Promedio</Typography>
-                  <Typography variant="h4">{Math.round(stats.averageTime)}s</Typography>
+                <Paper
+                  sx={{
+                    p: 3,
+                    textAlign: 'center',
+                    borderRadius: 2,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+                    },
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                    Tiempo Promedio
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: '#2575fc' }}>
+                    {Math.round(stats.averageTime)}s
+                  </Typography>
                 </Paper>
               </Grid>
             </Grid>
           </Box>
         )}
-
+  
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" gutterBottom>Historial de Juegos</Typography>
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              fontWeight: 600,
+              color: '#4e54c8',
+              textAlign: 'center',
+              mb: 3,
+            }}
+          >
+            Historial de Juegos
+          </Typography>
           {gameHistory.length > 0 ? (
             <Grid container spacing={2}>
               {gameHistory.map((game, index) => (
                 <Grid item xs={12} key={index}>
-                  <Paper sx={{ p: 2 }}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      backgroundColor: '#ffffff',
+                      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+                      },
+                    }}
+                  >
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm={4}>
-                        <Typography>Fecha: {new Date(game.createdAt).toLocaleDateString()}</Typography>
+                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                          Fecha:
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {new Date(game.createdAt).toLocaleDateString()}
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
-                        <Typography>Puntos: {game.points}</Typography>
+                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                          Puntos:
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {game.points}
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
-                        <Typography>Tiempo promedio: {Math.round(game.avgtime)}s</Typography>
+                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                          Tiempo promedio:
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {Math.round(game.avgtime)}s
+                        </Typography>
                       </Grid>
                     </Grid>
                   </Paper>
@@ -123,18 +252,30 @@ const UserProfile = () => {
             <Typography>No hay juegos registrados aún.</Typography>
           )}
         </Box>
-
+  
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-          <Button 
-            variant="contained" 
-            color="primary" 
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{
+              backgroundColor: '#2575fc',
+              '&:hover': {
+                backgroundColor: '#4e54c8',
+              },
+            }}
             onClick={() => navigate('/game')}
           >
             Jugar Nueva Partida
           </Button>
-          <Button 
-            variant="contained" 
-            color="secondary" 
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              backgroundColor: '#6a11cb',
+              '&:hover': {
+                backgroundColor: '#4e54c8',
+              },
+            }}
             onClick={() => navigate('/ranking')}
           >
             Ver Rankings
