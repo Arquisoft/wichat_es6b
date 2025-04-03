@@ -199,36 +199,36 @@ const Jugar = () => {
   const handleAnswerSelect = (answerIndex) => {
     const now = Date.now();
     const timeSpent = (now - questionStartTime) / 1000; // tiempo en segundos
-    
+  
     // Actualizar la pregunta actual con la respuesta y el tiempo
     const updatedQuestions = [...questions];
     updatedQuestions[indice] = {
       ...updatedQuestions[indice],
       userAnswer: answerIndex,
       timeSpent: timeSpent,
-      answered: true
+      answered: true,
     };
-
     clearChat();
-    
     setQuestions(updatedQuestions);
-    
+  
+    // Calcular el puntaje actualizado
+    const updatedScore = score + (answerIndex === questions[indice].respuesta_correcta ? 10 : 0);
   
     // Actualizar puntuación
     if (answerIndex === questions[indice].respuesta_correcta) {
       setShowCorrectAnswer(true);
-      setScore(score + 10);
       setTimeout(() => {
         setShowCorrectAnswer(false);
       }, 1500);
     }
-    
+  
     // Avanzar a la siguiente pregunta o finalizar
     if (indice < questions.length - 1) {
       setIndice(indice + 1);
       setQuestionStartTime(Date.now());
+      setScore(updatedScore); // Actualizar el estado del puntaje
     } else {
-      finishGame();
+      finishGame(updatedScore); // Pasar el puntaje actualizado a finishGame
     }
   };
 
@@ -262,38 +262,34 @@ const handleTimeout = () => {
 
 
   // Finalizar el juego
-  const finishGame = async () => {
+  const finishGame = async (finalScore) => {
     const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
     setGameFinished(true);
-    
+  
     try {
       const username = localStorage.getItem('username');
-      
+      console.log("Score:", finalScore); // Usar el puntaje actualizado
+      setScore(finalScore); // Actualizar el puntaje final
+  
       // Preparar datos para guardar
       const gameData = {
         id: `game_${Date.now()}`,
         username,
-        points: score,
+        points: finalScore, // Usar el puntaje actualizado
         avgtime: totalGameTime / questions.length,
-        questions: questions.map(q => ({
+        questions: questions.map((q) => ({
           questionId: q.id,
           question: q.pregunta,
           correct: q.userAnswer === q.respuesta_correcta,
-          timeSpent: q.timeSpent || 0
-        }))
+          timeSpent: q.timeSpent || 0,
+        })),
       };
-      
+  
       // Guardar el historial del juego
       await axios.post(`${apiEndpoint}/savegame`, gameData);
-      
+  
       setSnackbarMessage('¡Juego guardado correctamente!');
       setSnackbarOpen(true);
-      
-      // Redirigir al perfil después de un breve retraso
-      setTimeout(() => {
-        navigate(`/profile/${username}`);
-      }, 2000);
-      
     } catch (error) {
       console.error('Error guardando el historial del juego:', error);
       setSnackbarMessage('Error al guardar el juego');
@@ -532,7 +528,7 @@ const handleTimeout = () => {
               sx={{ mt: 2 }}
               onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
             >
-              Ver mi perfil
+              Ver mi historial
             </Button>
           </Box>
         ) : (
