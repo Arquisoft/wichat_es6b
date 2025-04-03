@@ -6,10 +6,7 @@ const YAML = require('yamljs');
 const swaggerDocument = YAML.load(__dirname + '/historyservice.yaml');
 const app = express();
 const port = 8004;
-const cors = require('cors');
-app.use(cors({
-  origin: 'http://localhost:3000', 
-}));
+
 // Middleware para analizar JSON en el cuerpo de la solicitud
 app.use(express.json());
 
