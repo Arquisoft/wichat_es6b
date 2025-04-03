@@ -19,6 +19,12 @@ const Login = () => {
   const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
 
   const loginUser = async () => {
+    if (!username.trim() || !password.trim()) { //Validacion de campos
+      setError('Please complete all fields.');
+      setOpenSnackbar(true);
+      return;
+    }
+  
     try {
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
 
