@@ -16,7 +16,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 | **Wikidata** | Request for information about the game question | Generated question with relevant information  
 
-| **ChatGPT** | Game question and correct answer | Hints to help the user answer better  
+| **Empathy/Gemini** | Game question and correct answer | Hints to help the user answer better  
 |===
 
 
