@@ -6,7 +6,10 @@ const YAML = require('yamljs');
 const swaggerDocument = YAML.load(__dirname + '/historyservice.yaml');
 const app = express();
 const port = 8004;
-
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000', 
+}));
 // Middleware para analizar JSON en el cuerpo de la solicitud
 app.use(express.json());
 
@@ -133,7 +136,33 @@ app.get('/stats/:username', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+app.get('/rankings', async (req, res) => {
+  try {
+    console.log("entro al ranking");
+    const ranking = await Game.aggregate([
+      {
+        $group: {
+          _id: "$username",
+          totalPoints: { $sum: "$points" },
+        },
+      },
+      { $sort: { totalPoints: -1 } }, // Ordenar por puntos en orden descendente
+      { $limit: 10 }, // Limitar a los 10 mejores jugadores
+      {
+        $project: {
+          _id: 0,
+          username: "$_id",
+          totalPoints: 1,
+        },
+      },
+    ]);
 
+    res.json(ranking);
+  } catch (error) {
+    console.error("Error al obtener el ranking:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const server = app.listen(port, () => {
