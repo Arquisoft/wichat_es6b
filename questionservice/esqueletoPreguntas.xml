@@ -1,0 +1,52 @@
+<textoPreguntas>
+
+    <pregunta  question="pais" type="ubicacion"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+       <es>¿Cuál es el pais mostrado en la imagen?</es>
+       <en>What is the country shown in the image?</en>
+    </pregunta>
+    
+    <pregunta  question="pais" type="paisaeje"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿En qué pais se encuentra este paisaje?</es>
+        <en>In which country is this landscape located?</en>       
+    </pregunta>
+
+    <pregunta  question="cine" type="actor"> 
+         <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Quién es el actor de la imagen?</es>
+        <en>Who is the actor in the image?</en>
+    </pregunta>
+
+     <pregunta  question="musica" type="musico"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Quién es el músico de la imagen?</es>
+        <en>Who is the musician in the image?</en>
+    </pregunta>
+
+
+    <pregunta  question="videojuego" type="portada"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Cuál es el videojuego de la imagen?</es>
+        <en>What is the videogame of the image?</en>
+    </pregunta>
+
+
+    <pregunta  question="futbol" type="clubFutbol"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Cuál es este equipo de fútbol?</es>
+        <en>Which football team is this?</en>
+    </pregunta>
+
+    <pregunta  question="futbol" type="futbolista"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿Quién es el futbolista de la imagen?</es>
+        <en>Who is the footballer in the image?</en>
+    </pregunta>
+
+    <pregunta  question="futbol" type="estadio"> 
+        <imageUrl>{URL_IMAGEN}</imageUrl>
+        <es>¿De qué equipo de fútbol es este estadio?</es>
+        <en>Which football team does this stadium belong to?</en>
+    </pregunta>
+</textoPreguntas>

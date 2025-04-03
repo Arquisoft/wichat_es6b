@@ -13,6 +13,7 @@ const port = 8000;
 const llmServiceUrl = process.env.LLM_SERVICE_URL || 'http://localhost:8003';
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8002';
 const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:8001';
+const historyServiceUrl = process.env.HISTORY_SERVICE_URL || 'http://localhost:8004';
 
 app.use(cors());
 app.use(express.json());
@@ -55,6 +56,43 @@ app.post('/askllm', async (req, res) => {
     res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
+
+// Rutas para estadísticas e historial
+app.get('/stats/:username', async (req, res) => {
+  try {
+    const response = await axios.get(historyServiceUrl+`/stats/${req.params.username}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+app.get('/rankings', async (req, res) => {
+  try {
+    const response = await axios.get(historyServiceUrl+`/rankings`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+app.get('/history/:username', async (req, res) => {
+  try {
+    const response = await axios.get(historyServiceUrl+`/history/${req.params.username}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+
+app.post('/savegame', async (req, res) => {
+  try {
+    const response = await axios.post(historyServiceUrl+'/savegame', req.body);
+    res.status(201).json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+
+
 
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'

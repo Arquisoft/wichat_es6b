@@ -48,6 +48,30 @@ services:
     networks:
       - mynetwork
 
+  historyservice:
+    container_name: historyservice-wichat_es6b
+    image: ghcr.io/arquisoft/wichat_es6b/historyservice:latest
+    profiles: ["dev", "prod"]
+    build: ./users/historyservice
+    depends_on:
+      - mongodb
+    ports:
+      - "8004:8004"
+    networks:
+      - mynetwork
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/userdb
+  
+  questionservice:
+    container_name: questionservice-wichat_es6b
+    image: ghcr.io/arquisoft/wichat_es6b/questionservice:latest
+    profiles: ["dev", "prod"]
+    build: ./questionservice
+    ports:
+      - "8010:8010"
+    networks:
+      - mynetwork
+
   gatewayservice:
     container_name: gatewayservice-wichat_es6b
     image: ghcr.io/arquisoft/wichat_es6b/gatewayservice:latest
@@ -58,6 +82,8 @@ services:
       - userservice
       - authservice
       - llmservice
+      - historyservice
+      - questionservice
     ports:
       - "8000:8000"
     networks:
@@ -66,6 +92,8 @@ services:
       AUTH_SERVICE_URL: http://authservice:8002
       USER_SERVICE_URL: http://userservice:8001
       LLM_SERVICE_URL: http://llmservice:8003
+      HISTORY_SERVICE_URL: http://historyservice:8004
+      QUESTION_SERVICE_URL: http://questionservice:8010
 
   webapp:
     container_name: webapp-wichat_es6b
