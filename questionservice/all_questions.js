@@ -66,7 +66,7 @@ queries["es"] = {
       LIMIT 100
       `, "¿Cuál es el nombre de este futbolista?"],
             ],
-            "Cantante":
+            "Cantantes":
                 // pregunta = imagen cantante, opcion = nombre cantante
                 [
                    [   `
@@ -131,7 +131,7 @@ queries["en"] = {
       LIMIT 100
       `, "What is the name of this painter?"]
             ],
-            "Futbolista":
+            "Futbolistas":
                 [
                   [ `
       SELECT ?optionLabel ?imageLabel
@@ -146,7 +146,7 @@ queries["en"] = {
       `, "What is the name of this footballer?"]
                   ],
       
-            "Cantante":   [
+            "Cantantes":   [
                   [`
       SELECT ?optionLabel ?imageLabel
       WHERE {

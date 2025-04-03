@@ -8,11 +8,10 @@ const YAML = require('yamljs');
 const path = require('path');
 const swaggerPath = path.join(__dirname, "questionservice.yaml");
 const swaggerDocument = YAML.load(swaggerPath);
-
-
+const mongoose = require('mongoose');
+const Question = require('./question-model');
 
 const generatorEndpoint = process.env.REACT_APP_API_ORIGIN_ENDPOINT || 'http://localhost:3000';
-
 const app = express();
 app.disable('x-powered-by');
 const port = 8010;
@@ -46,8 +45,9 @@ var image = "";
 var url = 'https://query.wikidata.org/sparql';
 var randomNumber;
 
-const maxQuestions = 5;
+const maxQuestions = 10;
 var numberOfQuestions = 0;
+mongoose.connect('mongodb://localhost:27017/questionsDB');
 
 // La funcion getQueriesAndQuestion vuelca el all_questions en generalQueries
 function getQueriesAndQuestions(imagesQueries) {
@@ -237,11 +237,6 @@ app.get('/nextQuestion', async (req, res) => {
 
 // });
 
-// Iniciar servidor
-app.listen(port, () => {
-    console.log(`Questions Generation Service listening at http://localhost:${port}`);
-});
-
 
 app.get('/startGame', async (req, res) => {
     try {
@@ -277,3 +272,10 @@ app.get('/startGame', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
+// Iniciar servidor
+const server = app.listen(port, () => {
+    console.log(`Questions Generation Service listening at http://localhost:${port}`);
+});
+
+module.exports = server
