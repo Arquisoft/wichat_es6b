@@ -16,124 +16,30 @@ import Login from './components/Login';
 import Game from './game/gameManager';
 import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
+import FlipCard from './components/FlipCard';
 import './App.css';
 
 
 function Home() {
-  const [showLogin, setShowLogin] = useState(true);
-  
-  const handleToggleView = () => {
-    setShowLogin(!showLogin);
-  };
-  
   return (
     <Container
       component="main"
       maxWidth="sm"
       sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '16px',
-        padding: {
-          xs: '2rem',
-          sm: '2.5rem',
-        },
-        backdropFilter: 'blur(10px)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        marginTop: '10vh',
-        transition: 'all 0.3s ease-in-out',
-        width: {
-          xs: '90%',
-          sm: '500px',
-        },
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center', // Centrar contenido horizontalmente
-        justifyContent: 'center', // Centrar contenido verticalmente
-        minHeight: '60vh', // Asegurar que el contenedor tenga una altura mínima
-        '&:hover': {
-          boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
-          transform: 'translateY(-5px)',
-        },
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '60vh',
+        marginTop: '10vh',
       }}
     >
       <CssBaseline />
-      {/* Usamos el Login estilizado o el AddUser original */}
-      {showLogin ? <Login /> : <AddUser />}
-
-      <Typography
-        component="div"
-        align="center"
-        sx={{
-          marginTop: 2,
-          fontSize: '1rem',
-          fontWeight: 500,
-        }}
-      >
-        {showLogin ? (
-          <Link
-            component="button"
-            variant="body2"
-            onClick={handleToggleView}
-            sx={{
-              color: '#6a11cb',
-              textDecoration: 'none',
-              fontWeight: 500,
-              position: 'relative',
-              '&:hover': {
-                color: '#8a3ffc',
-                '&::after': {
-                  width: '100%',
-                },
-              },
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                bottom: '-2px',
-                left: 0,
-                width: 0,
-                height: '2px',
-                backgroundColor: '#8a3ffc',
-                transition: 'width 0.3s ease',
-              },
-            }}
-          >
-            Don't have an account? Register here.
-          </Link>
-        ) : (
-          <Link
-            component="button"
-            variant="body2"
-            onClick={handleToggleView}
-            sx={{
-              color: '#6a11cb',
-              textDecoration: 'none',
-              fontWeight: 500,
-              position: 'relative',
-              '&:hover': {
-                color: '#8a3ffc',
-                '&::after': {
-                  width: '100%',
-                },
-              },
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                bottom: '-2px',
-                left: 0,
-                width: 0,
-                height: '2px',
-                backgroundColor: '#8a3ffc',
-                transition: 'width 0.3s ease',
-              },
-            }}
-          >
-            Already have an account? Login here.
-          </Link>
-        )}
-      </Typography>
+      <FlipCard />
     </Container>
   );
 }
+
 
 function App() {
   return (
