@@ -190,3 +190,22 @@ Gateway <-- RankingService: Devuelve todos los rankings
 App <-- Gateway: Devuelve todos los rankings
 User <-- App: Muestra el ranking
 ----
+
+=== Consulta del Ranking
+[plantuml, ranking, png]
+----
+actor User
+participant App
+participant Gateway
+participant RankingService
+database DBranking
+
+User -> App: Selecciona opción de ver el ranking
+App -> Gateway: Pide el ranking
+Gateway -> RankingService: Pide el ranking
+RankingService -> DBranking: Pide todos los rankings
+RankingService <-- DBranking: Devuelve todos los rankings
+Gateway <-- RankingService: Devuelve todos los rankings
+App <-- Gateway: Devuelve todos los rankings
+User <-- App: Muestra el ranking
+----
