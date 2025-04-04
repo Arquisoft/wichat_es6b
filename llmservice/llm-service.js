@@ -64,7 +64,7 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '
 
     const headers= config.headers ? config.headers(apiKey) : { 'Content-Type': 'application/json' };
     
-
+	console.log(url); 
     const response = await axios.post(url, requestData, { headers });
 
     return config.transformResponse(response);

@@ -36,6 +36,7 @@ const AddUser = () => {
     }
 
     try {
+	console.log(`${apiEndpoint}/adduse/adduserr`);
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
       setError('');

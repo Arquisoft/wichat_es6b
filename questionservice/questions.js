@@ -8,8 +8,8 @@ const YAML = require('yamljs');
 const path = require('path');
 const swaggerPath = path.join(__dirname, "questionservice.yaml");
 const swaggerDocument = YAML.load(swaggerPath);
-const mongoose = require('mongoose');
-const Question = require('./question-model');
+// const mongoose = require('mongoose');
+// const Question = require('./question-model');
 
 const generatorEndpoint = process.env.REACT_APP_API_ORIGIN_ENDPOINT || 'http://localhost:3000';
 const app = express();
@@ -47,7 +47,7 @@ var randomNumber;
 
 const maxQuestions = 10;
 var numberOfQuestions = 0;
-mongoose.connect('mongodb://localhost:27017/questionsDB');
+// mongoose.connect('mongodb://localhost:27017/questionsDB');
 
 // La funcion getQueriesAndQuestion vuelca el all_questions en generalQueries
 function getQueriesAndQuestions(imagesQueries) {
@@ -72,6 +72,8 @@ async function getQueriesByThematic(thematic) {
         changeQueriesAndQuestions("Pintores");
     } else if (thematic == "Futbolistas") {
         changeQueriesAndQuestions("Futbolistas");
+    } else if (thematic == "Cantantes") {
+        changeQueriesAndQuestions("Cantantes");
     } else {
         queries = getAllValues();
     }
