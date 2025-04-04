@@ -33,6 +33,10 @@ This is a base project for the Software Architecture course in 2024/2025. It is 
 
 Both the user and auth service share a Mongo database that is accessed with mongoose.
 
+## IP to try the application
+
+http://20.0.153.228:3000
+
 ## Quick start guide
 
 First, clone the project:
