@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar, Box } from '@mui/material';
 import { Typewriter } from "react-simple-typewriter";
+import { SessionContext } from '../SessionContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -13,6 +14,8 @@ const Login = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState('');
 
+   
+  const { createSession } = useContext(SessionContext);
   const navigate = useNavigate();
 
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
@@ -45,6 +48,7 @@ const Login = () => {
       
       // Guardar el nombre de usuario en localStorage
       localStorage.setItem('username', username);
+      createSession(username);
       
       
     } catch (error) {

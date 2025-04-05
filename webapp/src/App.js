@@ -13,7 +13,6 @@ import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer'; 
 import NavBar from './components/NavBar'; 
-import { SessionProvider } from './sessionContext';
 import './App.css';
 
 
@@ -37,19 +36,14 @@ function Home() {
   );
 }
 
+
 function App() {
   return (
+    <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
     <Router>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh', // Ocupa toda la altura de la ventana
-        }}
-      >
-        {/* <NavBar /> */}
-        
-        {/* Fondo animado */}
+      <>
+       <NavBar />
+        {/* Fondo animado mejorado */}
         <motion.div
           initial={{ backgroundPosition: "0% 50%" }}
           animate={{ backgroundPosition: "100% 50%" }}
@@ -65,22 +59,28 @@ function App() {
             backgroundSize: "400% 400%",
           }}
         />
-
-        {/* Header */}
-        <Container 
+        
+        {/* Header mejorado */}
+        {/* <Container 
           component="header" 
+        
           maxWidth={false} 
           sx={{
             background: 'linear-gradient(90deg, #2c3e50 0%, #4e54c8 100%)',
-            height: '10vh', // Altura fija del header
+            margin: 0,
+            height: "10vh",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-            position: 'fixed',
-            top: 0,
-            width: '100%',
             zIndex: 10,
+            backdropFilter: 'blur(5px)',
+            padding: '0 2rem'
+          
           }}
         >
           <Typography 
@@ -91,6 +91,7 @@ function App() {
               fontWeight: 700,
               color: 'white',
               textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+              letterSpacing: '0.5px'
             }}
           >
             <Typewriter 
@@ -100,33 +101,33 @@ function App() {
               typeSpeed={70}
             />
           </Typography>
-        </Container>
-
-        {/* Contenido principal */}
-        <Container
-          component="main"
-          maxWidth={false}
-          sx={{
-            flex: 1, // Expande para ocupar el espacio entre el header y el footer
-            paddingTop: '10vh', // Espacio reservado para el header
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/ranking" element={<Ranking />} />
-            <Route path="/profile/:username" element={<UserProfile />} />
-          </Routes>
-        </Container>
-
-        {/* Footer */}
-        <Footer />
-      </Box>
+        </Container> */}
+        
+        {/* Main content container - añade espacio para el header */}
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <Container
+              maxWidth="md" // o false si no quieres límite de ancho
+              sx={{
+                flexGrow: 1,
+                pt: '10vh', // espacio para el NavBar fijo
+                pb: '2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/game" element={<Game />} />
+                <Route path="/ranking" element={<Ranking />} />
+                <Route path="/profile/:username" element={<UserProfile />} />
+              </Routes>
+            </Container>
+          </Box>
+          {/* <Footer/> */}
+      </>
     </Router>
+    </Box>
   );
 }
 
