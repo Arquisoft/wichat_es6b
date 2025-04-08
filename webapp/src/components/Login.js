@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar, Box } from '@mui/material';
 import { Typewriter } from "react-simple-typewriter";
-import { SessionContext } from '../SessionContext';
+import { SessionContext } from '../sessionContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');

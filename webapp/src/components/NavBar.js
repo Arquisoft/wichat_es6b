@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { AppBar, Toolbar, Box, Button, IconButton, Typography, Avatar } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
-import { SessionContext } from '../SessionContext';
+import { SessionContext } from '../sessionContext';
 
 function NavBar() {
   const { username, isLoggedIn, avatar, destroySession } = useContext(SessionContext);
