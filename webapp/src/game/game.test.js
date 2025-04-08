@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Game from './game';
-import { wait } from '@testing-library/user-event/dist/cjs/utils/index.js';
+import { wait, waitFor, screen } from '@testing-library/react';
 import { experimentalStyled } from '@mui/material';
 
 jest.mock('axios');

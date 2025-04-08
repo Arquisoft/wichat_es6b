@@ -26,7 +26,7 @@ function Home() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '60vh',
+        flexGrow: 1,
         marginTop: '10vh',
       }}
     >
@@ -42,6 +42,7 @@ function App() {
     <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
     <Router>
       <>
+      {/* Barra de navegación */}
        <NavBar />
         {/* Fondo animado mejorado */}
         <motion.div
@@ -104,27 +105,25 @@ function App() {
         </Container> */}
         
         {/* Main content container - añade espacio para el header */}
-        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-            <Container
-              maxWidth="md" // o false si no quieres límite de ancho
-              sx={{
-                flexGrow: 1,
-                pt: '10vh', // espacio para el NavBar fijo
-                pb: '2rem',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
+        <Box
+            sx={{
+              flexGrow: 1, // Hace que el contenido se expanda para llenar el espacio
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              pt: '10vh', // Espacio para el NavBar fijo
+              pb: '10vh', // Opcional para dejar espacio para un futuro footer
+            }}
+          >
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/game" element={<Game />} />
                 <Route path="/ranking" element={<Ranking />} />
                 <Route path="/profile/:username" element={<UserProfile />} />
               </Routes>
-            </Container>
           </Box>
-          {/* <Footer/> */}
+          <Footer/>
       </>
     </Router>
     </Box>

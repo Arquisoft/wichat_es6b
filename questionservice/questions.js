@@ -97,6 +97,11 @@ function getAllValues() {
 
 /// Obtener y procesar la pregunta
 async function generateQuestions() {
+     // Limpiar variables globales antes de generar una nueva pregunta
+    options = [];
+    correctOption = "";
+    question = "";
+    image = "";
     // Verificar si queries está vacío
     if (queries.length === 0) {
         throw new Error("No hay preguntas disponibles. Verifica que las queries se estén cargando correctamente.");
@@ -238,42 +243,6 @@ app.get('/nextQuestion', async (req, res) => {
 //     res.send("Bienvenido al servicio de generación de preguntas");
 
 // });
-
-
-app.get('/startGame', async (req, res) => {
-    try {
-        res.send("Preguntas juego")
-        language = req.query.language || 'es'; // Idioma por defecto
-        queries = [];
-
-        if (numberOfQuestions === 0) {
-            gameId = null;
-        }
-
-        await getQueriesByThematic(req.query.thematic);
-        await generateQuestions();
-        numberOfQuestions++;
-
-        if (numberOfQuestions >= maxQuestions) {
-            numberOfQuestions = 0;
-        }
-
-        // Crear el objeto de la pregunta
-        const response = {
-            responseQuestion: question,
-            responseOptions: options,
-            responseCorrectOption: correctOption,
-            responseImage: image,
-        };
-
-        // Emitir la pregunta a todos los clientes conectados
-        io.emit('newQuestion', response);
-
-        res.status(200).json({ message: "Pregunta enviada a los clientes" });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
 
 // Iniciar servidor
 const server = app.listen(port, () => {

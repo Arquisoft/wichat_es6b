@@ -71,6 +71,7 @@ services:
       - "8010:8010"
     networks:
       - mynetwork
+    
 
   gatewayservice:
     container_name: gatewayservice-wichat_es6b

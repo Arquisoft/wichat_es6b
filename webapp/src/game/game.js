@@ -1,4 +1,6 @@
 import axios from "axios";
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+const language = "es";
 
 class Game {
   constructor() {
@@ -10,17 +12,31 @@ class Game {
     console.log("Fetching questions...");
     const tipoPreguntas = ["Geografia", "Cultura", "Pintores", "Futbolistas", "Cantantes"];
     
+    // Generar las URLs con el gateway-service
     const urls = Array.from({ length: 10 }, () => {
-        const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
-        return { url: `http://localhost:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
+        const thematic = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
+        return { 
+            url: `${apiEndpoint}/generateQuestions`, 
+            params: { 
+                language, 
+                thematic 
+            },
+            tipo: thematic 
+        };
     });
 
     // Inicializamos un array vacío con el tamaño adecuado
     const questionsArray = new Array(urls.length).fill(null);
 
     try {
-        for (let [index, { url, tipo }] of urls.entries()) {
-            const response = await axios.get(url);
+        for (let index = 0; index < urls.length; index++) {
+            const { url, params, tipo } = urls[index];
+            const response = await axios.get(url, { params });
+
+            if (!response.data.responseQuestion || !response.data.responseOptions || !response.data.responseCorrectOption) {
+                console.warn(`Datos incompletos para la pregunta ${index + 1}. Respuesta del servidor:`, response.data);
+                continue; // Saltar esta pregunta si los datos están incompletos
+            }
 
             const question = {
                 id: `q${index + 1}`,
@@ -32,9 +48,7 @@ class Game {
             };
 
             // Rellenamos el array en la posición específica
-            questionsArray[index] = {
-                ...question
-            };
+            questionsArray[index] = { ...question };
 
             console.log(`Pregunta ${index + 1} realizada (${tipo})`);
 
@@ -47,7 +61,7 @@ class Game {
         console.error("Error fetching questions:", error);
         return null;
     }
-  }
+}
 
 
 

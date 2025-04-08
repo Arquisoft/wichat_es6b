@@ -96,7 +96,6 @@ function NavBar() {
               <IconButton>
                 <Avatar
                   src="/default_user.jpg"
-                  alt="Profile pic"
                   sx={{ width: 33, height: 33, bgcolor: 'white' }}
                 />
               </IconButton>
