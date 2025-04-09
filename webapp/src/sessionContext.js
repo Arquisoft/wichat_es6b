@@ -56,7 +56,17 @@ const SessionProvider = ({ children }) => {
   
     return (
         // This values are the props we can access from the child objects
-      <SessionContext.Provider value={{ sessionId, username, isLoggedIn, avatar, createSession, destroySession, updateAvatar }}>
+        <SessionContext.Provider
+        value={{
+          sessionId: sessionId || '',
+          username: username || '',
+          isLoggedIn: isLoggedIn || false,
+          avatar: avatar || '/default_user.jpg',
+          createSession,
+          destroySession,
+          updateAvatar,
+        }}
+      >
         {children}
       </SessionContext.Provider>
     );

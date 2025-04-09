@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../sessionContext';
 
 function NavBar() {
-  const { username, isLoggedIn, avatar, destroySession } = useContext(SessionContext);
+  const { username = '', isLoggedIn = false, avatar = '/default_user.jpg', destroySession } = useContext(SessionContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -67,7 +67,10 @@ function NavBar() {
                   {username}
                 </Typography>
                 <IconButton>
-                  <Avatar src={avatar} alt="Profile pic" sx={{ width: 33, height: 33 }} />
+                  <Avatar src={avatar} alt="Profile pic" sx={{ width: 33, height: 33 }} 
+                    aria-label="current user account"
+                  />
+                  
                 </IconButton>
               </Button>
               <IconButton
