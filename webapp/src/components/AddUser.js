@@ -5,7 +5,7 @@ import { Box, Container, Typography, TextField, Button, Snackbar } from '@mui/ma
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const defaultTheme = createTheme();
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
 const AddUser = () => {
   const [username, setUsername] = useState('');
@@ -40,8 +40,8 @@ const AddUser = () => {
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
       setError('');
-    } catch (error) {
-      if (error.response && error.response.data.error) {
+    } catch (error) { 
+      if (error.response && error.response.data && error.response.data.error) {
         setError(error.response.data.error); // Mostrar el mensaje de error del backend
       } else {
         setError('An unexpected error occurred');

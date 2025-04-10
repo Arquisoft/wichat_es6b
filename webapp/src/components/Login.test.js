@@ -3,6 +3,8 @@ import { render, fireEvent, screen, waitFor, act } from '@testing-library/react'
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import Login from './Login';
+import { SessionContext } from '../sessionContext'; 
+import { MemoryRouter } from 'react-router-dom';
 
 const mockAxios = new MockAdapter(axios);
 
@@ -12,7 +14,14 @@ describe('Login component', () => {
   });
 
   it('should log in successfully', async () => {
-    render(<Login />);
+    const createSession = jest.fn();
+    render(
+      <SessionContext.Provider value={{createSession}}>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </SessionContext.Provider >
+    );
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
@@ -23,18 +32,25 @@ describe('Login component', () => {
     mockAxios.onPost('http://localhost:8000/askllm').reply(200, { answer: 'Hello test user' });
 
     // Simulate user input
-    await act(async () => {
-        fireEvent.change(usernameInput, { target: { value: 'testUser' } });
-        fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
-        fireEvent.click(loginButton);
-      });
+    fireEvent.change(usernameInput, { target: { value: 'testUser' } });
+    fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
+    fireEvent.click(loginButton);
 
     // Verify that the user information is displayed
-    expect(screen.getByText(/Your account was created on 1\/1\/2024/i)).toBeInTheDocument();
+    await waitFor(() => {
+      //expect(screen.getByText(/Your account was created on 1\/1\/2024/i)).toBeInTheDocument();
+      expect(createSession).toHaveBeenCalledWith('testUser');
+    });
   });
 
   it('should handle error when logging in', async () => {
-    render(<Login />);
+      render(
+        <SessionContext.Provider value={{}}>
+          <MemoryRouter>
+            <Login />
+          </MemoryRouter>
+        </SessionContext.Provider>
+      );
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);

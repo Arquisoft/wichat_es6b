@@ -1,7 +1,9 @@
 const contextMap = {
     "Geografia": "Genera una pista en español sobre la respuesta correcta sin revelar directamente la respuesta. Describe su bandera o donde esta posicionado",
     "Cultura": "Da algun hecho importante de este monumento, donde esta colocado o cuando se hizo. Sin decir el monumento, a modo de pista." ,
-    "Personajes": "Genera una pista en español sobre la respuesta correcta sin revelarla directamente. Da algun hecho importante de este personaje, y haz un juego de palabras con su apellido",
+    "Pintores": "Genera una pista en español sobre la respuesta correcta sin revelarla directamente. Di alguna obra importante que haya realizado, y haz un juego de palabras con su apellido",
+    "Futbolistas": "Genera una pista en español sobre la respuesta correcta sin revelarla directamente. Di algún equipo en el que haya juagado este futbolista y de que pais es.",
+    "Cantantes": "Genera una pista en español sobre la respuesta correcta sin revelarla directamente. Di su canción más exitosa y de que pais es.",
     "default": "Genera una pista en español sobre la respuesta correcta sin revelarla directamente. Da un juego de palabras con la respuesta correcta."
   };
   

@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import { Typewriter } from "react-simple-typewriter";
 
-import AddUser from './components/AddUser';
-// Importante: Importamos el componente Login original para mantener su funcionalidad
-import Login from './components/Login';
+import FlipCard from './components/FlipCard';
 import Game from './game/gameManager';
 import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
-import FlipCard from './components/FlipCard';
+import Footer from './components/Footer'; 
+import NavBar from './components/NavBar'; 
 import './App.css';
 
 
@@ -30,7 +26,7 @@ function Home() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '60vh',
+        flexGrow: 1,
         marginTop: '10vh',
       }}
     >
@@ -43,8 +39,11 @@ function Home() {
 
 function App() {
   return (
+    <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
     <Router>
       <>
+      {/* Barra de navegación */}
+       <NavBar />
         {/* Fondo animado mejorado */}
         <motion.div
           initial={{ backgroundPosition: "0% 50%" }}
@@ -63,8 +62,9 @@ function App() {
         />
         
         {/* Header mejorado */}
-        <Container 
+        {/* <Container 
           component="header" 
+        
           maxWidth={false} 
           sx={{
             background: 'linear-gradient(90deg, #2c3e50 0%, #4e54c8 100%)',
@@ -81,6 +81,7 @@ function App() {
             zIndex: 10,
             backdropFilter: 'blur(5px)',
             padding: '0 2rem'
+          
           }}
         >
           <Typography 
@@ -101,30 +102,31 @@ function App() {
               typeSpeed={70}
             />
           </Typography>
-        </Container>
+        </Container> */}
         
         {/* Main content container - añade espacio para el header */}
-        <Container 
-          maxWidth={false}
-          sx={{
-            padding: '2rem',
-            minHeight: '100vh',
-            paddingTop: '12vh', // Espacio para el header
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/ranking" element={<Ranking />} />
-            <Route path="/profile/:username" element={<UserProfile />} />
-          </Routes>
-        </Container>
+        <Box
+            sx={{
+              flexGrow: 1, // Hace que el contenido se expanda para llenar el espacio
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              pt: '10vh', // Espacio para el NavBar fijo
+              pb: '10vh', // Opcional para dejar espacio para un futuro footer
+            }}
+          >
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/game" element={<Game />} />
+                <Route path="/ranking" element={<Ranking />} />
+                <Route path="/profile/:username" element={<UserProfile />} />
+              </Routes>
+          </Box>
+          <Footer/>
       </>
     </Router>
+    </Box>
   );
 }
 
