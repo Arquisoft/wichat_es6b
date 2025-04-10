@@ -83,7 +83,7 @@ const Ranking = () => {
               <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>#</TableCell>
               <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Jugador</TableCell>
               <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Puntos</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Partidas</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Partidas Jugadas</TableCell>
               <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Eficiencia</TableCell>
             </TableRow>
           </TableHead>
