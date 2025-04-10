@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback  } from 'react';
 import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -15,7 +15,6 @@ const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000
 const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
 
 const Jugar = () => {
-  let maxTime = 40;
 
   const navigate = useNavigate();
   const [indice, setIndice] = useState(0);
@@ -23,7 +22,8 @@ const Jugar = () => {
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
   const [difficulty, setDifficulty] = useState('Fácil');
-  const [timeLeft, setTimeLeft] = useState(maxTime);
+  const [maxTime, setMaxTime] = useState(40); 
+  const [timeLeft, setTimeLeft] = useState(40);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,18 +40,34 @@ const Jugar = () => {
   const [chatInput, setChatInput] = useState("");
   const [chatLocked, setChatLocked] = useState(false);
 
-  const toggleDifficulty = () => {
-    setDifficulty(prevDifficulty => {
-      const newDifficulty = prevDifficulty === 'Fácil' ? 'Difícil' : 'Fácil';
-      if (newDifficulty === 'Fácil') {
-        maxTime = 40;
-      } else {
-        maxTime = 20;
-      }
-      setTimeLeft(maxTime);
-      return newDifficulty;
-    });
-  };
+  const updateDifficultyAndTime = useCallback((selectedDifficulty) => {
+    setDifficulty(selectedDifficulty);
+    switch (selectedDifficulty) {
+      case 'Fácil':
+        setMaxTime(40);
+        setTimeLeft(40);
+        break;
+      case 'Medio':
+        setMaxTime(30);
+        setTimeLeft(30);
+        break;
+      case 'Difícil':
+        setMaxTime(20);
+        setTimeLeft(20);
+        break;
+      default:
+        setMaxTime(40);
+        setTimeLeft(40);
+        break;
+    }
+  }, [setMaxTime, setTimeLeft, setDifficulty]);
+  
+  useEffect(() => {
+    const storedDifficulty = localStorage.getItem('gameDifficulty');
+    if (storedDifficulty) {
+      updateDifficultyAndTime(storedDifficulty);
+    }
+  }, [updateDifficultyAndTime]);
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
@@ -207,7 +223,7 @@ const Jugar = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [indice,questions,maxTime, gameFinished]);
+  }, [indice, questions, maxTime, gameFinished]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
@@ -478,9 +494,9 @@ const handleTimeout = () => {
 
         {/* Botón para cambiar la dificultad */}
         <Box sx={{ textAlign: 'center', mt: 3 }}>
-          <Button variant="contained" color="primary" onClick={toggleDifficulty}>
-           Dificultad: {difficulty}
-         </Button>
+          {/* Aquí iría el selector de dificultad */}
+          <Typography variant="h6">Dificultad Seleccionada: {difficulty}</Typography>
+          <Typography variant="body2">Tiempo por pregunta: {maxTime} segundos</Typography>
         </Box>
         
         {/* Nueva estructura: Grid para colocar imagen a la izquierda y preguntas a la derecha */}
