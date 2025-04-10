@@ -282,6 +282,7 @@ const handleTimeout = () => {
           question: q.pregunta,
           correct: q.userAnswer === q.respuesta_correcta,
           timeSpent: q.timeSpent || 0,
+          imageUrl: q.imagen // Añadimos la URL de la imagen
         })),
       };
   
