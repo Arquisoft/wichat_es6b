@@ -140,17 +140,25 @@ app.get('/rankings', async (req, res) => {
         $group: {
           _id: "$username",
           totalPoints: { $sum: "$points" },
+          totalGames: { $sum: 1 },
         },
       },
-      { $sort: { totalPoints: -1 } }, // Ordenar por puntos en orden descendente
-      { $limit: 10 }, // Limitar a los 10 mejores jugadores
       {
         $project: {
           _id: 0,
           username: "$_id",
           totalPoints: 1,
+          totalGames: 1,
+          efficiency: {
+            $multiply: [
+              { $divide: ["$totalPoints", { $multiply: ["$totalGames", 100] }] },
+              100
+            ]
+          }
         },
       },
+      { $sort: { totalPoints: -1 } },
+      { $limit: 10 },
     ]);
 
     res.json(ranking);
@@ -159,6 +167,7 @@ app.get('/rankings', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const server = app.listen(port, () => {

@@ -1,10 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, CircularProgress } from '@mui/material';
+
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
+const EfficiencyCircle = ({ value }) => {
+  return (
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <CircularProgress
+        variant="determinate"
+        value={value}
+        size={60}
+        thickness={4}
+        sx={{
+          color: (theme) => 
+            value < 30 ? theme.palette.error.main :
+            value < 70 ? theme.palette.warning.main :
+            theme.palette.success.main
+        }}
+      />
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography variant="caption" component="div" color="text.secondary">
+          {`${Math.round(value)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
 
 const Ranking = () => {
   const navigate = useNavigate();
@@ -46,8 +81,10 @@ const Ranking = () => {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#33779d" }}>
               <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>#</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Nombre del Jugador</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Jugador</TableCell>
               <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Puntos</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Partidas</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: "1.2rem" }}>Eficiencia</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -55,7 +92,13 @@ const Ranking = () => {
               <TableRow key={player.username}>
                 <TableCell sx={{ fontSize: "1.1rem", fontWeight: "bold" }}>{index + 1}</TableCell>
                 <TableCell sx={{ fontSize: "1.1rem" }}>{player.username}</TableCell>
-                <TableCell sx={{ fontSize: "1.1rem", fontWeight: "bold", color: "#d32f2f" }}>{player.totalPoints}</TableCell>
+                <TableCell sx={{ fontSize: "1.1rem", fontWeight: "bold", color: "#d32f2f" }}>
+                  {player.totalPoints}
+                </TableCell>
+                <TableCell sx={{ fontSize: "1.1rem" }}>{player.totalGames}</TableCell>
+                <TableCell>
+                  <EfficiencyCircle value={player.efficiency} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
