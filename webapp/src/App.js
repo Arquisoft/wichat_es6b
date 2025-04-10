@@ -17,6 +17,7 @@ import Game from './game/gameManager';
 import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
 import FlipCard from './components/FlipCard';
+import Settings from './components/GameSettings';
 import './App.css';
 
 
@@ -121,6 +122,7 @@ function App() {
             <Route path="/game" element={<Game />} />
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/profile/:username" element={<UserProfile />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </Container>
       </>
