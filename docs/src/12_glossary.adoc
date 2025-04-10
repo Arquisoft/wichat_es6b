@@ -44,3 +44,15 @@ endif::arc42help[]
 |Docker|Containers are isolated from one another and bundle their own software, libraries and configuration files; they can communicate with each other through well-defined channels. Because all of the containers share the services of a single operating system kernel, they use fewer resources than virtual machines.
 |SSH|The Secure Shell Protocol (SSH Protocol) is a cryptographic network protocol for operating network services securely over an unsecured network. Its most notable applications are remote login and command-line execution.
 |===
+
+== About the game
+
+[cols="e,2e" options="header"]
+|===
+|Term |Definition
+|Hint Chat - WiChat AI |The hint chat is referred to the chat where the players can comunicate with the LLM in order to get information about the correct answer
+|WiChat | WiChat is the name of the whole project and the application.
+|Ranking | The ranking page is referred to an online leaderboard of who got the most points overall.
+|Category | Although is not shown yet, categories are referred to the type of questions the game has. This can be expanded or filtered as needed.
+|Time | Each question has its own time of answering, that could be use in several game modes.
+|===

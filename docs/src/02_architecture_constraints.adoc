@@ -33,17 +33,27 @@ Constraints, like building codes, budgets, or client needs, must always be consi
 === Technical constraints
 |===
 |Constraint|Explanation
+|Javascript|The programming language of the project is Javascript, in order to take advantage of some of the frameworks available.
 |React|The use of React.js framefork for the frontend.
 |Node|The use of Node.js framework for the backend.
+|Express|A framework used by Node.js in order to make a structure for application witout a huge complexity.
 |MongoDB|The database will be MongoDb, a NoSQL database system.
 |Wikidata|It will be used to generate questions.
 |Github|All the shares information will be stored at the repo of the project.
+|LLM integration|As the system gives hints to the players, a way of comunicating with a LLM (Long Language Model) sush as Gemini or Mistral is needed.
+|Docker|In order to deploy all the services and make them accesible online, Docker will be used to ease and automate the deployment process.
+|APIs usage|Some of the services will work as an Application Programming Interface.
+|Time mangement|In order to have a complete experience while using the app, timeouts and timers are needed.
 |===
 === Organizational  constraints
 |===
 |Constraint|Explanation
 |P2P Review|Every branch for the development will have two roles, the developer and the reviewer, using one of the features of Github, Pull Requests.
+|Issues|As the project is held in Github, Github issues are the best way to track all the tasks that need to be done.
 |Meeting reports|Every time the development team have a meeting to discuss something related with the project.
+|Self reports|By the end of every sprint, each member has to open an issue to write down what they have done over the sprint, as well as the complications they have found while developing.
+|Timelines|As the project has a final deadline, evrything would be finished by May 5th and will not recieve any update after that day.
+|Azure budget cap|As deployment is a mandatory function of the final result, the team have to deal with the budget cap given by Azure as students.
 |===
 === Conventions
 |===

@@ -39,4 +39,154 @@ See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-Right now, we haven't started the implementation yet, so we are unable to define the runtime view. As the project progresses, we will include all the necessary diagrams and information in this section.
+=== User Registration
+[plantuml, registration, png]
+----
+actor User
+participant App
+participant Gateway
+participant UserService
+database DBuser
+
+User -> App: Selects registration option
+User <-- App: Displays registration screen
+User -> App: Enters registration data
+App -> Gateway: Sends data
+Gateway -> UserService: Sends data
+UserService -> UserService: Validates data
+
+alt valid user
+    UserService -> DBuser: Saves registration data
+    UserService <-- DBuser: Confirms registration
+    Gateway <-- UserService: Confirms registration
+    App <-- Gateway: Confirms registration
+    User <-- App: Confirms registration
+else invalid user
+    Gateway <-- UserService: Denies registration
+    App <-- Gateway: Denies registration
+    User <-- App: Denies registration
+end
+----
+
+=== User Login
+[plantuml, login, png]
+----
+actor User
+participant App
+participant Gateway
+participant AuthService
+database DBuser
+
+User -> App: Enters credentials
+App -> Gateway: Sends data
+Gateway -> AuthService: Sends data
+AuthService -> DBuser: Validates data
+
+alt valid user
+    AuthService <-- DBuser: Confirms login
+    Gateway <-- AuthService: Confirms login
+    App <-- Gateway: Confirms login
+    User <-- App: Confirms login
+else invalid user
+    AuthService <-- DBuser: Denies login
+    Gateway <-- AuthService: Denies login
+    App <-- Gateway: Denies login
+    User <-- App: Denies login
+end
+----
+
+=== Question Generation
+[plantuml, question_generation, png]
+----
+database DBquestions
+participant CreateService
+participant Gateway
+participant QuestionGeneratorService
+database DBquestiongenerator
+
+loop every 60 seconds
+    CreateService -> DBquestions: Requests question template
+    CreateService <-- DBquestions: Returns question template
+    CreateService -> CreateService: Generates a question
+    Gateway <-- CreateService: Sends generated question
+    Gateway -> QuestionGeneratorService: Sends generated question
+    QuestionGeneratorService -> DBquestiongenerator: Saves generated question
+    alt more than 500 questions generated
+        DBquestiongenerator -> DBquestiongenerator: Deletes the oldest question
+    else existing question
+        DBquestiongenerator -> DBquestiongenerator: Updates the question
+    end
+end
+----
+
+=== Answering a Question
+[plantuml, question_response, png]
+----
+actor User
+participant App
+participant Gateway
+participant GeneratedQuestionService
+database DBquestions
+participant QuestionGeneratorService
+database DBquestiongenerator
+participant RecordService
+database DBrecords
+
+User -> App: Requests a question
+App -> Gateway: Requests a question
+Gateway -> QuestionGeneratorService: Requests a question
+QuestionGeneratorService -> DBquestiongenerator: Requests a question
+QuestionGeneratorService <-- DBquestiongenerator: Returns a generated question
+Gateway <-- QuestionGeneratorService: Returns a generated question
+App <-- Gateway: Returns a generated question
+User <-- App: Displays question with options
+Gateway -> GeneratedQuestionService: Sends the generated question
+GeneratedQuestionService -> DBquestions: Saves the generated question
+
+alt time not expired
+    User -> App: Selects an answer option
+    App -> App: Verifies selected answer
+    alt correct answer
+        alt last question
+            User <-- App: Displays correct answer message and ends the game
+            App -> RecordService: Sends game data
+            RecordService -> DBrecords: Saves game data
+            User <-- App: Displays game data
+        else not the last question
+            User <-- App: Displays correct answer message and continues the game
+        end
+    else incorrect answer
+        alt last question
+            User <-- App: Displays incorrect answer message and ends the game
+            App -> RecordService: Sends game data
+            RecordService -> DBrecords: Saves game data
+            User <-- App: Displays game data
+        else not the last question
+            User <-- App: Displays incorrect answer message and continues the game
+        end
+    end
+else time expired
+    App -> RecordService: Sends game data
+    RecordService -> DBrecords: Saves game data
+    User <-- App: Displays game data
+end
+----
+
+=== Ranking Query
+[plantuml, ranking, png]
+----
+actor User
+participant App
+participant Gateway
+participant RankingService
+database DBranking
+
+User -> App: Selects ranking option
+App -> Gateway: Requests ranking
+Gateway -> RankingService: Requests ranking
+RankingService -> DBranking: Requests all rankings
+RankingService <-- DBranking: Returns all rankings
+Gateway <-- RankingService: Returns all rankings
+App <-- Gateway: Returns all rankings
+User <-- App: Displays ranking
+----
