@@ -19,12 +19,17 @@ const Settings = () => {
     const selectedOption = difficultyOptions.find(opt => opt.name === selectedDifficulty);
     if (selectedOption) {
       console.log(`Dificultad seleccionada: ${selectedOption.name} (${selectedOption.time} segundos)`);
-      // Aquí implementarías la lógica para aplicar la dificultad y el tiempo
+      localStorage.setItem('gameDifficulty', selectedDifficulty); // Guarda la dificultad en localStorage al cambiar
     }
   }, []);
 
   const handleGoBack = () => {
     navigate('/');
+  };
+
+  const handleSaveAndPlay = () => {
+    localStorage.setItem('gameDifficulty', difficulty); // Asegura que la dificultad actual se guarde
+    navigate('/game');
   };
 
   return (
@@ -51,14 +56,6 @@ const Settings = () => {
             fontWeight: 600,
             color: '#333',
             textAlign: 'center',
-          },
-          '& .go-back-button': {
-            marginTop: '2rem',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: '#5a6268',
-            },
           },
         }}
       >
@@ -92,11 +89,11 @@ const Settings = () => {
           <Button variant="contained" onClick={handleGoBack} className="go-back-button">
             Guardar y salir
           </Button>
-          <Button variant="contained" color="secondary" onClick={() => navigate('/game')}>
+          <Button variant="contained" color="secondary" onClick={handleSaveAndPlay}>
             Guardar y jugar
           </Button>
         </Box>
-        
+
       </Box>
     </Box>
   );
