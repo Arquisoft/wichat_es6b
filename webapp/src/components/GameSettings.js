@@ -66,6 +66,10 @@ const Settings = () => {
           Configuraciones
         </Typography>
 
+        <Typography variant="h6" gutterBottom align="left">
+          Nivel de dificultad:
+        </Typography>
+
         <div className="selector">
           {difficultyOptions.map((option) => (
             <div
@@ -78,9 +82,21 @@ const Settings = () => {
           ))}
         </div>
 
-        <Button variant="contained" onClick={handleGoBack} className="go-back-button">
-          Volver atrás
-        </Button>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '2rem',
+          }}
+        >
+          <Button variant="contained" onClick={handleGoBack} className="go-back-button">
+            Guardar y salir
+          </Button>
+          <Button variant="contained" color="secondary" onClick={() => navigate('/game')}>
+            Guardar y jugar
+          </Button>
+        </Box>
+        
       </Box>
     </Box>
   );
