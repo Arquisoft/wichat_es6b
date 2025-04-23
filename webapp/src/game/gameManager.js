@@ -33,6 +33,7 @@ const Jugar = () => {
   const [loadingHint, setLoadingHint] = useState(false);
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+  const preguntaActual = questions[indice] || { opciones: [], respuesta_correcta: null, userAnswer: null, answered: false };
 
 	// Chat functionality
   const [chatMessages, setChatMessages] = useState([]);
@@ -193,7 +194,7 @@ const Jugar = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [indice,questions]);
+  }, [indice,questions.length]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
@@ -223,22 +224,23 @@ const Jugar = () => {
     }
   
     // Avanzar a la siguiente pregunta o finalizar
+    setTimeout(() => {
     if (indice < questions.length - 1) {
       setIndice(indice + 1);
       setQuestionStartTime(Date.now());
-      setScore(updatedScore); // Actualizar el estado del puntaje
+      setScore(updatedScore); // Actualizar puntuacion
     } else {
-      finishGame(updatedScore); // Pasar el puntaje actualizado a finishGame
+      finishGame(updatedScore); // Puntuacion final
     }
-  };
+  }, 1000); // 1 segundo de espera para mostrar colores
+};
 
 //marca pregunta como fallida si se acaba el tiempo
 const handleTimeout = () => {
-  setShowTimeoutMessage(true); // Mostrar mensaje
+  setShowTimeoutMessage(true);
 
   setTimeout(() => {
-    setShowTimeoutMessage(false); // Ocultar mensaje tras 1.5s
-
+    setShowTimeoutMessage(false);
     clearChat();
 
     const updatedQuestions = [...questions];
@@ -250,13 +252,17 @@ const handleTimeout = () => {
     };
     setQuestions(updatedQuestions);
 
+    // No suma puntos si no responde
+    const updatedScore = score;
+
     if (indice < questions.length - 1) {
       setIndice(indice + 1);
       setQuestionStartTime(Date.now());
+      setScore(updatedScore); // <-- asegura que el score se actualiza
     } else {
-      finishGame();
+      finishGame(updatedScore); // <-- pasa el score final
     }
-  }, 1500); // Mantiene el mensaje visible 1.5 segundos antes de cambiar
+  }, 1500);
 };
 
 
@@ -298,17 +304,6 @@ const handleTimeout = () => {
     }
   };
   
-  const handleSiguiente = () => {
-    if (indice < questions.length - 1) {
-      setIndice(indice + 1);
-    }
-  };
-
-  const handleAnterior = () => {
-    if (indice > 0) {
-      setIndice(indice - 1);
-    }
-  };
   
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -346,234 +341,252 @@ const handleTimeout = () => {
           +10 
         </motion.div>
       )}
+
     
-      {/* Chat con burbujas en blanco y negro */}
+      {/* Contenedor principal */}
+<Box
+  sx={{
+    width: "80vw",
+    height: "70vh",
+    maxwidth: "80vw",
+    maxheight: "70vh",
+    overflow: "hidden",
+    overflowX: "hidden",
+    overflowY: "hidden",
+    margin: "0 auto",
+    marginTop: 12,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 2,
+    padding: 4,
+    boxShadow: 3,
+    display: "flex",
+    flexDirection: "column",
+  }}
+>
+  <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
+    Pregunta {indice + 1} de {questions.length}
+  </Typography>
+
+  <Box sx={{ textAlign: "right", mb: 2 }}>
+    <Typography variant="h6">Puntuación: {score}</Typography>
+    <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
+  </Box>
+
+  {/* Nueva estructura: Flexbox para organizar chat, imagen y preguntas */}
+  <Box sx={{ display: "flex", gap: 3, flexGrow: 1 }}>
+    {/* Chat (izquierda) */}
+    <Box
+      sx={{
+        flex: "0 0 20vw",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#fff",
+        borderRadius: 2,
+        boxShadow: 1,
+        overflow: "hidden",
+      }}
+    >
       <Box
         sx={{
-          position: 'fixed',
-          top: '20%',
-          left: 0,
-          width: 300,
-          height: '70%',
-          backgroundColor: '#fff', // Fondo blanco
-          border: '1px solid #ccc',
-          borderRadius: 2,
-          boxShadow: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          zIndex: 10,
+          backgroundColor: "#f0f0f0",
+          padding: 1,
+          textAlign: "center",
+          borderBottom: "1px solid #ccc",
         }}
       >
-        <Box
-          sx={{
-            backgroundColor: '#f0f0f0', // Encabezado gris claro
-            padding: 1,
-            textAlign: 'center',
-            borderBottom: '1px solid #ccc',
-          }}
-        >
-          <Typography variant="h6">WiChat AI</Typography>
-        </Box>
-
-        <Paper
-          sx={{
-            flexGrow: 1,
-            overflowY: 'auto',
-            padding: 2,
-            backgroundColor: '#fff', // Fondo blanco para mensajes
-          }}
-        >
-          {chatMessages.map((msg, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: 'flex',
-                justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                marginY: 1,
-              }}
-            >
-              <Typography
-                sx={{
-                  maxWidth: '70%',
-                  padding: 1,
-                  borderRadius: 10,
-                  backgroundColor: '#f9f9f9',
-                  color: '#000',
-                  textAlign: 'left',
-                  boxShadow: 1,
-                }}
-              >
-                <strong>{msg.sender === 'user' ? 'Tú:' : 'WiChat AI:'}</strong> {msg.text}
-              </Typography>
-            </Box>
-          ))}
-        </Paper>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: 1,
-            backgroundColor: '#f0f0f0', // Fondo gris claro para entrada de texto
-            borderTop: '1px solid #ccc',
-          }}
-        >
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Escribe un mensaje..."
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
-            sx={{
-              backgroundColor: '#fff', // Fondo blanco para la caja de texto
-              borderRadius: 10,
-              marginRight: 1,
-            }}
-          />
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#000', // Botón negro
-              color: '#fff', // Texto blanco
-              borderRadius: 10,
-              '&:hover': {
-                backgroundColor: '#333',
-              },
-            }}
-            onClick={handleChatSubmit}
-            disabled={chatLocked} // Desactiva el botón si el chat está bloqueado
-          >
-            Enviar
-          </Button>
-        </Box>
+        <Typography variant="h6">WiChat AI</Typography>
       </Box>
 
-
-  
-      {/* Contenedor principal */}
-      <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
-        <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-          Pregunta {indice + 1} de {questions.length}
-        </Typography>
-        
-        <Box sx={{ textAlign: 'right', mb: 2 }}>
-          <Typography variant="h6">
-            Puntuación: {score}
-          </Typography>
-          <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
-        </Box>
-        
-        {/* Nueva estructura: Grid para colocar imagen a la izquierda y preguntas a la derecha */}
-        <Grid container spacing={3}>
-          {/* Imagen de la pregunta (izquierda) */}
-          <Grid item xs={12} md={4}>
-            {questions[indice].imagen ? (
-              <Paper sx={{ 
-                padding: 2, 
-                textAlign: "center", 
-                height: "100%", 
-                minHeight: 300, 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center" 
+      <Paper
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          padding: 2,
+          backgroundColor: "#fff",
+        }}
+      >
+        {chatMessages.map((msg, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: "flex",
+              justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
+              marginY: 1,
+            }}
+          >
+            <Typography
+              sx={{
+                maxWidth: "70%",
+                padding: 1,
+                borderRadius: 10,
+                backgroundColor: "#f9f9f9",
+                color: "#000",
+                textAlign: "left",
+                boxShadow: 1,
               }}
             >
-                <img 
-                  src={questions[indice].imagen} 
-                  alt="Pregunta" 
-                  style={{ 
-                    maxHeight: 250, 
-                    maxWidth: "100%", 
-                    objectFit: "contain" 
-                  }}  
-                />
-              </Paper>
-            ) : (
-              <Paper sx={{ padding: 2, textAlign: "center", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Typography variant="body1" color="textSecondary">
-                  No hay imagen para esta pregunta
-                </Typography>
-              </Paper>
-            )}
-          </Grid>
-          
-          {/* Pregunta y opciones (derecha) */}
-          <Grid item xs={12} md={8}>
-            <Paper sx={{ padding: 3, position: "relative" }}>
-              <Typography variant="h5" align="center" gutterBottom>
-                {questions[indice].pregunta}
-              </Typography>
-              
-              
-      
-              {/* Opciones de respuesta */}
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 2 }}>
-        {questions[indice].opciones.map((opcion, i) => (
-          <Button 
+              <strong>{msg.sender === "user" ? "Tú:" : "WiChat AI:"}</strong> {msg.text}
+            </Typography>
+          </Box>
+        ))}
+      </Paper>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          padding: 1,
+          backgroundColor: "#f0f0f0",
+          borderTop: "1px solid #ccc",
+        }}
+      >
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Escribe un mensaje..."
+          value={chatInput}
+          onChange={(e) => setChatInput(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && handleChatSubmit()}
+          sx={{
+            backgroundColor: "#fff",
+            borderRadius: 10,
+            marginRight: 1,
+          }}
+        />
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: "#000",
+            color: "#fff",
+            borderRadius: 10,
+            "&:hover": {
+              backgroundColor: "#333",
+            },
+          }}
+          onClick={handleChatSubmit}
+          disabled={chatLocked}
+        >
+          Enviar
+        </Button>
+      </Box>
+    </Box>
+
+ {/* Imagen de la pregunta (centro) */}
+<Container
+  sx={{
+    width: "40vw",
+    maxWidth: 500,
+    height: "100%",
+    maxHeight: "60vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    borderRadius: 2,
+    boxShadow: 1,
+    overflow: "hidden",
+    flexShrink: 0, // <-- evita que el chat se haga pequeño
+  }}
+>
+  {questions[indice].imagen ? (
+    <Box
+      component="img"
+      src={questions[indice].imagen}
+      alt="Pregunta"
+      sx={{
+        width: "100%",
+        height: "100%",
+        objectFit: "contain",
+      }}
+    />
+  ) : (
+    <Typography variant="body1" color="textSecondary">
+      No hay imagen para esta pregunta
+    </Typography>
+  )}
+</Container>
+    {/* Pregunta y opciones (derecha) */}
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#fff",
+        borderRadius: 2,
+        boxShadow: 1,
+        padding: 3,
+        overflow: "hidden",
+      }}
+    >
+      <Typography variant="h5" align="center" gutterBottom>
+        {questions[indice].pregunta}
+      </Typography>
+
+      {/* Opciones de respuesta */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 2 }}>
+        {preguntaActual.opciones.map((opcion, i) => (
+          <Button
             key={i}
-            variant="contained" 
-            fullWidth 
-            sx={{ 
-              fontSize: "1rem", 
+            variant="contained"
+            fullWidth
+            sx={{
+              fontSize: "1rem",
               padding: 2,
-              backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
-                ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
-                : undefined
+              bgcolor: 'primary.main', 
+              color: 'white', 
+              
+              // Estilos específicos para CUANDO LA PREGUNTA HA SIDO RESPONDIDA (y por tanto, el botón está disabled)
+              '&.Mui-disabled': { // <-- Sobrescribir estilos cuando está deshabilitado
+                bgcolor: 
+                  i === preguntaActual.respuesta_correcta
+                    ? "success.main" // Verde si correcta
+                    : i === preguntaActual.userAnswer
+                      ? "error.main" // Rojo si seleccionada incorrecta
+                      : 'grey.300', // Gris si otra opción (y respondida)
+                
+                // Ajustar el color del texto para que sea legible sobre los fondos
+                color: 
+                  (i === preguntaActual.respuesta_correcta || i === preguntaActual.userAnswer)
+                    ? 'white' // Texto blanco para verde/rojo
+                    : 'rgba(0, 0, 0, 0.5)', // Texto más oscuro/grisáceo para el fondo gris claro
+                
+                border: (i === preguntaActual.respuesta_correcta || i === preguntaActual.userAnswer) 
+                        ? '2px solid #222' // Aplicar borde si es relevante y está deshabilitado
+                        : ''
+              },
             }}
-            onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
-            disabled={questions[indice].answered || timeLeft === 0}
+            onClick={() => !preguntaActual.answered && handleAnswerSelect(i)}
+            disabled={preguntaActual.answered || timeLeft === 0}
           >
             {opcion}
           </Button>
         ))}
       </Box>
-    </Paper>
-  </Grid>
-</Grid>
-  
-        {gameFinished ? (
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Typography variant="h4">¡Juego terminado!</Typography>
-            <Typography variant="h5">Puntuación final: {score}</Typography>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              sx={{ mt: 2 }}
-              onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
-            >
-              Ver mi historial
-            </Button>
-          </Box>
-        ) : (
-          <Box display="flex" justifyContent="space-between" mt={3}>
-            <Button 
-              variant="contained" 
-              color="secondary" 
-              onClick={handleAnterior} 
-              disabled={indice === 0 || questions[indice].answered}
-            >
-              Anterior Pregunta
-            </Button>
-            
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={handleSiguiente} 
-              disabled={indice === questions.length - 1 || questions[indice].answered}
-            >
-              Siguiente Pregunta
-            </Button>
-          </Box>
-        )}
-        
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          message={snackbarMessage}
-        />
-      </Container>
+    </Box>
+  </Box>
+
+  {gameFinished ? (
+    <Box sx={{ textAlign: "center", mt: 4 }}>
+      <Typography variant="h4">¡Juego terminado!</Typography>
+      <Typography variant="h5">Puntuación final: {score}</Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ mt: 2 }}
+        onClick={() => navigate(`/profile/${localStorage.getItem("username")}`)}
+      >
+        Ver mi historial
+      </Button>
+    </Box>
+  ) : null}
+
+  <Snackbar
+    open={snackbarOpen}
+    autoHideDuration={6000}
+    onClose={handleCloseSnackbar}
+    message={snackbarMessage}
+  />
+</Box>
     </>
   );
   

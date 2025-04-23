@@ -64,8 +64,6 @@ class Game {
 }
 
 
-
-
   checkAnswer(questionIndex, selectedOption) {
     if (this.questions[questionIndex] && this.questions[questionIndex].respuesta_correcta === selectedOption) {
       this.score += 10;

@@ -17,7 +17,8 @@ function NavBar() {
   // List of site pages for the menu
   const pages = [
     { path: '/game', text: "Jugar" },
-    { path: '/ranking', text: "Ranking" }
+    { path: '/ranking', text: "Ranking" },
+
   ];
 
   const logo = (
@@ -38,7 +39,7 @@ function NavBar() {
                 <Button
                   component={Link}
                   size="large"
-                  to={page.path === '/statistics' ? `/statistics/${username}` : page.path}
+                  to={page.path === '/stats' ? `/stats/${username}` : page.path}
                   key={page.path}
                   sx={{ color: 'white', '&:hover': { backgroundColor: '#5f7e94' } }}
                 >

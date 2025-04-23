@@ -46,13 +46,14 @@ function App() {
        <NavBar />
         {/* Fondo animado mejorado */}
         <motion.div
+          tabIndex={-1}
           initial={{ backgroundPosition: "0% 50%" }}
           animate={{ backgroundPosition: "100% 50%" }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
           style={{
             position: "fixed",
-            width: "100vw",
-            height: "100vh",
+            width: "100%",
+            height: "100%",
             top: 0,
             left: 0,
             zIndex: -1,
@@ -60,49 +61,6 @@ function App() {
             backgroundSize: "400% 400%",
           }}
         />
-        
-        {/* Header mejorado */}
-        {/* <Container 
-          component="header" 
-        
-          maxWidth={false} 
-          sx={{
-            background: 'linear-gradient(90deg, #2c3e50 0%, #4e54c8 100%)',
-            margin: 0,
-            height: "10vh",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-            zIndex: 10,
-            backdropFilter: 'blur(5px)',
-            padding: '0 2rem'
-          
-          }}
-        >
-          <Typography 
-            component="h1" 
-            variant="h4" 
-            align="center" 
-            sx={{ 
-              fontWeight: 700,
-              color: 'white',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-              letterSpacing: '0.5px'
-            }}
-          >
-            <Typewriter 
-              words={["Welcome to the 2025 edition of the Wichat game"]} 
-              cursor 
-              cursorStyle="|" 
-              typeSpeed={70}
-            />
-          </Typography>
-        </Container> */}
         
         {/* Main content container - añade espacio para el header */}
         <Box
@@ -112,8 +70,8 @@ function App() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              pt: '10vh', // Espacio para el NavBar fijo
-              pb: '10vh', // Opcional para dejar espacio para un futuro footer
+              pt: '10vh', // Espacio para el NavBar 
+              pb: '10vh',  //Espacio para el footer
             }}
           >
               <Routes>
