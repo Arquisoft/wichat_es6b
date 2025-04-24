@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -34,8 +34,10 @@ const Jugar = () => {
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const preguntaActual = questions[indice] || { opciones: [], respuesta_correcta: null, userAnswer: null, answered: false };
-
-	// Chat functionality
+  const timerRef = useRef(null);
+  const [loadingQuestion, setLoadingQuestion] = useState(false);
+  
+  // Chat functionality
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLocked, setChatLocked] = useState(false);
@@ -182,10 +184,10 @@ const Jugar = () => {
 
     setTimeLeft(maxTime);
 
-    const timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
-        if (prevTime === 1) {
-          clearInterval(timer);
+        if (prevTime <= 1) {
+          clearInterval(timerRef.current);
           handleTimeout();
           return 0;
         }
@@ -193,11 +195,12 @@ const Jugar = () => {
       });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [indice,questions.length]);
+     return () => clearInterval(timerRef.current);
+  }, [indice, questions.length]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
+    clearInterval(timerRef.current); //Detener contador
     const now = Date.now();
     const timeSpent = (now - questionStartTime) / 1000; // tiempo en segundos
   
@@ -232,7 +235,7 @@ const Jugar = () => {
     } else {
       finishGame(updatedScore); // Puntuacion final
     }
-  }, 1000); // 1 segundo de espera para mostrar colores
+  }, 3000); // 3 segundos de espera para mostrar colores
 };
 
 //marca pregunta como fallida si se acaba el tiempo
@@ -258,11 +261,11 @@ const handleTimeout = () => {
     if (indice < questions.length - 1) {
       setIndice(indice + 1);
       setQuestionStartTime(Date.now());
-      setScore(updatedScore); // <-- asegura que el score se actualiza
+      setScore(updatedScore); // asegura que el score se actualiza
     } else {
-      finishGame(updatedScore); // <-- pasa el score final
+      finishGame(updatedScore); //  pasa el score final
     }
-  }, 1500);
+  }, 3000);
 };
 
 
@@ -309,8 +312,17 @@ const handleTimeout = () => {
     setSnackbarOpen(false);
   };
 
-  if (!questions.length) {
-    return <LoadingProgressBar />;
+  if (!questions.length || (!questions[indice] && !gameFinished && indice < questions.length - 1)) {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h6" gutterBottom>
+          Cargando preguntas...
+        </Typography>
+        <Box className="progress-container">
+          <div className="progress-bar"></div>
+        </Box>
+      </Container>
+    );
   }
 
   return (
@@ -341,28 +353,79 @@ const handleTimeout = () => {
           +10 
         </motion.div>
       )}
-
-    
-      {/* Contenedor principal */}
-<Box
-  sx={{
-    width: "80vw",
-    height: "70vh",
-    maxwidth: "80vw",
-    maxheight: "70vh",
-    overflow: "hidden",
-    overflowX: "hidden",
-    overflowY: "hidden",
-    margin: "0 auto",
-    marginTop: 12,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 2,
-    padding: 4,
-    boxShadow: 3,
-    display: "flex",
-    flexDirection: "column",
-  }}
->
+      
+    {/* Mostrar solo el bloque final si el juego terminó */}
+    {gameFinished ? (
+      <Box
+        sx={{
+          width: "50vw",
+          height: "50vh",
+          minHeight: "100vh",
+          minWidth: "100vw",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          background: "#f0f0f0",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1.1 }}
+          transition={{ duration: 2, type: "spring" }}
+          style={{
+            width: "40vw",
+            maxWidth: "90vw",
+            background: "#fff",
+            borderRadius: 16,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+            padding: 40,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h4" gutterBottom>¡Juego terminado!</Typography>
+          <Typography variant="h5" gutterBottom>Puntuación final: {score}</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, mr: 2 }}
+            onClick={() => navigate(`/profile/${localStorage.getItem("username")}`)}
+          >
+            Ver mi historial
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={() => window.location.reload()}
+          >
+            Volver a jugar
+          </Button>
+        </motion.div>
+      </Box>
+) : (
+  // Contenedor principal
+  <Box
+    sx={{
+      width: "80vw",
+      height: "70vh",
+      maxWidth: "80vw",
+      maxHeight: "70vh",
+      overflow: "auto", 
+      margin: "0 auto",
+      marginTop: 12,
+      backgroundColor: "#f0f0f0",
+      borderRadius: 2,
+      padding: 4,
+      boxShadow: 3,
+      display: "flex",
+      flexDirection: "column",
+      gap: 2, 
+    }}
+  >
   <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
     Pregunta {indice + 1} de {questions.length}
   </Typography>
@@ -402,7 +465,7 @@ const handleTimeout = () => {
           flexGrow: 1,
           overflowY: "auto",
           padding: 2,
-          backgroundColor: "#fff",
+          minHeight: 0, // <-- evita expansión forzada
         }}
       >
         {chatMessages.map((msg, index) => (
@@ -472,12 +535,11 @@ const handleTimeout = () => {
     </Box>
 
  {/* Imagen de la pregunta (centro) */}
-<Container
+ <Container
   sx={{
     width: "40vw",
-    maxWidth: 500,
-    height: "100%",
-    maxHeight: "60vh",
+    maxWidth: "40vw",
+    height: "50vh", 
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -485,25 +547,39 @@ const handleTimeout = () => {
     borderRadius: 2,
     boxShadow: 1,
     overflow: "hidden",
-    flexShrink: 0, // <-- evita que el chat se haga pequeño
+    flexShrink: 0,
+    mb: 2,
   }}
 >
-  {questions[indice].imagen ? (
-    <Box
-      component="img"
-      src={questions[indice].imagen}
-      alt="Pregunta"
-      sx={{
-        width: "100%",
-        height: "100%",
-        objectFit: "contain",
-      }}
-    />
-  ) : (
-    <Typography variant="body1" color="textSecondary">
-      No hay imagen para esta pregunta
-    </Typography>
-  )}
+  <Box
+    sx={{
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+    }}
+  >
+    {questions[indice].imagen ? (
+      <img
+        src={questions[indice].imagen}
+        alt="Pregunta"
+        style={{
+          maxWidth: "100%",
+          maxHeight: "100%",
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          display: "block",
+        }}
+      />
+    ) : (
+      <Typography variant="body1" color="textSecondary">
+        No hay imagen para esta pregunta
+      </Typography>
+    )}
+  </Box>
 </Container>
     {/* Pregunta y opciones (derecha) */}
     <Box
@@ -565,20 +641,6 @@ const handleTimeout = () => {
     </Box>
   </Box>
 
-  {gameFinished ? (
-    <Box sx={{ textAlign: "center", mt: 4 }}>
-      <Typography variant="h4">¡Juego terminado!</Typography>
-      <Typography variant="h5">Puntuación final: {score}</Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ mt: 2 }}
-        onClick={() => navigate(`/profile/${localStorage.getItem("username")}`)}
-      >
-        Ver mi historial
-      </Button>
-    </Box>
-  ) : null}
 
   <Snackbar
     open={snackbarOpen}
@@ -587,9 +649,10 @@ const handleTimeout = () => {
     message={snackbarMessage}
   />
 </Box>
+)}
+    {/* Cargando preguntas */}
     </>
   );
-  
 };
 
 export default Jugar;

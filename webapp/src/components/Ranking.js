@@ -9,7 +9,7 @@ const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000
 const EfficiencyCircle = ({ value }) => {
   return (
     <Box sx={{ position: 'relative', display: 'inline-flex', overflowX: "hidden",
-          overflowY: "hidden",}}>
+          overflowY: "hidden"}}>
       <CircularProgress
         variant="determinate"
         value={value}

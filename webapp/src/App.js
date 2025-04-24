@@ -70,8 +70,10 @@ function App() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              pt: '10vh', // Espacio para el NavBar 
-              pb: '10vh',  //Espacio para el footer
+              maxHeight: '100vh',
+              overflow: 'auto',
+              // pt: '10vh', // Espacio para el NavBar 
+              // pb: '10vh',  //Espacio para el footer
             }}
           >
               <Routes>
