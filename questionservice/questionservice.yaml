@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  title: Question Generation API
+  description: API para generar preguntas interactivas basadas en consultas a WikiData
+  version: "1.0.0"
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://app.swaggerhub.com/apis/asw-60f/questions-api/1.0.0'
+  - description: Development server
+    url: http://localhost:8010
+paths:
+  /generateQuestion:
+    get:
+      summary: Generar una nueva pregunta de trivia.
+      operationId: generateQuestion
+      parameters:
+        - name: language
+          in: query
+          description: Idioma de la pregunta (por defecto 'es').
+          required: false
+          schema:
+            type: string
+            example: es
+        - name: thematic
+          in: query
+          description: Categoría temática de la pregunta.
+          required: false
+          schema:
+            type: string
+            example: Geografia
+      responses:
+        '200':
+          description: Devuelve una nueva pregunta con opciones de respuesta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseQuestion:
+                    type: string
+                    description: Pregunta generada.
+                    example: ¿Cuál es la capital de Francia?
+                  responseOptions:
+                    type: array
+                    items:
+                      type: string
+                    description: Opciones de respuesta.
+                    example: ["Madrid", "París", "Londres", "Berlín"]
+                  responseCorrectOption:
+                    type: string
+                    description: Respuesta correcta.
+                    example: París
+                  responseImage:
+                    type: string
+                    description: URL de la imagen relacionada con la pregunta.
+                    example: https://example.com/image.jpg
+        '400':
+          description: Error al generar la pregunta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Información del error.
+                    example: No hay preguntas disponibles.
+  /nextQuestion:
+    get:
+      summary: Generar la siguiente pregunta en una sesión de juego.
+      operationId: nextQuestion
+      parameters:
+        - name: language
+          in: query
+          description: Idioma de la pregunta (por defecto 'es').
+          required: false
+          schema:
+            type: string
+            example: es
+        - name: thematic
+          in: query
+          description: Categoría temática de la pregunta.
+          required: false
+          schema:
+            type: string
+            example: Cultura
+      responses:
+        '200':
+          description: Devuelve la siguiente pregunta en la secuencia.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseQuestion:
+                    type: string
+                    description: Pregunta generada.
+                    example: ¿Quién escribió "Cien años de soledad"?
+                  responseOptions:
+                    type: array
+                    items:
+                      type: string
+                    description: Opciones de respuesta.
+                    example: ["Gabriel García Márquez", "Mario Vargas Llosa", "Pablo Neruda", "Julio Cortázar"]
+                  responseCorrectOption:
+                    type: string
+                    description: Respuesta correcta.
+                    example: Gabriel García Márquez
+                  responseImage:
+                    type: string
+                    description: URL de la imagen relacionada con la pregunta.
+                    example: https://example.com/image2.jpg
+        '400':
+          description: Error al generar la pregunta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Información del error.
+                    example: No hay más preguntas disponibles.

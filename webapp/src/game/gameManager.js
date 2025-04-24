@@ -312,6 +312,7 @@ const handleTimeout = () => {
           question: q.pregunta,
           correct: q.userAnswer === q.respuesta_correcta,
           timeSpent: q.timeSpent || 0,
+          imageUrl: q.imagen // Añadimos la URL de la imagen
         })),
       };
   
@@ -357,6 +358,7 @@ const handleTimeout = () => {
           exit={{ opacity: 0, scale: 0.5 }}
           transition={{ duration: 0.5 }}
           className="timeout-message"
+          
         >
           ⏳ ¡Tiempo Agotado!
         </motion.div>
@@ -504,11 +506,24 @@ const handleTimeout = () => {
           {/* Imagen de la pregunta (izquierda) */}
           <Grid item xs={12} md={4}>
             {questions[indice].imagen ? (
-              <Paper sx={{ padding: 2, textAlign: "center", height: "100%" }}>
+              <Paper sx={{ 
+                padding: 2, 
+                textAlign: "center", 
+                height: "100%", 
+                minHeight: 300, 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center" 
+              }}
+            >
                 <img 
                   src={questions[indice].imagen} 
                   alt="Pregunta" 
-                  style={{ maxHeight: 300, width: "100%", objectFit: "contain" }} 
+                  style={{ 
+                    maxHeight: 250, 
+                    maxWidth: "100%", 
+                    objectFit: "contain" 
+                  }}  
                 />
               </Paper>
             ) : (
@@ -530,30 +545,29 @@ const handleTimeout = () => {
               
       
               {/* Opciones de respuesta */}
-              <Grid container spacing={1} sx={{ marginTop: 2 }}>
-                {questions[indice].opciones.map((opcion, i) => (
-                  <Grid item xs={12} key={i}>
-                    <Button 
-                      variant="contained" 
-                      fullWidth 
-                      sx={{ 
-                        fontSize: "1rem", 
-                        padding: 2,
-                        backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
-                          ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
-                          : undefined
-                      }}
-                      onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
-                      disabled={questions[indice].answered || timeLeft === 0}
-                    >
-                      {opcion}
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
-          </Grid>
-        </Grid>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 2 }}>
+        {questions[indice].opciones.map((opcion, i) => (
+          <Button 
+            key={i}
+            variant="contained" 
+            fullWidth 
+            sx={{ 
+              fontSize: "1rem", 
+              padding: 2,
+              backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
+                ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
+                : undefined
+            }}
+            onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
+            disabled={questions[indice].answered || timeLeft === 0}
+          >
+            {opcion}
+          </Button>
+        ))}
+      </Box>
+    </Paper>
+  </Grid>
+</Grid>
   
         {gameFinished ? (
           <Box sx={{ textAlign: 'center', mt: 4 }}>

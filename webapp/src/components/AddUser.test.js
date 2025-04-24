@@ -3,6 +3,8 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import AddUser from './AddUser';
+import { MemoryRouter } from 'react-router-dom';
+import { SessionContext } from '../sessionContext'; // Import the SessionContext
 
 const mockAxios = new MockAdapter(axios);
 
@@ -12,11 +14,18 @@ describe('AddUser component', () => {
   });
 
   it('should add user successfully', async () => {
-    render(<AddUser />);
+    const createSession = jest.fn();
+    render(
+    <SessionContext.Provider value={{ createSession }}>
+      <MemoryRouter>
+        <AddUser />
+      </MemoryRouter>
+    </SessionContext.Provider>
+    );
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
-    const addUserButton = screen.getByRole('button', { name: /Add User/i });
+    const addUserButton = screen.getByRole('button', { name: /Register/i });
 
     // Mock the axios.post request to simulate a successful response
     mockAxios.onPost('http://localhost:8000/adduser').reply(200);
@@ -35,11 +44,17 @@ describe('AddUser component', () => {
   });
 
   it('should handle error when adding user', async () => {
-    render(<AddUser />);
+    render(
+    <SessionContext.Provider value={{}}>
+      <MemoryRouter>
+        <AddUser />
+      </MemoryRouter> 
+    </SessionContext.Provider>
+  );
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
-    const addUserButton = screen.getByRole('button', { name: /Add User/i });
+    const addUserButton = screen.getByRole('button', { name: /Register/i });
 
     // Mock the axios.post request to simulate an error response
     mockAxios.onPost('http://localhost:8000/adduser').reply(500, { error: 'Internal Server Error' });
@@ -53,7 +68,7 @@ describe('AddUser component', () => {
 
     // Wait for the error Snackbar to be open
     await waitFor(() => {
-      expect(screen.getByText(/Error: Internal Server Error/i)).toBeInTheDocument();
+      expect(screen.getByText(/internal server error/i)).toBeInTheDocument();
     });
   });
 
