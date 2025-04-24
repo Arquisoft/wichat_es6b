@@ -188,7 +188,7 @@ const Jugar = () => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
           clearInterval(timerRef.current);
-          handleTimeout();
+          setTimeout(() => handleTimeout(), 0);
           return 0;
         }
         return prevTime - 1;
@@ -234,7 +234,9 @@ const Jugar = () => {
   
     setTimeout(() => {
       if (indice < questions.length - 1) {
+        console.log("Indice:", indice);
         setIndice(indice + 1);
+        console.log("IndiceNuevo:", indice);
         setQuestionStartTime(Date.now());
         setScore(updatedScore);
       } else {
@@ -420,7 +422,7 @@ const Jugar = () => {
       initial={{ rotateY: 90, opacity: 0 }}
       animate={{ rotateY: 0, opacity: 1 }}
       exit={{ rotateY: -90, opacity: 0 }}
-      transition={{ duration: 0.7, ease: "easeInOut" }}
+      transition={{ duration: 1.5, ease: "easeInOut" }}
       style={{
         perspective: 1200,
         width: "100%",
@@ -618,7 +620,7 @@ const Jugar = () => {
           </Typography>
 
           {/* Opciones de respuesta */}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 2, height: "100%",}}>
             {preguntaActual.opciones.map((opcion, i) => (
               <Button
                 key={i}
@@ -629,7 +631,8 @@ const Jugar = () => {
                   padding: 2,
                   bgcolor: 'primary.main', 
                   color: 'white', 
-                  
+                   flexGrow: 1, 
+              
                   // Estilos específicos para CUANDO LA PREGUNTA HA SIDO RESPONDIDA (y por tanto, el botón está disabled)
                   '&.Mui-disabled': { // <-- Sobrescribir estilos cuando está deshabilitado
                     bgcolor: 
