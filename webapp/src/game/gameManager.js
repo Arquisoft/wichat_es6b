@@ -192,16 +192,16 @@ const Jugar = () => {
 
 
     const storedCategories = localStorage.getItem('selectedCategories');
-    console.log(storedCategories);
+    console.log(storedCategories.split(',').map(cat => cat.trim()));
+
+    var auxCategories = selectedCategories;
 
     if(storedCategories!==null){
-      setSelectedCategories(storedCategories.split(',').map(cat => cat.trim()));
-      console.log("Ha entrado");
-      console.log(selectedCategories);
+      auxCategories = storedCategories.split(',').map(cat => cat.trim());
     }
     
 
-    const gameInstance = new Game(selectedCategories);
+    const gameInstance = new Game(auxCategories);
     
     gameInstance.fetchQuestions(updatedQuestions => {
         // Actualizamos el estado cada vez que se recibe un array actualizado
