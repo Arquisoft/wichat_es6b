@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,17 +12,32 @@ import ChatIcon from '@mui/icons-material/Chat';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Grid, List, ListItem, ListItemIcon, ListItemText, Button, Paper } from '@mui/material';
 import FlipCard from './components/FlipCard';
+import { SessionContext } from './context/SessionContext';
+import { SessionProvider } from './context/SessionContext';
 import Game from './game/gameManager';
 import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer'; 
 import NavBar from './components/NavBar'; 
 import HomeRanking from './components/HomeRanking';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+
+
 import './App.css';
 
 
 function Home() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useContext(SessionContext);
+
+  const handlePlayClick = () => {
+    if (isLoggedIn) {
+      navigate('/game');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 8, mb: 4 }}>
@@ -117,9 +132,9 @@ function Home() {
               px: 6,
               fontSize: '1.2rem'
             }}
-            onClick={() => navigate('/game')}
+            onClick={handlePlayClick}
           >
-            ¡Comenzar a Jugar!
+            {isLoggedIn ? '¡Comenzar a Jugar!' : '¡Iniciar Sesión!'}
           </Button>
         </Grid>
       </Grid>
@@ -130,6 +145,7 @@ function Home() {
 
 function App() {
   return (
+    <SessionProvider>
     <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
     <Router>
       <>
@@ -209,6 +225,8 @@ function App() {
           >
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/game" element={<Game />} />
                 <Route path="/ranking" element={<Ranking />} />
                 <Route path="/profile/:username" element={<UserProfile />} />
@@ -218,6 +236,8 @@ function App() {
       </>
     </Router>
     </Box>
+    </SessionProvider>
+
   );
 }
 
