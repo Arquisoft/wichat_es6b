@@ -14,12 +14,12 @@ const Login = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState('');
 
-   
+    
   const { createSession } = useContext(SessionContext);
   const navigate = useNavigate();
 
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-  const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
+  const apiKey =   "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
 
   const loginUser = async () => {
     if (!username.trim() || !password.trim()) { //Validacion de campos
@@ -121,8 +121,8 @@ const Login = () => {
           <Button variant="outlined" onClick={() => navigate(`/profile/${username}`)}>
             Ver mi perfil
           </Button>
-          <Button variant="outlined" onClick={() => navigate('/friends')}> {}
-            Amigos
+          <Button variant="outlined" onClick={() => navigate('/groups')}> {/* Ruta corregida a /groups */}
+            Grupos
           </Button>
         </Box>
       </Box>
