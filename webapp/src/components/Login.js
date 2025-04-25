@@ -121,6 +121,9 @@ const Login = () => {
           <Button variant="outlined" onClick={() => navigate(`/profile/${username}`)}>
             Ver mi perfil
           </Button>
+          <Button variant="outlined" onClick={() => navigate('/friends')}> {}
+            Amigos
+          </Button>
         </Box>
       </Box>
     ) : (
