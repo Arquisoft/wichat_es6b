@@ -121,6 +121,9 @@ const Login = () => {
           <Button variant="outlined" onClick={() => navigate(`/profile/${username}`)}>
             Ver mi perfil
           </Button>
+          <Button variant="contained" color="info" onClick={() => navigate('/settings')}>
+              Configuraciones
+          </Button>
         </Box>
       </Box>
     ) : (

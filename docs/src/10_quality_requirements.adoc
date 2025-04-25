@@ -50,3 +50,12 @@ The application must be easy to test to ensure quality and detect errors.
 The application must run on different platforms for better adaptability.  
 *Priority:* Medium  
 
+[[section-specific-requirements]]
+== Specific Requirements
+
+Specific Requirements::  
+- [ ] The system must store user registration data.  
+- [ ] The system must correctly validate answers to questions.  
+- [ ] The system must not allow modification of question results once answered.  
+- [ ] The system must inform the user of possible errors through a message.  
+- [ ] The system must notify the user when they have answered a question correctly or incorrectly and when their time has run out.  

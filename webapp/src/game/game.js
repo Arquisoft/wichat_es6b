@@ -3,9 +3,11 @@ const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000
 const language = "es";
 
 class Game {
-  constructor() {
+
+  constructor(arrayPreguntas) {
     this.questions = [];
     this.score = 0;
+    this.tipoPreguntas = arrayPreguntas;
   }
 
   async fetchQuestions(callback) {

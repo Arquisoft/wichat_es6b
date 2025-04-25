@@ -14,15 +14,18 @@ import "./ProgressBar.css";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
 
-const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
-
 const Jugar = () => {
+
   const navigate = useNavigate();
   const [indice, setIndice] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(maxTime);
+  const [difficulty, setDifficulty] = useState('Fácil');
+  const [selectedCategories, setSelectedCategories] = 
+    useState(["Geografia", "Cultura", "Personajes"]);
+  const [maxTime, setMaxTime] = useState(40); 
+  const [timeLeft, setTimeLeft] = useState(40);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +44,35 @@ const Jugar = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLocked, setChatLocked] = useState(false);
+
+  const updateDifficultyAndTime = useCallback((selectedDifficulty) => {
+    setDifficulty(selectedDifficulty);
+    switch (selectedDifficulty) {
+      case 'Fácil':
+        setMaxTime(40);
+        setTimeLeft(40);
+        break;
+      case 'Medio':
+        setMaxTime(30);
+        setTimeLeft(30);
+        break;
+      case 'Difícil':
+        setMaxTime(20);
+        setTimeLeft(20);
+        break;
+      default:
+        setMaxTime(40);
+        setTimeLeft(40);
+        break;
+    }
+  }, [setMaxTime, setTimeLeft, setDifficulty]);
+  
+  useEffect(() => {
+    const storedDifficulty = localStorage.getItem('gameDifficulty');
+    if (storedDifficulty) {
+      updateDifficultyAndTime(storedDifficulty);
+    }
+  }, [updateDifficultyAndTime,setSelectedCategories]);
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
@@ -161,7 +193,18 @@ const Jugar = () => {
     setGameStartTime(Date.now());
     setQuestionStartTime(Date.now());
 
-    const gameInstance = new Game();
+
+    const storedCategories = localStorage.getItem('selectedCategories');
+    console.log(storedCategories);
+
+    if(storedCategories!==null){
+      setSelectedCategories(storedCategories.split(',').map(cat => cat.trim()));
+      console.log("Ha entrado");
+      console.log(selectedCategories);
+    }
+    
+
+    const gameInstance = new Game(selectedCategories);
     
     gameInstance.fetchQuestions(updatedQuestions => {
         // Actualizamos el estado cada vez que se recibe un array actualizado
@@ -174,7 +217,7 @@ const Jugar = () => {
     }).then(() => {
         setLoading(false); // Terminamos la carga cuando todas las preguntas estén listas
     });
-  } , [navigate]);
+  } , [navigate, setSelectedCategories]);
 
   
 
