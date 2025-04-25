@@ -4,6 +4,7 @@ import { AppBar, Toolbar, Box, Button, IconButton, Typography, Avatar } from '@m
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../sessionContext';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 function NavBar() {
   const { username = '', isLoggedIn = false, avatar = '/default_user.jpg', destroySession } = useContext(SessionContext);
@@ -46,6 +47,20 @@ function NavBar() {
                   {page.text}
                 </Button>
               ))}
+               {isLoggedIn && (
+                <Button
+                  component={Link}
+                  to="/settings"
+                  size="large"
+                  sx={{
+                    color: 'white',
+                    '&:hover': { backgroundColor: '#5f7e94' },
+                  }}
+                >
+                  <SettingsIcon sx={{ marginRight: 1 }} />
+                  Ajustes de juego
+                </Button>
+              )}
             </Box>
           )}
         </Box>

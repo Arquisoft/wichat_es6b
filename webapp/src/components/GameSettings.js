@@ -10,7 +10,7 @@ const difficultyOptions = [
   { name: 'Difícil', time: 20 },
 ];
 
-const categoryOptions = ["Geografia", "Cultura", "Personajes"];
+const categoryOptions = ["Geografia", "Cultura", "Futbolistas", "Pintores", "Cantantes"];
 
 const Settings = () => {
   const [difficulty, setDifficulty] = useState('Fácil');

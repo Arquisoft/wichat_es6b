@@ -42,3 +42,23 @@ html, body, #root {
   max-width: 100vw;
   max-height: 100vh;
 }
+
+@font-face {
+  font-family: 'NeonSans';
+  src: url('../public/NeonSans.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.neon-text {
+  font-family: 'NeonSans', sans-serif;
+  font-size: 14rem; 
+  color: #ffffff; 
+  text-shadow: 
+    0 0 5px #ff00f7,  
+    0 0 10px #ff00f7, 
+    0 0 15px #00b3ff, 
+    0 0 20px #00b3ff,
+    0 0 25px #ff00f7, 
+    0 0 30px #ff00f7; 
+}

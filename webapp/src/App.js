@@ -13,6 +13,7 @@ import Ranking from './components/Ranking';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer'; 
 import NavBar from './components/NavBar'; 
+import GameSettings from './components/GameSettings';
 import './App.css';
 
 
@@ -65,21 +66,23 @@ function App() {
         {/* Main content container - añade espacio para el header */}
         <Box
             sx={{
-              flexGrow: 1, // Hace que el contenido se expanda para llenar el espacio
+              flexGrow: 1,
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              maxHeight: '100vh',
-              overflow: 'auto',
-              // pt: '10vh', // Espacio para el NavBar 
-              // pb: '10vh',  //Espacio para el footer
+              height: 'calc(90vh - 64px)', // 90vh menos la altura del NavBar
+              overflow: 'hidden',
+              '@media (max-width: 768px)': {
+                height: 'calc(90vh - 56px)', // En móvil el NavBar es más pequeño
+              }
             }}
           >
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/game" element={<Game />} />
                 <Route path="/ranking" element={<Ranking />} />
+                <Route path="/settings" element={<GameSettings />} />
                 <Route path="/profile/:username" element={<UserProfile />} />
               </Routes>
           </Box>

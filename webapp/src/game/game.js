@@ -12,11 +12,11 @@ class Game {
 
   async fetchQuestions(callback) {
     console.log("Fetching questions...");
-    const tipoPreguntas = ["Geografia", "Cultura", "Pintores", "Futbolistas", "Cantantes"];
+    //const tipoPreguntas = ["Geografia", "Cultura", "Pintores", "Futbolistas", "Cantantes"];
     
     // Generar las URLs con el gateway-service
     const urls = Array.from({ length: 10 }, () => {
-        const thematic = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
+        const thematic = this.tipoPreguntas[Math.floor(Math.random() * this.tipoPreguntas.length)];
         return { 
             url: `${apiEndpoint}/generateQuestions`, 
             params: { 
