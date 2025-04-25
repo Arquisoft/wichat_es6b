@@ -10,8 +10,11 @@ const difficultyOptions = [
   { name: 'Difícil', time: 20 },
 ];
 
+const categoryOptions = ["Geografia", "Cultura", "Personajes"];
+
 const Settings = () => {
   const [difficulty, setDifficulty] = useState('Fácil');
+  const [selectedCategories, setSelectedCategories] = useState(categoryOptions); // Por defecto, todas seleccionadas
   const navigate = useNavigate();
 
   const handleDifficultyChange = useCallback((selectedDifficulty) => {
@@ -23,12 +26,25 @@ const Settings = () => {
     }
   }, []);
 
+  const handleCategoryToggle = useCallback((category) => {
+    setSelectedCategories((prevSelected) => {
+      if (prevSelected.includes(category)) {
+        // Si ya está seleccionada, la quitamos
+        return prevSelected.filter((cat) => cat !== category);
+      } else {
+        // Si no está seleccionada, la añadimos
+        return [...prevSelected, category];
+      }
+    });
+  }, []);
+
   const handleGoBack = () => {
     navigate('/');
   };
 
   const handleSaveAndPlay = () => {
     localStorage.setItem('gameDifficulty', difficulty); // Asegura que la dificultad actual se guarde
+    localStorage.setItem('selectedCategories', selectedCategories); // Guarda las categorías seleccionadas
     navigate('/game');
   };
 
@@ -75,6 +91,22 @@ const Settings = () => {
               onClick={() => handleDifficultyChange(option.name)}
             >
               {option.name}
+            </div>
+          ))}
+        </div>
+
+        <Typography variant="h6" gutterBottom align="left" style={{ marginTop: '2rem' }}>
+          Categorías:
+        </Typography>
+
+        <div className="selector">
+          {categoryOptions.map((category) => (
+            <div
+              key={category}
+              className={`option ${selectedCategories.includes(category) ? 'active' : ''}`}
+              onClick={() => handleCategoryToggle(category)}
+            >
+              {category}
             </div>
           ))}
         </div>

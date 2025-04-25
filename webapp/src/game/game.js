@@ -6,6 +6,7 @@ class Game {
   constructor() {
     this.questions = [];
     this.score = 0;
+    this.tipoPreguntas = arrayPreguntas;
   }
 
   async fetchQuestions(callback) {
@@ -38,28 +39,27 @@ class Game {
                 continue; // Saltar esta pregunta si los datos están incompletos
             }
 
-            const question = {
-                id: `q${index + 1}`,
-                pregunta: response.data.responseQuestion,
-                opciones: response.data.responseOptions,
-                respuesta_correcta: response.data.responseOptions.indexOf(response.data.responseCorrectOption),
-                imagen: response.data.responseImage,
-                tipo: tipo
-            };
+        const question = {
+          id: `q${index + 1}`,
+          pregunta: response.data.responseQuestion,
+          opciones: response.data.responseOptions,
+          respuesta_correcta: response.data.responseOptions.indexOf(response.data.responseCorrectOption),
+          imagen: response.data.responseImage,
+          tipo: tipo
+        };
 
             // Rellenamos el array en la posición específica
             questionsArray[index] = { ...question };
 
-            console.log(`Pregunta ${index + 1} realizada (${tipo})`);
+        console.log(`Pregunta ${index + 1} realizada (${tipo})`);
 
-            // Llamamos al callback con el array actualizado
-            if (callback) {
-                callback([...questionsArray]); // Usamos [...questionsArray] para evitar mutaciones externas
-            }
+        if (callback) {
+          callback([...questionsArray]);
         }
+      }
     } catch (error) {
-        console.error("Error fetching questions:", error);
-        return null;
+      console.error("Error fetching questions:", error);
+      return null;
     }
 }
 

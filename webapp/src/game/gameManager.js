@@ -22,6 +22,8 @@ const Jugar = () => {
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
   const [difficulty, setDifficulty] = useState('Fácil');
+  const [selectedCategories, setSelectedCategories] = 
+    useState(["Geografia", "Cultura", "Personajes"]);
   const [maxTime, setMaxTime] = useState(40); 
   const [timeLeft, setTimeLeft] = useState(40);
   const [gameFinished, setGameFinished] = useState(false);
@@ -67,7 +69,7 @@ const Jugar = () => {
     if (storedDifficulty) {
       updateDifficultyAndTime(storedDifficulty);
     }
-  }, [updateDifficultyAndTime]);
+  }, [updateDifficultyAndTime,setSelectedCategories]);
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
@@ -188,7 +190,18 @@ const Jugar = () => {
     setGameStartTime(Date.now());
     setQuestionStartTime(Date.now());
 
-    const gameInstance = new Game();
+
+    const storedCategories = localStorage.getItem('selectedCategories');
+    console.log(storedCategories);
+
+    if(storedCategories!==null){
+      setSelectedCategories(storedCategories.split(',').map(cat => cat.trim()));
+      console.log("Ha entrado");
+      console.log(selectedCategories);
+    }
+    
+
+    const gameInstance = new Game(selectedCategories);
     
     gameInstance.fetchQuestions(updatedQuestions => {
         // Actualizamos el estado cada vez que se recibe un array actualizado
@@ -201,7 +214,7 @@ const Jugar = () => {
     }).then(() => {
         setLoading(false); // Terminamos la carga cuando todas las preguntas estén listas
     });
-  } , [navigate]);
+  } , [navigate, setSelectedCategories]);
 
   
 
