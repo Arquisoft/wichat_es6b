@@ -1,17 +1,18 @@
 import axios from "axios";
 
 class Game {
-  constructor() {
+
+  constructor(arrayPreguntas) {
     this.questions = [];
     this.score = 0;
+    this.tipoPreguntas = arrayPreguntas;
   }
 
   async fetchQuestions(callback) {
     console.log("Fetching questions...");
-    const tipoPreguntas = ["Geografia", "Cultura", "Personajes"];
     
     const urls = Array.from({ length: 10 }, () => {
-        const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
+        const tipoAleatorio = this.tipoPreguntas[Math.floor(Math.random() * this.tipoPreguntas.length)];
         return { url: `http://localhost:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
     });
 
