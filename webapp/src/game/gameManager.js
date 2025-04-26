@@ -195,7 +195,7 @@ const Jugar = () => {
     setQuestionStartTime(Date.now());
 
     const storedCategories = localStorage.getItem('selectedCategories');
-
+   
 
     var auxCategories = selectedCategories;
 
