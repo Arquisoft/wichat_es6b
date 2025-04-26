@@ -103,7 +103,7 @@ services:
     build: 
       context: ./webapp
       args:
-        LLM_API_KEY: ${LLM_API_KEY}
+        LLM_API_KEY: "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ"
     depends_on:
       - gatewayservice
     ports:
