@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Typewriter } from "react-simple-typewriter";
 
 import FlipCard from './components/FlipCard';
 import Game from './game/gameManager';
@@ -15,7 +13,6 @@ import Footer from './components/Footer';
 import NavBar from './components/NavBar'; 
 import GameSettings from './components/GameSettings';
 import './App.css';
-
 
 function Home() {
   return (
@@ -36,7 +33,6 @@ function Home() {
     </Container>
   );
 }
-
 
 function App() {
   return (
@@ -66,6 +62,7 @@ function App() {
         {/* Main content container - añade espacio para el header */}
         <Box
             sx={{
+              flexGrow: 1,
               flexGrow: 1,
               display: 'flex',
               flexDirection: 'column',

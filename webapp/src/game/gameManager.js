@@ -193,30 +193,33 @@ const Jugar = () => {
     setGameStartTime(Date.now());
     setQuestionStartTime(Date.now());
 
-
     const storedCategories = localStorage.getItem('selectedCategories');
-    console.log(storedCategories);
+    console.log(storedCategories.split(',').map(cat => cat.trim()));
+
+    var auxCategories = selectedCategories;
 
     if(storedCategories!==null){
-      setSelectedCategories(storedCategories.split(',').map(cat => cat.trim()));
-      console.log("Ha entrado");
-      console.log(selectedCategories);
+      auxCategories = storedCategories.split(',').map(cat => cat.trim());
     }
     
-
-    const gameInstance = new Game(selectedCategories);
+    const gameInstance = new Game(auxCategories);
     
     gameInstance.fetchQuestions(updatedQuestions => {
-        // Actualizamos el estado cada vez que se recibe un array actualizado
         setQuestions(updatedQuestions.map(q => q ? {
             ...q,
             userAnswer: null,
             timeSpent: 0,
             answered: false
-        } : null)); // Mantiene las posiciones vacías como `null` mientras no se hayan rellenado
+        } : null));
     }).then(() => {
-        setLoading(false); // Terminamos la carga cuando todas las preguntas estén listas
+        setLoading(false);
     });
+
+    return () => {
+      if (gameInstance) {
+        gameInstance.cancelRequests();
+      }
+    };
   } , [navigate, setSelectedCategories]);
 
   

@@ -8,13 +8,18 @@ class Game {
     this.questions = [];
     this.score = 0;
     this.tipoPreguntas = arrayPreguntas;
+    this.controller = new AbortController();
+  }
+
+  cancelRequests() {
+    this.controller.abort();
+    this.controller = new AbortController();
   }
 
   async fetchQuestions(callback) {
     console.log("Fetching questions...");
     //const tipoPreguntas = ["Geografia", "Cultura", "Pintores", "Futbolistas", "Cantantes"];
     
-    // Generar las URLs con el gateway-service
     const urls = Array.from({ length: 10 }, () => {
         const thematic = this.tipoPreguntas[Math.floor(Math.random() * this.tipoPreguntas.length)];
         return { 
@@ -31,14 +36,11 @@ class Game {
     const questionsArray = new Array(urls.length).fill(null);
 
     try {
-        for (let index = 0; index < urls.length; index++) {
-            const { url, params, tipo } = urls[index];
-            const response = await axios.get(url, { params });
-
-            if (!response.data.responseQuestion || !response.data.responseOptions || !response.data.responseCorrectOption) {
-                console.warn(`Datos incompletos para la pregunta ${index + 1}. Respuesta del servidor:`, response.data);
-                continue; // Saltar esta pregunta si los datos están incompletos
-            }
+        for (let [index, { url, params, tipo }] of urls.entries()) {
+            const response = await axios.get(url, { 
+                params,
+                signal: this.controller.signal
+            });
 
             const question = {
                 id: `q${index + 1}`,
@@ -50,7 +52,9 @@ class Game {
             };
 
             // Rellenamos el array en la posición específica
-            questionsArray[index] = { ...question };
+            questionsArray[index] = {
+                ...question
+            };
 
             console.log(`Pregunta ${index + 1} realizada (${tipo})`);
 
@@ -67,7 +71,7 @@ class Game {
 
 
   checkAnswer(questionIndex, selectedOption) {
-    if (this.questions[questionIndex] && this.questions[questionIndex].respuesta_correcta === selectedOption) {
+    if (this.questions[questionIndex] && this.questions[questionIndex].responseCorrectOption === selectedOption) {
       this.score += 10;
       return true;
     }
