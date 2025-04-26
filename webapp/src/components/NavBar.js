@@ -12,6 +12,7 @@ function NavBar() {
   const handleLogout = () => {
     navigate('/');
     destroySession();
+    window.location.reload();
   };
 
   // List of site pages for the menu
@@ -85,7 +86,7 @@ function NavBar() {
           ) : (
             <Button
               component={Link}
-              to={'/'}
+              to={'/login'}
               sx={{
                 p: 0,
                 display: 'flex',

@@ -49,6 +49,7 @@ const Login = () => {
       // Guardar el nombre de usuario en localStorage
       localStorage.setItem('username', username);
       createSession(username);
+      navigate('/dashboard'); // Redirigir al dashboard después del login exitoso
       
       
     } catch (error) {
@@ -65,65 +66,45 @@ const Login = () => {
 
   return (
     <Box
-    sx={{
-      width: '100%',
-      backgroundColor: 'rgba(245, 245, 240, 0.5)',
-      padding: '1.5rem',
-      borderRadius: '12px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-      backdropFilter: 'blur(10px)',
-      '& .MuiTypography-h5': {
-        marginBottom: '1.5rem',
-        fontWeight: 600,
-        color: '#333',
-        textAlign: 'center',
-      },
-      '& .MuiTextField-root': {
-        marginBottom: '1rem',
-        '&:last-of-type': {
+      sx={{
+        width: '100%',
+        maxWidth: '400px',
+        margin: '0 auto',
+        backgroundColor: 'rgba(245, 245, 240, 0.5)',
+        padding: '2rem',
+        borderRadius: '12px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(10px)',
+        '& .MuiTypography-h5': {
           marginBottom: '1.5rem',
+          fontWeight: 600,
+          color: '#333',
+          textAlign: 'center',
         },
-      },
-      '& .MuiInputBase-root': {
-        borderRadius: '8px',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-      },
-      '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-          borderColor: 'rgba(0, 0, 0, 0.23)',
+        '& .MuiTextField-root': {
+          marginBottom: '1rem',
+          '&:last-of-type': {
+            marginBottom: '1.5rem',
+          },
         },
-        '&:hover fieldset': {
-          borderColor: '#4e54c8',
+        '& .MuiInputBase-root': {
+          borderRadius: '8px',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
         },
-        '&.Mui-focused fieldset': {
-          borderColor: '#6a11cb',
-          borderWidth: '2px',
+        '& .MuiOutlinedInput-root': {
+          '& fieldset': {
+            borderColor: 'rgba(0, 0, 0, 0.23)',
+          },
+          '&:hover fieldset': {
+            borderColor: '#4e54c8',
+          },
+          '&.Mui-focused fieldset': {
+            borderColor: '#6a11cb',
+            borderWidth: '2px',
+          },
         },
-      },
-    }}
-  >
-    {loginSuccess ? (
-      <Box>
-        <Typography variant="h5" component="h1" gutterBottom>
-          <Typewriter words={[message]} cursor cursorStyle="|" typeSpeed={50} />
-        </Typography>
-        <Typography component="p" variant="body1" sx={{ marginTop: 2, textAlign: 'center' }}>
-          Your account was created on {new Date(createdAt).toLocaleDateString()}.
-        </Typography>
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4 }}>
-          <Button variant="contained" color="primary" onClick={() => navigate('/ranking')}>
-            Ver Rankings
-          </Button>
-          <Button variant="contained" color="secondary" onClick={() => navigate('/game')}>
-            Jugar
-          </Button>
-          <Button variant="outlined" onClick={() => navigate(`/profile/${username}`)}>
-            Ver mi perfil
-          </Button>
-        </Box>
-      </Box>
-    ) : (
+      }}
+    >
       <Box sx={{ width: '100%' }}>
         <Typography component="h1" variant="h5" sx={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: 600 }}>
           Login
@@ -168,7 +149,7 @@ const Login = () => {
         >
           Login
         </Button>
-
+  
         <Snackbar
           open={openSnackbar && !error}
           autoHideDuration={6000}
@@ -182,8 +163,7 @@ const Login = () => {
           message={`Error: ${error}`}
         />
       </Box>
-    )}
-  </Box>
+    </Box>
   );
 };
 
