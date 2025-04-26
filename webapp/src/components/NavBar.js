@@ -4,6 +4,7 @@ import { AppBar, Toolbar, Box, Button, IconButton, Typography, Avatar } from '@m
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../sessionContext';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 function NavBar() {
   const { username = '', isLoggedIn = false, avatar = '/default_user.jpg', destroySession } = useContext(SessionContext);
@@ -18,7 +19,8 @@ function NavBar() {
   // List of site pages for the menu
   const pages = [
     { path: '/game', text: "Jugar" },
-    { path: '/ranking', text: "Ranking" }
+    { path: '/ranking', text: "Ranking" },
+
   ];
 
   const logo = (
@@ -39,13 +41,27 @@ function NavBar() {
                 <Button
                   component={Link}
                   size="large"
-                  to={page.path === '/statistics' ? `/statistics/${username}` : page.path}
+                  to={page.path === '/stats' ? `/stats/${username}` : page.path}
                   key={page.path}
                   sx={{ color: 'white', '&:hover': { backgroundColor: '#5f7e94' } }}
                 >
                   {page.text}
                 </Button>
               ))}
+               {isLoggedIn && (
+                <Button
+                  component={Link}
+                  to="/settings"
+                  size="large"
+                  sx={{
+                    color: 'white',
+                    '&:hover': { backgroundColor: '#5f7e94' },
+                  }}
+                >
+                  <SettingsIcon sx={{ marginRight: 1 }} />
+                  Ajustes de juego
+                </Button>
+              )}
             </Box>
           )}
         </Box>

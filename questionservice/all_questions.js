@@ -44,7 +44,7 @@ queries["es"] = {
       WHERE {
         ?option wdt:P106 wd:Q1028181;      
                 wdt:P569 ?birthdate.      
-        FILTER(YEAR(?birthdate) >= 1500) 
+        FILTER(YEAR(?birthdate) >= 1000) 
         ?option wdt:P18 ?imageLabel.     
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],es". }
       }
@@ -59,7 +59,7 @@ queries["es"] = {
       WHERE {
         ?option wdt:P106 wd:Q937857;     
                 wdt:P569 ?birthdate.     
-        FILTER(YEAR(?birthdate) >= 1960)  
+        FILTER(YEAR(?birthdate) >= 1940)  
         ?option wdt:P18 ?imageLabel.     
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],es". }
       }
@@ -124,7 +124,7 @@ queries["en"] = {
       WHERE {
         ?option wdt:P106 wd:Q1028181;      
                 wdt:P569 ?birthdate.      
-        FILTER(YEAR(?birthdate) >= 1500) 
+        FILTER(YEAR(?birthdate) >= 1000) 
         ?option wdt:P18 ?imageLabel.     
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
       }
@@ -138,7 +138,7 @@ queries["en"] = {
       WHERE {
         ?option wdt:P106 wd:Q937857;     
                 wdt:P569 ?birthdate.     
-        FILTER(YEAR(?birthdate) >= 1960)  
+        FILTER(YEAR(?birthdate) >= 1940)  
         ?option wdt:P18 ?imageLabel.     
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
       }
