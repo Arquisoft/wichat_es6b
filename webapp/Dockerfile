@@ -7,7 +7,7 @@ WORKDIR /app
 RUN npm install --ignore-scripts
 
 ARG API_URI="http://localhost:8000"
-ARG LLM_API_KEY=sk-mkoawLTxACWSbvpg42QCsg
+ARG LLM_API_KEY= "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ"
 ENV REACT_APP_API_ENDPOINT=$API_URI
 ENV REACT_APP_LLM_API_KEY=$LLM_API_KEY
 

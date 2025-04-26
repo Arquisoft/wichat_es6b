@@ -24,7 +24,8 @@ const gameSchema = new mongoose.Schema({
     questionId: String,
     question: String,
     correct: Boolean,
-    timeSpent: Number
+    timeSpent: Number,
+    imageUrl: String // Añadimos el campo para la URL de la imagen
   }],
   // Mantenemos el campo existente
   createdAt: {

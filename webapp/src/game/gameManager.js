@@ -1,28 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef,useCallback} from 'react';
 import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
 import { getContext } from './hintContext.js';
 import HourglassTimer from "./HourglassTimer";
-import { motion } from 'framer-motion'; //npm install framer-motion
+import { AnimatePresence, motion } from "framer-motion";
 import "./OutTimeMessage.css";
 import "./ProgressBar.css";
 
 
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
+const apiKey =  process.env.REACT_APP_LLM_API_KEY || 'None';
 
-const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
 
 const Jugar = () => {
+
   const navigate = useNavigate();
   const [indice, setIndice] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(maxTime);
+  const [difficulty, setDifficulty] = useState('Fácil');
+  const [selectedCategories, setSelectedCategories] = 
+    useState(["Geografia", "Cultura", "Futbolistas", "Pintores", "Cantantes"]);
+  const [maxTime, setMaxTime] = useState(40); 
+  const [timeLeft, setTimeLeft] = useState(40);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,11 +37,43 @@ const Jugar = () => {
   const [loadingHint, setLoadingHint] = useState(false);
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-
-	// Chat functionality
+  const preguntaActual = questions[indice] || { opciones: [], respuesta_correcta: null, userAnswer: null, answered: false };
+  const timerRef = useRef(null);
+  const [loadingQuestion, setLoadingQuestion] = useState(false);
+  
+  // Chat functionality
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLocked, setChatLocked] = useState(false);
+
+  const updateDifficultyAndTime = useCallback((selectedDifficulty) => {
+    setDifficulty(selectedDifficulty);
+    switch (selectedDifficulty) {
+      case 'Fácil':
+        setMaxTime(40);
+        setTimeLeft(40);
+        break;
+      case 'Medio':
+        setMaxTime(30);
+        setTimeLeft(30);
+        break;
+      case 'Difícil':
+        setMaxTime(20);
+        setTimeLeft(20);
+        break;
+      default:
+        setMaxTime(40);
+        setTimeLeft(40);
+        break;
+    }
+  }, [setMaxTime, setTimeLeft, setDifficulty]);
+  
+  useEffect(() => {
+    const storedDifficulty = localStorage.getItem('gameDifficulty');
+    if (storedDifficulty) {
+      updateDifficultyAndTime(storedDifficulty);
+    }
+  }, [updateDifficultyAndTime,setSelectedCategories]);
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
@@ -158,20 +194,34 @@ const Jugar = () => {
     setGameStartTime(Date.now());
     setQuestionStartTime(Date.now());
 
-    const gameInstance = new Game();
+    const storedCategories = localStorage.getItem('selectedCategories');
+   
+
+    var auxCategories = selectedCategories;
+
+    if(storedCategories!==null){
+      auxCategories = storedCategories.split(',').map(cat => cat.trim());
+    }
+    
+    const gameInstance = new Game(auxCategories);
     
     gameInstance.fetchQuestions(updatedQuestions => {
-        // Actualizamos el estado cada vez que se recibe un array actualizado
         setQuestions(updatedQuestions.map(q => q ? {
             ...q,
             userAnswer: null,
             timeSpent: 0,
             answered: false
-        } : null)); // Mantiene las posiciones vacías como `null` mientras no se hayan rellenado
+        } : null));
     }).then(() => {
-        setLoading(false); // Terminamos la carga cuando todas las preguntas estén listas
+        setLoading(false);
     });
-  } , [navigate]);
+
+    return () => {
+      if (gameInstance) {
+        gameInstance.cancelRequests();
+      }
+    };
+  } , [navigate, setSelectedCategories]);
 
   
 
@@ -181,26 +231,35 @@ const Jugar = () => {
 
     setTimeLeft(maxTime);
 
-    const timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
-        if (prevTime === 1) {
-          clearInterval(timer);
-          handleTimeout();
+        if (prevTime <= 1) {
+          clearInterval(timerRef.current);
+          setTimeout(() => handleTimeout(), 0);
           return 0;
         }
         return prevTime - 1;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [indice,questions]);
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [indice, questions.length]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
     const now = Date.now();
-    const timeSpent = (now - questionStartTime) / 1000; // tiempo en segundos
+    const timeSpent = (now - questionStartTime) / 1000;
   
-    // Actualizar la pregunta actual con la respuesta y el tiempo
     const updatedQuestions = [...questions];
     updatedQuestions[indice] = {
       ...updatedQuestions[indice],
@@ -211,34 +270,34 @@ const Jugar = () => {
     clearChat();
     setQuestions(updatedQuestions);
   
-    // Calcular el puntaje actualizado
     const updatedScore = score + (answerIndex === questions[indice].respuesta_correcta ? 10 : 0);
   
-    // Actualizar puntuación
     if (answerIndex === questions[indice].respuesta_correcta) {
       setShowCorrectAnswer(true);
       setTimeout(() => {
         setShowCorrectAnswer(false);
-      }, 1500);
+      }, 3000);
     }
   
-    // Avanzar a la siguiente pregunta o finalizar
-    if (indice < questions.length - 1) {
-      setIndice(indice + 1);
-      setQuestionStartTime(Date.now());
-      setScore(updatedScore); // Actualizar el estado del puntaje
-    } else {
-      finishGame(updatedScore); // Pasar el puntaje actualizado a finishGame
-    }
+    setTimeout(() => {
+      if (indice < questions.length - 1) {
+        console.log("Indice:", indice);
+        setIndice(indice + 1);
+        console.log("IndiceNuevo:", indice);
+        setQuestionStartTime(Date.now());
+        setScore(updatedScore);
+      } else {
+        finishGame(updatedScore);
+      }
+    }, 3000);
   };
 
-//marca pregunta como fallida si se acaba el tiempo
-const handleTimeout = () => {
-  setShowTimeoutMessage(true); // Mostrar mensaje
+  //marca pregunta como fallida si se acaba el tiempo
+  const handleTimeout = () => {
+  setShowTimeoutMessage(true);
 
   setTimeout(() => {
-    setShowTimeoutMessage(false); // Ocultar mensaje tras 1.5s
-
+    setShowTimeoutMessage(false);
     clearChat();
 
     const updatedQuestions = [...questions];
@@ -250,13 +309,19 @@ const handleTimeout = () => {
     };
     setQuestions(updatedQuestions);
 
+    // No suma puntos si no responde
+    const updatedScore = score;
+
     if (indice < questions.length - 1) {
+      console.log("Indice:", indice);
       setIndice(indice + 1);
+      console.log("IndiceNuevo:", indice);
       setQuestionStartTime(Date.now());
+      setScore(updatedScore); // asegura que el score se actualiza
     } else {
-      finishGame();
+      finishGame(updatedScore); //  pasa el score final
     }
-  }, 1500); // Mantiene el mensaje visible 1.5 segundos antes de cambiar
+  }, 3000);
 };
 
 
@@ -282,6 +347,7 @@ const handleTimeout = () => {
           question: q.pregunta,
           correct: q.userAnswer === q.respuesta_correcta,
           timeSpent: q.timeSpent || 0,
+          imageUrl: q.imagen // Añadimos la URL de la imagen
         })),
       };
   
@@ -297,24 +363,22 @@ const handleTimeout = () => {
     }
   };
   
-  const handleSiguiente = () => {
-    if (indice < questions.length - 1) {
-      setIndice(indice + 1);
-    }
-  };
-
-  const handleAnterior = () => {
-    if (indice > 0) {
-      setIndice(indice - 1);
-    }
-  };
   
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
 
-  if (!questions.length) {
-    return <LoadingProgressBar />;
+  if (questions.length ===0|| (!questions[indice] && !gameFinished && indice < questions.length - 1)) {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h6" gutterBottom>
+          Cargando preguntas...
+        </Typography>
+        <Box className="progress-container">
+          <div className="progress-bar"></div>
+        </Box>
+      </Container>
+    );
   }
 
   return (
@@ -327,6 +391,7 @@ const handleTimeout = () => {
           exit={{ opacity: 0, scale: 0.5 }}
           transition={{ duration: 0.5 }}
           className="timeout-message"
+          
         >
           ⏳ ¡Tiempo Agotado!
         </motion.div>
@@ -344,225 +409,399 @@ const handleTimeout = () => {
           +10 
         </motion.div>
       )}
-    
-      {/* Chat con burbujas en blanco y negro */}
+      
+    {/* Mostrar solo el bloque final si el juego terminó */}
+    {gameFinished ? (
       <Box
         sx={{
-          position: 'fixed',
-          top: '20%',
+          width: "50vw",
+          height: "50vh",
+          minHeight: "100vh",
+          minWidth: "100vw",
+          position: "fixed",
+          top: 0,
           left: 0,
-          width: 300,
-          height: '70%',
-          backgroundColor: '#fff', // Fondo blanco
-          border: '1px solid #ccc',
-          borderRadius: 2,
-          boxShadow: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          zIndex: 10,
+          background: "#f0f0f0",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <Box
-          sx={{
-            backgroundColor: '#f0f0f0', // Encabezado gris claro
-            padding: 1,
-            textAlign: 'center',
-            borderBottom: '1px solid #ccc',
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1.1 }}
+          transition={{ duration: 2, type: "spring" }}
+          style={{
+            width: "40vw",
+            maxWidth: "90vw",
+            background: "#fff",
+            borderRadius: 16,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+            padding: 40,
+            textAlign: "center",
           }}
         >
-          <Typography variant="h6">WiChat AI</Typography>
-        </Box>
-
-        <Paper
-          sx={{
-            flexGrow: 1,
-            overflowY: 'auto',
-            padding: 2,
-            backgroundColor: '#fff', // Fondo blanco para mensajes
-          }}
-        >
-          {chatMessages.map((msg, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: 'flex',
-                justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                marginY: 1,
-              }}
-            >
-              <Typography
-                sx={{
-                  maxWidth: '70%',
-                  padding: 1,
-                  borderRadius: 10,
-                  backgroundColor: '#f9f9f9',
-                  color: '#000',
-                  textAlign: 'left',
-                  boxShadow: 1,
-                }}
-              >
-                <strong>{msg.sender === 'user' ? 'Tú:' : 'WiChat AI:'}</strong> {msg.text}
-              </Typography>
-            </Box>
-          ))}
-        </Paper>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: 1,
-            backgroundColor: '#f0f0f0', // Fondo gris claro para entrada de texto
-            borderTop: '1px solid #ccc',
-          }}
-        >
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Escribe un mensaje..."
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
-            sx={{
-              backgroundColor: '#fff', // Fondo blanco para la caja de texto
-              borderRadius: 10,
-              marginRight: 1,
-            }}
-          />
+          <Typography variant="h4" gutterBottom>¡Juego terminado!</Typography>
+          <Typography variant="h5" gutterBottom>Puntuación final: {score}</Typography>
           <Button
             variant="contained"
-            sx={{
-              backgroundColor: '#000', // Botón negro
-              color: '#fff', // Texto blanco
-              borderRadius: 10,
-              '&:hover': {
-                backgroundColor: '#333',
-              },
-            }}
-            onClick={handleChatSubmit}
-            disabled={chatLocked} // Desactiva el botón si el chat está bloqueado
+            color="primary"
+            sx={{ mt: 2, mr: 2 }}
+            onClick={() => navigate(`/profile/${localStorage.getItem("username")}`)}
           >
-            Enviar
+            Ver mi historial
           </Button>
-        </Box>
+          <Button
+            variant="outlined"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={() => window.location.reload()}
+          >
+            Volver a jugar
+          </Button>
+        </motion.div>
       </Box>
+) : (
+  <AnimatePresence mode="wait">
+    <motion.div
+      key={indice}
+      initial={{ rotateY: 90, opacity: 0 }}
+      animate={{ rotateY: 0, opacity: 1 }}
+      exit={{ rotateY: -90, opacity: 0 }}
+      transition={{ duration: 1.5, ease: "easeInOut" }}
+      style={{
+        perspective: 1200,
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <Box
+        sx={{
+          width: "90%",
+          height: "65vh",
+          maxWidth: "80vw",
+          maxHeight: "65vh",
+          overflow: "hidden",
+          margin: "7.5vh auto",
+          backgroundColor: "#f0f0f0",
+          borderRadius: 2,
+          padding: "1rem 2rem",
+          boxShadow: 3,
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <Box sx={{ 
+          minHeight: "4rem",
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center",
+          overflow: "hidden"
+        }}>
+          <Typography 
+            variant="h4" 
+            align="center" 
+            className="neon-text"
+            sx={{ 
+              fontFamily: 'NeonSans, sans-serif',
+              fontWeight: "bold", 
+              fontSize: "4rem", 
+              lineHeight: 1,
+              color: '#ffffff',
+              textShadow: `
+                0 0 5px #ff00f7,
+                0 0 10px #ff00f7,
+                0 0 15px #00b3ff,
+                0 0 20px #00b3ff,
+                0 0 25px #ff00f7,
+                0 0 30px #ff00f7
+              `
+            }}>
+            Pregunta {indice + 1} de {questions.length}
+          </Typography>
+        </Box>
 
-
-  
-      {/* Contenedor principal */}
-      <Container maxWidth="lg" sx={{ marginTop: 12, backgroundColor: '#f0f0f0', borderRadius: 2, padding: 4, boxShadow: 3 }}>
-        <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-          Pregunta {indice + 1} de {questions.length}
-        </Typography>
-        
-        <Box sx={{ textAlign: 'right', mb: 2 }}>
-          <Typography variant="h6">
+        <Box sx={{ textAlign: "right", mb: 1 }}>
+          <Typography variant="h6" sx={{ fontSize: "1.2rem" }}>
             Puntuación: {score}
           </Typography>
           <HourglassTimer timeLeft={timeLeft} totalTime={maxTime} />
         </Box>
-        
-        {/* Nueva estructura: Grid para colocar imagen a la izquierda y preguntas a la derecha */}
-        <Grid container spacing={3}>
-          {/* Imagen de la pregunta (izquierda) */}
-          <Grid item xs={12} md={4}>
-            {questions[indice].imagen ? (
-              <Paper sx={{ padding: 2, textAlign: "center", height: "100%" }}>
-                <img 
-                  src={questions[indice].imagen} 
-                  alt="Pregunta" 
-                  style={{ maxHeight: 300, width: "100%", objectFit: "contain" }} 
+
+        <Box sx={{ 
+          display: "flex", 
+          gap: 2, 
+          flexGrow: 1,
+          height: "calc(100% - 8rem)",
+          overflow: "hidden"
+        }}>
+          {/* Chat (izquierda) */}
+          <Box
+            sx={{
+              flex: "0 0 20%",
+              display: "flex",
+              flexDirection: "column",
+              backgroundColor: "#fff",
+              borderRadius: 2,
+              overflow: "hidden",
+              border: '2px solid #ff00f7',
+              boxShadow: '0 0 5px #ff00f7'
+            }}
+          >
+            <Box
+              sx={{
+                backgroundColor: "#f0f0f0",
+                padding: 1,
+                textAlign: "center",
+                borderBottom: "1px solid #ccc",
+              }}
+            >
+              <Typography variant="h6">WiChat AI</Typography>
+            </Box>
+
+            <Paper
+              sx={{
+                flexGrow: 1,
+                overflowY: "auto",
+                padding: 2,
+                minHeight: 0, // <-- evita expansión forzada
+              }}
+            >
+              {chatMessages.map((msg, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
+                    marginY: 1,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      maxWidth: "70%",
+                      padding: 1,
+                      borderRadius: 10,
+                      backgroundColor: "#f9f9f9",
+                      color: "#000",
+                      textAlign: "left",
+                      boxShadow: 1,
+                    }}
+                  >
+                    <strong>{msg.sender === "user" ? "Tú:" : "WiChat AI:"}</strong> {msg.text}
+                  </Typography>
+                </Box>
+              ))}
+            </Paper>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                padding: 1,
+                backgroundColor: "#f0f0f0",
+                borderTop: "1px solid #ccc",
+              }}
+            >
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Escribe un mensaje..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleChatSubmit()}
+                sx={{
+                  backgroundColor: "#fff",
+                  borderRadius: 10,
+                  marginRight: 1,
+                }}
+              />
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#000",
+                  color: "#fff",
+                  borderRadius: 10,
+                  "&:hover": {
+                    backgroundColor: "#333",
+                  },
+                }}
+                onClick={handleChatSubmit}
+                disabled={chatLocked}
+              >
+                Enviar
+              </Button>
+            </Box>
+          </Box>
+
+          {/* Imagen (centro) */}
+          <Container
+            sx={{
+              width: "40%",
+              maxWidth: "40%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#fff",
+              borderRadius: 2,
+              overflow: "hidden",
+              flexShrink: 0,
+              border: '2px solid #00b3ff',
+              boxShadow: '0 0 5px #00b3ff'
+            }}
+          >
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+            >
+              {questions[indice] && questions[indice].imagen ? (
+                <img
+                  src={questions[indice].imagen}
+                  alt="Pregunta"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    display: "block",
+                  }}
                 />
-              </Paper>
-            ) : (
-              <Paper sx={{ padding: 2, textAlign: "center", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              ) : (
                 <Typography variant="body1" color="textSecondary">
                   No hay imagen para esta pregunta
                 </Typography>
-              </Paper>
-            )}
-          </Grid>
-          
+              )}
+            </Box>
+          </Container>
+
           {/* Pregunta y opciones (derecha) */}
-          <Grid item xs={12} md={8}>
-            <Paper sx={{ padding: 3, position: "relative" }}>
-              <Typography variant="h5" align="center" gutterBottom>
-                {questions[indice].pregunta}
-              </Typography>
-              
-              
-      
-              {/* Opciones de respuesta */}
-              <Grid container spacing={1} sx={{ marginTop: 2 }}>
-                {questions[indice].opciones.map((opcion, i) => (
-                  <Grid item xs={12} key={i}>
-                    <Button 
-                      variant="contained" 
-                      fullWidth 
-                      sx={{ 
-                        fontSize: "1rem", 
-                        padding: 2,
-                        backgroundColor: questions[indice].answered && i === questions[indice].userAnswer 
-                          ? (i === questions[indice].respuesta_correcta ? 'green' : 'red')
-                          : undefined
-                      }}
-                      onClick={() => !questions[indice].answered && handleAnswerSelect(i)}
-                      disabled={questions[indice].answered || timeLeft === 0}
-                    >
-                      {opcion}
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
-          </Grid>
-        </Grid>
-  
-        {gameFinished ? (
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Typography variant="h4">¡Juego terminado!</Typography>
-            <Typography variant="h5">Puntuación final: {score}</Typography>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              sx={{ mt: 2 }}
-              onClick={() => navigate(`/profile/${localStorage.getItem('username')}`)}
-            >
-              Ver mi historial
-            </Button>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              backgroundColor: "#fff",
+              borderRadius: 2,
+              padding: 2,
+              overflow: "hidden",
+              border: '2px solid #50ff00',
+              boxShadow: '0 0 5px #50ff00'
+            }}
+          >
+            <Typography 
+              variant="h5" 
+              align="center" 
+              className="neon-text"
+              sx={{ 
+                fontSize: "1.3rem", 
+                mb: 1,
+                color: '#ffffff',
+                textShadow: `
+                  0 0 5px #ff00f7,
+                  0 0 10px #ff00f7,
+                  0 0 15px #00b3ff,
+                  0 0 20px #00b3ff,
+                  0 0 25px #ff00f7,
+                  0 0 30px #ff00f7
+                `
+              }}>
+             {questions[indice] ? questions[indice].pregunta : ""}
+            </Typography>
+
+            <Box sx={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              gap: 1, 
+              flexGrow: 1,
+              overflow: "hidden"
+            }}>
+              {preguntaActual.opciones.map((opcion, i) => (
+                <Button
+                  key={i}
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    fontSize: "1.2rem",
+                    padding: 2,
+                    bgcolor: 'transparent',
+                    border: '2px solid #00b3ff',
+                    color: 'black',
+                    flexGrow: 1,
+                    transition: 'all 0.3s ease',
+                    boxShadow: `
+                      0 0 5px #00b3ff,
+                      inset 0 0 5px #00b3ff
+                    `,
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 179, 255, 0.1)',
+                      boxShadow: `
+                        0 0 10px #00b3ff,
+                        inset 0 0 10px #00b3ff
+                      `,
+                      border: '2px solid #00b3ff',
+                      transform: 'scale(1.02)'
+                    },
+                    '&.Mui-disabled': {
+                      bgcolor: 
+                        i === preguntaActual.respuesta_correcta
+                          ? "transparent"
+                          : i === preguntaActual.userAnswer
+                            ? "transparent"
+                            : 'rgba(255, 255, 255, 0.1)',
+                      border: 
+                        i === preguntaActual.respuesta_correcta
+                          ? '2px solid #50ff00'
+                          : i === preguntaActual.userAnswer
+                            ? '2px solid #ff0055'
+                            : '2px solid #666',
+                      boxShadow:
+                        i === preguntaActual.respuesta_correcta
+                          ? `
+                            0 0 10px #50ff00,
+                            inset 0 0 10px #50ff00
+                          `
+                          : i === preguntaActual.userAnswer
+                            ? `
+                              0 0 10px #ff0055,
+                              inset 0 0 10px #ff0055
+                            `
+                            : 'none',
+                      color: 
+                        (i === preguntaActual.respuesta_correcta || i === preguntaActual.userAnswer)
+                          ? 'black'
+                          : 'rgba(0, 0, 0, 0.5)'
+                    }
+                  }}
+                  onClick={() => !preguntaActual.answered && handleAnswerSelect(i)}
+                  disabled={preguntaActual.answered || timeLeft === 0}
+                >
+                  {opcion}
+                </Button>
+              ))}
+            </Box>
           </Box>
-        ) : (
-          <Box display="flex" justifyContent="space-between" mt={3}>
-            <Button 
-              variant="contained" 
-              color="secondary" 
-              onClick={handleAnterior} 
-              disabled={indice === 0 || questions[indice].answered}
-            >
-              Anterior Pregunta
-            </Button>
-            
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={handleSiguiente} 
-              disabled={indice === questions.length - 1 || questions[indice].answered}
-            >
-              Siguiente Pregunta
-            </Button>
-          </Box>
-        )}
-        
+        </Box>
+
+
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
           message={snackbarMessage}
         />
-      </Container>
+      </Box>
+    </motion.div>
+  </AnimatePresence>
+        )}
     </>
   );
-  
-};
-
+}
 export default Jugar;

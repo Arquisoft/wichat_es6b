@@ -1,26 +1,46 @@
 import axios from "axios";
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+const language = "es";
 
 class Game {
-  constructor() {
+
+  constructor(arrayPreguntas) {
     this.questions = [];
     this.score = 0;
+    this.tipoPreguntas = arrayPreguntas;
+    this.controller = new AbortController();
+  }
+
+  cancelRequests() {
+    this.controller.abort();
+    this.controller = new AbortController();
   }
 
   async fetchQuestions(callback) {
     console.log("Fetching questions...");
-    const tipoPreguntas = ["Geografia", "Cultura", "Personajes"];
+    //const tipoPreguntas = ["Geografia", "Cultura", "Pintores", "Futbolistas", "Cantantes"];
     
     const urls = Array.from({ length: 10 }, () => {
-        const tipoAleatorio = tipoPreguntas[Math.floor(Math.random() * tipoPreguntas.length)];
-        return { url: `http://localhost:8010/generateQuestion?language=es&thematic=${tipoAleatorio}`, tipo: tipoAleatorio };
+        const thematic = this.tipoPreguntas[Math.floor(Math.random() * this.tipoPreguntas.length)];
+        return { 
+            url: `${apiEndpoint}/generateQuestions`, 
+            params: { 
+                language, 
+                thematic 
+            },
+            tipo: thematic 
+        };
     });
 
     // Inicializamos un array vacío con el tamaño adecuado
     const questionsArray = new Array(urls.length).fill(null);
 
     try {
-        for (let [index, { url, tipo }] of urls.entries()) {
-            const response = await axios.get(url);
+        for (let [index, { url, params, tipo }] of urls.entries()) {
+            const response = await axios.get(url, { 
+                params,
+                signal: this.controller.signal
+            });
 
             const question = {
                 id: `q${index + 1}`,
@@ -47,9 +67,7 @@ class Game {
         console.error("Error fetching questions:", error);
         return null;
     }
-  }
-
-
+}
 
 
   checkAnswer(questionIndex, selectedOption) {

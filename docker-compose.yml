@@ -71,6 +71,7 @@ services:
       - "8010:8010"
     networks:
       - mynetwork
+    
 
   gatewayservice:
     container_name: gatewayservice-wichat_es6b
@@ -102,7 +103,7 @@ services:
     build: 
       context: ./webapp
       args:
-        LLM_API_KEY: ${LLM_API_KEY}
+        LLM_API_KEY: "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ"
     depends_on:
       - gatewayservice
     ports:
