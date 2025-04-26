@@ -12,7 +12,8 @@ import "./ProgressBar.css";
 
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-const apiKey =  "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
+const apiKey =  process.env.REACT_APP_LLM_API_KEY || 'None';
+
 
 const maxTime = 30;//Tiempo maximo para contestar a una pregunta 
 

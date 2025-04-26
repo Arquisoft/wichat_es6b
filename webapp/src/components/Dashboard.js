@@ -14,7 +14,7 @@ const Dashboard = () => {
 
   
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-  const apiKey = "AIzaSyC9nk-u0mzEzIKdj4ARECvAbjc2zKVUuNQ" || 'None';
+  const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
 
   const username = contextUsername || localStorage.getItem('username');
 
