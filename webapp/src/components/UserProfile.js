@@ -1,7 +1,12 @@
 // webapp/src/components/UserProfile.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Typography, Box, Paper, Grid, Button } from '@mui/material';
+import { 
+  Container, Typography, Box, Paper, Grid, Button,
+  Dialog, DialogTitle, DialogContent, List, ListItem, 
+  ListItemText, IconButton 
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
@@ -13,6 +18,19 @@ const UserProfile = () => {
   const [gameHistory, setGameHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleGameClick = (game) => {
+    setSelectedGame(game);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedGame(null);
+  };
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -189,16 +207,12 @@ const UserProfile = () => {
         )}
   
         <Box sx={{ mb: 4 }}>
-          <Typography
-            variant="h5"
-            gutterBottom
-            sx={{
-              fontWeight: 600,
-              color: '#4e54c8',
-              textAlign: 'center',
-              mb: 3,
-            }}
-          >
+          <Typography variant="h5" gutterBottom sx={{
+            fontWeight: 600,
+            color: '#4e54c8',
+            textAlign: 'center',
+            mb: 3,
+          }}>
             Historial de Juegos
           </Typography>
           {gameHistory.length > 0 ? (
@@ -212,11 +226,13 @@ const UserProfile = () => {
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                       backgroundColor: '#ffffff',
                       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                      cursor: 'pointer',
                       '&:hover': {
                         transform: 'translateY(-4px)',
                         boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
                       },
                     }}
+                    onClick={() => handleGameClick(game)}
                   >
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm={4}>
@@ -281,6 +297,100 @@ const UserProfile = () => {
             Ver Rankings
           </Button>
         </Box>
+        <Dialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle sx={{ 
+            m: 0, 
+            p: 2, 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center' 
+          }}>
+            <Typography variant="h6">
+              Detalles del Juego - {selectedGame && new Date(selectedGame.createdAt).toLocaleDateString()}
+            </Typography>
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseDialog}
+              sx={{ color: 'grey.500' }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent dividers>
+            {selectedGame && (
+              <List>
+                {selectedGame.questions.map((q, index) => (
+                  <ListItem 
+                    key={index}
+                    sx={{
+                      backgroundColor: q.correct ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)',
+                      borderRadius: 1,
+                      mb: 1,
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <Box sx={{ width: '100%', display: 'flex', gap: 2 }}>
+                      {/* Image section */}
+                      {q.imageUrl && (
+                        <Box sx={{ 
+                          width: 150, 
+                          height: 150, 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          borderRadius: 1,
+                          overflow: 'hidden',
+                          bgcolor: 'background.paper'
+                        }}>
+                          <img 
+                            src={q.imageUrl} 
+                            alt="Pregunta"
+                            style={{
+                              maxWidth: '100%',
+                              maxHeight: '100%',
+                              objectFit: 'contain'
+                            }}
+                          />
+                        </Box>
+                      )}
+                      
+                      {/* Question details section */}
+                      <Box sx={{ flex: 1 }}>
+                        <ListItemText
+                          primary={
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                              {q.question}
+                            </Typography>
+                          }
+                          secondary={
+                            <Box>
+                              <Typography 
+                                variant="body2" 
+                                color={q.correct ? "success.main" : "error.main"}
+                                sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                              >
+                                {q.correct ? "✓ Correcta" : "✗ Incorrecta"}
+                              </Typography>
+                              <Typography variant="body2">
+                                Tiempo: {Math.round(q.timeSpent)}s
+                              </Typography>
+                            </Box>
+                          }
+                        />
+                      </Box>
+                    </Box>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </DialogContent>
+        </Dialog>
       </Paper>
     </Container>
   );

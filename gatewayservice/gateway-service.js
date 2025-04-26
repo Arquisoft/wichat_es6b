@@ -13,6 +13,7 @@ const port = 8000;
 const llmServiceUrl = process.env.LLM_SERVICE_URL || 'http://localhost:8003';
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8002';
 const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:8001';
+const questionsServiceUrl = process.env.QUESTION_SERVICE_URL || 'http://localhost:8010';
 const historyServiceUrl = process.env.HISTORY_SERVICE_URL || 'http://localhost:8004';
 
 app.use(cors());
@@ -91,6 +92,28 @@ app.post('/savegame', async (req, res) => {
     res.status(error.response?.status || 500).json({ error: error.message });
   }
 });
+
+app.get('/generateQuestions', async (req, res) => {
+  try {
+    // Forward the generate question request to the questions service
+    const response = await axios.get(`${questionsServiceUrl}/generateQuestion`, { params: req.query });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error occurred in generateQuestion:', error); 
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+
+app.get('/nextQuestion', async (req, res) => {
+  try {
+    // Forward the next question request to the questions service
+    const questionResponse = await axios.get(`${questionsServiceUrl}/nextQuestion`, { params: req.query });
+    res.json(questionResponse.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || error.message });
+  }
+});
+
 
 
 
