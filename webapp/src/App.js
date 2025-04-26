@@ -14,6 +14,7 @@ import UserProfile from './components/UserProfile';
 import Footer from './components/Footer'; 
 import NavBar from './components/NavBar'; 
 import './App.css';
+import Groups from './components/Groups';
 
 
 function Home() {
@@ -120,6 +121,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/game" element={<Game />} />
                 <Route path="/ranking" element={<Ranking />} />
+                <Route path="/groups" element={<Groups />} />
                 <Route path="/profile/:username" element={<UserProfile />} />
               </Routes>
           </Box>

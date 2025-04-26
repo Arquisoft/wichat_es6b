@@ -1,139 +1,138 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Typography, Box, Button, TextField, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
-import './groups.css'; // Reutilizamos el CSS para mantener la apariencia
+// src/components/Groups.js
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Box, Container, Typography, TextField, Button, Snackbar, List, ListItem, ListItemText } from '@mui/material';
+
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000/api'; // Añadí /api como prefijo común
 
 const Groups = () => {
-  const [groupId, setGroupId] = useState('');
-  const [members, setMembers] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [newGroupName, setNewGroupName] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(true); // Estado para indicar carga
 
-  const handleInputChange = useCallback((event) => {
-    setGroupId(event.target.value);
+  useEffect(() => {
+    fetchGroups();
   }, []);
 
-  const handleJoinGroup = useCallback(async () => {
-    setError('');
-    setMembers([]);
+  const fetchGroups = async () => {
     setLoading(true);
-
-    if (!groupId.trim()) {
-      setError('Por favor, introduce un ID de grupo.');
+    try {
+      const response = await axios.get(`${apiEndpoint}/groups`);
+      setGroups(response.data); // Asumo que el backend devuelve directamente el array de grupos
       setLoading(false);
+    } catch (err) {
+      setError('Error fetching groups');
+      console.error('Error fetching groups:', err);
+      setLoading(false);
+    }
+  };
+
+  const createGroup = async () => {
+    if (!newGroupName.trim()) {
+      setError('Group name cannot be empty');
+      setOpenSnackbar(true);
       return;
     }
 
-    // Simulación de una llamada a la API (reemplaza con tu lógica real)
-    setTimeout(() => {
-      const fakeMembers = [
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
-        { id: 3, name: 'Charlie' },
-      ];
-      setMembers(fakeMembers);
-      setLoading(false);
-    }, 1500);
+    try {
+      const response = await axios.post(`${apiEndpoint}/groups`, { name: newGroupName }); // Simplifiqué la ruta
+      const createdGroup = response.data; // Asumo que el backend devuelve el grupo creado directamente
+      setGroups(prev => [...prev, createdGroup]);
+      setSuccessMessage(`Group "${createdGroup.name}" created successfully! ID: ${createdGroup._id}`); // Asumo que MongoDB usa _id
+      setNewGroupName('');
+      setOpenSnackbar(true);
+    } catch (err) {
+      console.error('Error creating group:', err.response?.data?.error || err.message);
+      setError(err.response?.data?.error || 'Error creating group');
+      setOpenSnackbar(true);
+    }
+  };
 
-    // Aquí iría tu llamada real a la API para obtener los miembros del grupo
-    // try {
-    //   const response = await fetch(`/api/groups/${groupId}/members`);
-    //   const data = await response.json();
-    //   if (response.ok) {
-    //     setMembers(data.members);
-    //   } else {
-    //     setError(data.message || 'Error al unirse al grupo.');
-    //   }
-    // } catch (error) {
-    //   setError('Hubo un problema al conectar con el servidor.');
-    //   console.error('Error:', error);
-    // } finally {
-    //   setLoading(false);
-    // }
-  }, [groupId]);
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+    setError('');
+    setSuccessMessage('');
+  };
 
-  const handleGoBack = useCallback(() => {
-    navigate(-1); // Volver a la página anterior
-  }, [navigate]);
+  if (loading) {
+    return (
+      <Container maxWidth="sm" sx={{ marginTop: 4 }}>
+        <Typography variant="h6" align="center">Loading groups...</Typography>
+      </Container>
+    );
+  }
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        mt: 10,
-      }}
-    >
+    <Container maxWidth="sm" sx={{ marginTop: 4 }}>
       <Box
         sx={{
-          width: '90%',
-          maxWidth: '400px',
           backgroundColor: 'rgba(245, 245, 240, 0.5)',
-          padding: '1.5rem',
+          padding: '2rem',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          backdropFilter: 'blur(10px)',
-          '& .MuiTypography-h4': {
-            marginBottom: '2rem',
-            fontWeight: 600,
-            color: '#333',
-            textAlign: 'center',
-          },
         }}
       >
-        <Typography variant="h4" gutterBottom align="center">
-          Unirse a un Grupo
+        <Typography variant="h4" align="center" gutterBottom>
+          Groups
         </Typography>
 
         <TextField
-          label="ID del grupo"
-          variant="outlined"
           fullWidth
-          value={groupId}
-          onChange={handleInputChange}
-          sx={{ marginBottom: '1rem' }}
+          label="New Group Name"
+          value={newGroupName}
+          onChange={(e) => setNewGroupName(e.target.value)}
+          sx={{ marginBottom: 2 }}
         />
-
         <Button
           variant="contained"
-          color="primary"
-          onClick={handleJoinGroup}
           fullWidth
-          disabled={loading}
-          sx={{ marginTop: '1rem' }}
+          onClick={createGroup}
+          sx={{
+            backgroundColor: '#2575fc',
+            color: 'white',
+            fontWeight: 600,
+            marginBottom: 4,
+            '&:hover': {
+              backgroundColor: '#4e54c8',
+            },
+          }}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Unirse'}
+          Create Group
         </Button>
 
-        {error && (
-          <Typography color="error" sx={{ marginTop: '1rem' }}>
-            {error}
-          </Typography>
-        )}
-
-        {members.length > 0 && (
-          <Box sx={{ marginTop: '2rem' }}>
-            <Typography variant="h6" gutterBottom align="left">
-              Miembros del Grupo:
-            </Typography>
-            <List>
-              {members.map((member) => (
-                <ListItem key={member.id}>
-                  <ListItemText primary={member.name} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        )}
-
-        <Button variant="outlined" onClick={handleGoBack} fullWidth sx={{ marginTop: '2rem' }}>
-          Volver
-        </Button>
+        <Typography variant="h6" gutterBottom>
+          Existing Groups:
+        </Typography>
+        <List>
+          {groups.map((group) => (
+            <ListItem key={group._id}> {/* Asumo que MongoDB usa _id como identificador */}
+              <ListItemText
+                primary={group.name}
+                secondary={`Group ID: ${group._id}`}
+              />
+            </ListItem>
+          ))}
+        </List>
       </Box>
-    </Box>
+
+      <Snackbar
+        open={openSnackbar && successMessage !== ''}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={successMessage}
+      />
+      {error && (
+        <Snackbar
+          open={!!error}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          message={`Error: ${error}`}
+        />
+      )}
+    </Container>
   );
 };
 
