@@ -34,9 +34,10 @@ app.post('/adduser', async (req, res) => {
 
         //const existingUser = await User.findOne({ username: req.body.username });
 
-        const validator = require('validator');
-
-        const username = validator.escape(req.body.username.trim());
+       // const validator = require('validator');
+        //const username = validator.escape(req.body.username.trim());
+        // Alternativa sin el paquete validator
+        const username = req.body.username ? req.body.username.trim().replace(/[<>&"'`]/g, '') : '';
         const existingUser = await User.findOne({ username });
 
         if (existingUser) {
