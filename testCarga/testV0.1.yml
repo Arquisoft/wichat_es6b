@@ -1,0 +1,192 @@
+config:
+  # La URL base de tu API Gateway
+  target: "http://localhost:8000"
+  phases:
+    # Fases de carga
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: "Rampa Inicial"
+    - duration: 120
+      arrivalRate: 10
+      name: "Carga Media"
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 20
+      name: "Pico de Carga"
+  # Configuración HTTP para manejar tiempos de espera
+  http:
+    timeout: 30  # Timeout en segundos para cada solicitud
+    maxSockets: 100  # Límite de conexiones simultáneas
+  # Umbrales de rendimiento
+  ensure:
+    p95: 8000  # 95% de respuestas en menos de 8 segundos
+    maxErrorRate: 5  # Tasa máxima de error permitida (5%)
+  # Variables globales útiles
+  variables:
+    username: "user{{ $randomNumber(1, 100000) }}"
+    password: "password123"
+    language: "es"
+    thematic: "Futbolistas"  # Cambiado a Futbolistas para coincidir con tu ejemplo
+
+scenarios:
+  # Escenario Principal: Intenta registrar y luego Inicia Sesión + Juega
+  - name: "Ciclo de Usuario (Registro o Login)"
+    flow:
+      # 1. Intentar Registrarse
+      - post:
+          url: "/adduser"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          # Permitir que la solicitud continúe incluso si falla porque el usuario ya existe
+          expect:
+            - statusCode: 200 # O 201 si es CREATED
+            - statusCode: 409 # Para "usuario ya existe"
+            - statusCode: 400 # Para Bad Request
+          capture:
+            json: "$"
+            as: "registerResponse"
+            strict: false
+
+      # 2. Iniciar Sesión (se ejecuta siempre, funcionará si se registró o si ya existía)
+      - post:
+          url: "/login"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          expect:
+            - statusCode: 200
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+      # --- Pausa ---
+      - think: 1
+
+      # 3. Flujo de Juego (Requiere token válido obtenido del login)
+      - log: "Continuando flujo para {{ username }} con token {{ authToken }}"
+      
+      # Corregido: Ruta generateQuestions (sin la 's' extra)
+      - get:
+          url: "/generateQuestions?language={{ language }}&thematic={{ thematic }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          timeout: 30000  # 30 segundos para permitir respuestas lentas
+          capture:
+            - json: "$"
+              as: "questionData"
+              strict: false
+          expect:
+            - statusCode: 200
+            - contentType: "application/json"
+            - hasProperty: "responseQuestion"
+            - hasProperty: "responseOptions"
+            - hasProperty: "responseCorrectOption"
+          metrics:
+            - name: "question_response_time"
+              value: "{{ responseTime }}"
+      
+      - log: "Pregunta generada en {{ responseTime }}ms: {{ questionData.responseQuestion }}"
+      - think: 5  # Simula tiempo para que el usuario responda la pregunta
+
+      - get:
+          url: "/nextQuestion"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+      - think: 0.5
+
+      # 4. Guardar la partida (Requiere token)
+      - post:
+          url: "/savegame"
+          json:
+            id: "game_12345"
+            username: "testuser123"
+            points: "50"
+            avgtime: "20"
+            questions: [
+              {
+                "questionId": "q_abc123",
+                "question": "¿Qué futbolista es conocido como El Pistolero?",
+                "correct": true,
+                "timeSpent": 8,
+                "imageUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Suarez_2018.jpg"
+              }, 
+              {
+                "questionId": "q_abc124",
+                "question": "¿Qué futbolista es conocido como El Portero?",
+                "correct": false,
+                "timeSpent": 10,
+                "imageUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Suarez_2018.jpg"
+              }
+
+            ]
+          expect:
+            - statusCode: 201
+          metrics:
+            - name: "savegame_response_time"
+              value: "{{ responseTime }}"
+
+      # --- Pausa ---
+      - think: 2
+
+      # 5. Consultar Estadísticas e Historial (Requiere token)
+      - get:
+          url: "/stats/{{ username }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+      - think: 0.5
+
+      - get:
+          url: "/history/{{ username }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+
+  # --- Los otros escenarios (Consultar Rankings, Health Check) se mantienen igual ---
+
+  - name: "Consultar Rankings Públicos"
+    weight: 0.2
+    flow:
+      - get:
+          url: "/rankings"
+          expect:
+            - statusCode: 200
+      - think: 3
+
+  - name: "Health Check Ocasional"
+    weight: 0.05
+    flow:
+      - get:
+          url: "/health"
+          expect:
+            - statusCode: 200
+      - think: 5
+      
+  # Nuevo escenario específico para probar solo generateQuestions
+  - name: "Solo Generar Preguntas"
+    weight: 0.3
+    flow:
+      - get:
+          url: "/generateQuestions?language=es&thematic=Futbolistas"
+          timeout: 30000
+          expect:
+            - statusCode: 200
+            - contentType: "application/json"
+            - hasProperty: "responseQuestion" 
+            - hasProperty: "responseOptions"
+            - hasProperty: "responseCorrectOption"
+            - hasProperty: "responseImage"
+          capture:
+            - json: "$.responseQuestion"
+              as: "question"
+          metrics:
+            - name: "standalone_question_time"
+              value: "{{ responseTime }}"
+      - log: "Pregunta generada (standalone): {{ question }} - Tiempo: {{ responseTime }}ms"
+      - think: 2
