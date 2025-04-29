@@ -3,18 +3,7 @@ import { AppBar, Toolbar, Typography, Link } from '@mui/material';
 
 const Footer = () => {
     return(
-        <AppBar
-        position="static"
-        sx={{
-            top: 'auto',
-            bottom: 0,
-            backgroundColor: 'black',
-            height: '10vh', // 10% de la altura de la ventana
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-        }}
-        >
+        <AppBar component="footer" position="static" sx={{ backgroundColor: "primary", color: "white", bottom: 0, left: 0, width: '100%', zIndex: 1000}}>
         <Toolbar
             sx={{
             width: '100%',

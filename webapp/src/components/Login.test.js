@@ -3,7 +3,7 @@ import { render, fireEvent, screen, waitFor, act } from '@testing-library/react'
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import Login from './Login';
-import { SessionContext } from '../sessionContext'; 
+import { SessionContext } from '../context/SessionContext'; 
 import { MemoryRouter } from 'react-router-dom';
 
 const mockAxios = new MockAdapter(axios);

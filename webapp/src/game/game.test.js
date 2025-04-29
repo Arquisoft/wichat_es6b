@@ -1,10 +1,9 @@
 import axios from 'axios';
 import Game from './game';
-import GameManager from './gameManager';
 import { wait, waitFor, screen, render } from '@testing-library/react';
 import { experimentalStyled } from '@mui/material';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { SessionContext } from '../sessionContext';
+import { SessionContext } from '../context/SessionContext';
 
 jest.mock('axios');
 
@@ -12,13 +11,13 @@ describe('Game class', () => {
     let game;
 
     beforeEach(() => {
-        game = new Game(); 
-        jest.useFakeTimers();
+        game = new Game(['Geografia', 'Cultura']); 
+        jest.clearAllMocks();
     });
 
     afterEach(() => {
-        jest.useRealTimers();
-      });
+        jest.resetAllMocks();
+    });
 
     it('should initialize with empty questions and score 0', () => {
         expect(game.questions).toEqual([]);
@@ -57,13 +56,14 @@ describe('Game class', () => {
 
     it('should handle error when fetching questions', async () => {
         axios.get.mockRejectedValueOnce(new Error('Network Error')); 
-
-        const fetchedQuestions = await game.fetchQuestions();
-
-        expect(fetchedQuestions).toBeNull();
+        const mockCallback = jest.fn();
+        
+        const result = await game.fetchQuestions(mockCallback);
+        expect(result).toBeNull();
+        expect(mockCallback).not.toHaveBeenCalled();
     });
 
-    it('should not increment score if answer is incorrect', () => {
+    it('should check answer correctly', () => {
         game.questions = [
             {
                 id: 'q1',
@@ -75,29 +75,14 @@ describe('Game class', () => {
             },
         ];
 
-        const isCorrect = game.checkAnswer(0, 1);
+        // Respuesta correcta
+        expect(game.checkAnswer(0, 0)).toBe(true);
+        expect(game.score).toBe(10);
 
-        expect(isCorrect).toBe(false);
-        expect(game.score).toBe(0);
+        // Respuesta incorrecta
+        expect(game.checkAnswer(0, 1)).toBe(false);
+        expect(game.score).toBe(10); // El score no debe cambiar
     });
-
-    it('should  increment score if answer is correct', () => {
-      game.questions = [
-          {
-              id: 'q1',
-              pregunta: '¿Cuál es la capital de España?',
-              opciones: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'],
-              respuesta_correcta: 0,
-              imagen: 'imagen1.jpg',
-              tipo: 'Geografia',
-          },
-      ];
-
-      const isCorrect = game.checkAnswer(0, 0);
-
-      expect(isCorrect).toBe(true);
-      expect(game.score).toBe(10);
-  });
 
     it('should return the total score', () => {
         game.score = 50;

@@ -64,7 +64,7 @@ app.get('/stats/:username', async (req, res) => {
     const response = await axios.get(historyServiceUrl+`/stats/${req.params.username}`);
     res.json(response.data);
   } catch (error) {
-    res.status(error.response?.status || 500).json({ error: error.message });
+     res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
 app.get('/rankings', async (req, res) => {
@@ -72,7 +72,7 @@ app.get('/rankings', async (req, res) => {
     const response = await axios.get(historyServiceUrl+`/rankings`);
     res.json(response.data);
   } catch (error) {
-    res.status(error.response?.status || 500).json({ error: error.message });
+    res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
 app.get('/history/:username', async (req, res) => {
@@ -80,7 +80,7 @@ app.get('/history/:username', async (req, res) => {
     const response = await axios.get(historyServiceUrl+`/history/${req.params.username}`);
     res.json(response.data);
   } catch (error) {
-    res.status(error.response?.status || 500).json({ error: error.message });
+     res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
 
@@ -89,7 +89,7 @@ app.post('/savegame', async (req, res) => {
     const response = await axios.post(historyServiceUrl+'/savegame', req.body);
     res.status(201).json(response.data);
   } catch (error) {
-    res.status(error.response?.status || 500).json({ error: error.message });
+     res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
 
@@ -100,21 +100,9 @@ app.get('/generateQuestions', async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error('Error occurred in generateQuestion:', error); 
-    res.status(error.response?.status || 500).json({ error: error.message });
+     res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
-
-app.get('/nextQuestion', async (req, res) => {
-  try {
-    // Forward the next question request to the questions service
-    const questionResponse = await axios.get(`${questionsServiceUrl}/nextQuestion`, { params: req.query });
-    res.json(questionResponse.data);
-  } catch (error) {
-    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || error.message });
-  }
-});
-
-
 
 
 // Read the OpenAPI YAML file synchronously
