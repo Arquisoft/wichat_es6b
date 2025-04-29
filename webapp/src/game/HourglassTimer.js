@@ -2,8 +2,9 @@ import React from "react";
 import { CircularProgress, Box, Typography } from "@mui/material";
 import './HourglassTimer.css';  
 
+
 const CircularTimer = ({ timeLeft, totalTime }) => {
-  const progress = (timeLeft / totalTime) * 100;
+  const progress = ((timeLeft / totalTime - 2)) * 100;
 
   const getColor = () => {
     if (timeLeft > 10) return "green";
