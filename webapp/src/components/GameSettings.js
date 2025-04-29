@@ -5,9 +5,9 @@ import { Typography, Box, Button } from '@mui/material';
 import './difficulty-selector.css'; // Importa el nuevo archivo CSS
 
 const difficultyOptions = [
-  { name: 'Fácil', time: 40 },
-  { name: 'Medio', time: 30 },
-  { name: 'Difícil', time: 20 },
+  { name: 'Fácil', time: 42 },
+  { name: 'Medio', time: 32 },
+  { name: 'Difícil', time: 22 },
 ];
 
 const categoryOptions = ["Geografia", "Cultura", "Futbolistas", "Pintores", "Cantantes"];
