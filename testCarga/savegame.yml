@@ -1,0 +1,44 @@
+config:
+  target: "http://localhost:8000"
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: "Rampa Inicial"
+    - duration: 120
+      arrivalRate: 10
+      name: "Carga Media"
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 20
+      name: "Pico de Carga"
+  variables:
+    username: "user{{ $randomNumber(1, 100000) }}"
+    password: "password123"
+    language: "es"
+    thematic: "Geografia"
+
+scenarios:
+  - name: "Ciclo de Usuario (Registro o Login)"
+    flow:
+      - post:
+          url: "/savegame"
+          json:
+            id: "game_12345"
+            username: "testuser123"
+            points: "50"
+            avgtime: "20"
+            questions: [
+              {
+                "questionId": "q_abc123",
+                "question": "¿Qué futbolista es conocido como El Pistolero?",
+                "correct": true,
+                "timeSpent": 8,
+                "imageUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Suarez_2018.jpg"
+              }
+            ]
+          expect:
+            - statusCode: 201
+          metrics:
+            - name: "savegame_response_time"
+              value: "{{ responseTime }}"

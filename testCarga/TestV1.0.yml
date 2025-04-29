@@ -1,0 +1,129 @@
+config:
+  target: "http://localhost:8000"
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: "Rampa Inicial"
+    - duration: 120
+      arrivalRate: 10
+      name: "Carga Media"
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 20
+      name: "Pico de Carga"
+
+  variables:
+    username: "user{{ $randomNumber(1, 100000) }}"
+    password: "password123"
+    language: "es"
+    thematic: "Geografia"
+
+scenarios:
+  - name: "Ciclo de Usuario (Registro o Login)"
+    flow:
+  
+      - post:
+          url: "/adduser"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          expect:
+            - statusCode: 200 
+            - statusCode: 400 
+      - post:
+          url: "/login"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          expect:
+            - statusCode: 200
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+      - think: 1
+
+      - get:
+          url: "/generateQuestions?language=es&thematic=Geografia"
+          timeout: 30000
+          expect:
+            - statusCode: 200
+            - contentType: "application/json"
+            - hasProperty: "responseQuestion" 
+            - hasProperty: "responseOptions"
+            - hasProperty: "responseCorrectOption"
+          capture:
+            - json: "$"
+              as: "questionData"
+              strict: false
+          metrics:
+            - name: "standalone_question_time"
+              value: "{{ responseTime }}"
+      - log: "Pregunta generada (standalone): {{ question }} - Tiempo: {{ responseTime }}ms"
+      - think: 5
+
+      - post:
+          url: "/savegame"
+          json:
+            id: "game_12345"
+            username: "testuser123"
+            points: "50"
+            avgtime: "20"
+            questions: [
+              {
+                "questionId": "q_abc123",
+                "question": "¿Qué futbolista es conocido como El Pistolero?",
+                "correct": true,
+                "timeSpent": 8,
+                "imageUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Suarez_2018.jpg"
+              }, 
+              {
+                "questionId": "q_abc124",
+                "question": "¿Qué futbolista es conocido como El Portero?",
+                "correct": false,
+                "timeSpent": 10,
+                "imageUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Suarez_2018.jpg"
+              }
+
+            ]
+          expect:
+            - statusCode: 201
+          metrics:
+            - name: "savegame_response_time"
+              value: "{{ responseTime }}"
+
+      - think: 2
+
+      - get:
+          url: "/stats/{{ username }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+      - think: 0.5
+
+      - get:
+          url: "/history/{{ username }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+
+  - name: "Consultar Rankings Públicos"
+    weight: 0.2
+    flow:
+      - get:
+          url: "/rankings"
+          expect:
+            - statusCode: 200
+      - think: 3
+
+  - name: "Health Check Ocasional"
+    weight: 0.05
+    flow:
+      - get:
+          url: "/health"
+          expect:
+            - statusCode: 200
+      - think: 5
