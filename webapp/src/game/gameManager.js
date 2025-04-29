@@ -697,11 +697,11 @@ const Jugar = () => {
             }}
           >
             <Typography 
-              variant="h5" 
+              variant="h4" 
               align="center" 
               className="neon-text"
               sx={{ 
-                fontSize: "1.3rem", 
+                fontSize: "1.1rem", 
                 mb: 1,
                 color: '#ffffff',
                 textShadow: `
