@@ -9,6 +9,10 @@ let mongoServer;
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
+  // Intenta desconectar si ya hay una conexión activa con una URI diferente
+  if (mongoose.connection.readyState === 1 && mongoose.connection.uri !== mongoUri) {
+    await mongoose.disconnect();
+  }
   await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
 });
 
@@ -77,7 +81,7 @@ describe('History Service API Tests', () => {
       .expect(200);
 
     expect(response.body).toHaveLength(2);
-    expect(response.body[0].id).toBe('game3'); // Debería estar ordenado por createdAt descendente
+    expect(response.body[0].id).toBe('game3');
     expect(response.body[1].id).toBe('game1');
   });
 
@@ -158,7 +162,7 @@ describe('History Service API Tests', () => {
         { username: 'user8', points: 70 },
         { username: 'user9', points: 220 },
         { username: 'user10', points: 110 },
-        { username: 'user11', points: 160 }, // Más de 10 para probar el límite
+        { username: 'user11', points: 160 },
       ];
       await Game.insertMany(gameData.map(data => ({ ...data, avgtime: 10, questions: [] })));
 
@@ -169,7 +173,6 @@ describe('History Service API Tests', () => {
       expect(response.body).toHaveLength(10);
       expect(response.body[0].username).toBe('user9');
       expect(response.body[0].totalPoints).toBe(220);
-      // ... otros usuarios en orden descendente de puntos
       const points = response.body.map(user => user.totalPoints);
       for (let i = 0; i < points.length - 1; i++) {
         expect(points[i]).toBeGreaterThanOrEqual(points[i + 1]);
@@ -189,7 +192,7 @@ describe('History Service API Tests', () => {
       expect(user1Ranking).toBeDefined();
       expect(user1Ranking.totalPoints).toBe(150);
       expect(user1Ranking.totalGames).toBe(2);
-      expect(user1Ranking.efficiency).toBe(75); // (150 / (2 * 100)) * 100 = 75
+      expect(user1Ranking.efficiency).toBe(75);
     });
 
     it('should return an empty array if no games have been played', async () => {
