@@ -38,6 +38,8 @@ function Home() {
       navigate('/login');
     }
   };
+ 
+
 
   return (
     <Container maxWidth="lg" sx={{ mt: 8, mb: 4 }}>
@@ -123,6 +125,7 @@ function Home() {
           <Button
             variant="contained"
             size="large"
+            data-testid="start-button"
             sx={{
               backgroundColor: '#6a11cb',
               '&:hover': {
@@ -141,6 +144,7 @@ function Home() {
     </Container>
   );
 }
+ export { Home };
 
 function App() {
   return (

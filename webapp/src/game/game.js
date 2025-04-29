@@ -71,7 +71,7 @@ class Game {
 
 
   checkAnswer(questionIndex, selectedOption) {
-    if (this.questions[questionIndex] && this.questions[questionIndex].responseCorrectOption === selectedOption) {
+    if (this.questions[questionIndex] && selectedOption === this.questions[questionIndex].respuesta_correcta) {
       this.score += 10;
       return true;
     }

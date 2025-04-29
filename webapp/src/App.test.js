@@ -1,57 +1,104 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import App from './App';
-import { SessionContext } from './sessionContext';
+import { SessionContext } from './context/SessionContext';
 import userEvent from '@testing-library/user-event';
+import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { Home } from './App';
+import Login from './components/Login';
 
-// test('renders welcome message', async () => {
-//   render(<App />);
+// Silenciar los warnings específicos de MUI Grid y React Router
+const originalWarn = console.warn;
+const originalError = console.error;
 
-//   await waitFor(() => {
-//       expect(screen.getByText(/Welcome to the 2025 edition of the Wichat game/i)).toBeInTheDocument();
-//   });
-// });
+beforeAll(() => {
+  console.warn = (...args) => {
+    if (
+      typeof args[0] === 'string' && (
+        args[0].includes('MUI Grid:') ||
+        args[0].includes('React Router Future Flag Warning:')
+      )
+    ) {
+      return;
+    }
+    originalWarn.call(console, ...args); 
+  };
 
-test('renders login form by default', () => {
-  render(
-     <SessionContext.Provider value={{ isLoggedIn: false }}>
-       <App />
-      </SessionContext.Provider>
-  );
-  expect(screen.getByText(/Don't have an account\? Register here./i)).toBeInTheDocument();
+  console.error = (...args) => {
+    if (
+      typeof args[0] === 'string' && (
+        args[0].includes('MUI:') || 
+        args[0].includes('React Router')
+      )
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
 });
 
-test('allows switching between login and register', async () => {
+afterAll(() => {
+  console.warn = originalWarn;
+  console.error = originalError;
+});
+
+test('renders login form by default', async () => {
   render(
     <SessionContext.Provider value={{ isLoggedIn: false }}>
-      <App />
-     </SessionContext.Provider>
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </MemoryRouter>
+    </SessionContext.Provider>
   );
-  const registerLink = screen.getByText(/Don't have an account\? Register here./i);
-  await userEvent.click(registerLink);
-  expect(screen.getByText(/Already have an account\? Login here./i)).toBeInTheDocument();
-});
-/*
-test('renders game page', async () => {
-  // Simula la navegación a la página del juego
-  window.location.assign('/game');
-  render(<App />);
-  await waitFor(() => screen.getByText(/Game Component/i));
-  expect(screen.getByText(/Game Component/i)).toBeInTheDocument();
+  
+
+  // Click en el botón de inicio
+  const startButton = screen.getByTestId('start-button');
+  await userEvent.click(startButton);
+
+  // Esperamos a que la navegación se complete
+  await waitFor(() => {
+    expect(screen.getByTestId('login-title')).toBeInTheDocument();
+  });
+
+  expect(screen.getByTestId('login-button')).toBeInTheDocument();
+
+  // Click en la pestaña de Signup
+  const signupTab = screen.getByRole('tab', { name: /signup/i });
+  await userEvent.click(signupTab);
+
+  // Ahora buscamos el botón de signup
+  expect(screen.getByTestId('signup-button')).toBeInTheDocument();
+
+  const signUpButton = screen.getByTestId('signup-button');
+  await userEvent.click(signUpButton);
+
+  // Esperamos a que la navegación se complete
+  await waitFor(() => {
+    expect(screen.getByTestId('signup-title')).toBeInTheDocument();
+  });
 });
 
-test('renders ranking page', async () => {
-  // Simula la navegación a la página de ranking
-  window.location.assign('/ranking');
-  render(<App />);
-  await waitFor(() => screen.getByText(/Ranking Component/i));
-  expect(screen.getByText(/Ranking Component/i)).toBeInTheDocument();
-});
+test('allows play the game from home if registered', async () => {
+  render(
+    <SessionContext.Provider value={{ isLoggedIn: true }}>
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/game" element={<div>Pregunta 1</div>} />
+        </Routes>
+      </MemoryRouter>
+    </SessionContext.Provider>
+  );
 
-test('renders user profile page', async () => {
-  // Simula la navegación a la página de perfil de usuario
-  window.location.assign('/profile');
-  render(<App />);
-  await waitFor(() => screen.getByText(/User Profile/i));
-  expect(screen.getByText(/User Profile/i)).toBeInTheDocument();
+  // Click en el botón de inicio
+  const startButton = screen.getByTestId('start-button');
+  await userEvent.click(startButton);
+
+  await waitFor(() => {
+    expect(screen.getByText(/Pregunta/i)).toBeInTheDocument();
+  });
 });
-*/

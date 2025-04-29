@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { AppBar, Toolbar, Box, Button, IconButton, Typography, Avatar } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
-import { SessionContext } from '../sessionContext';
+import { SessionContext } from '../context/SessionContext';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 function NavBar() {

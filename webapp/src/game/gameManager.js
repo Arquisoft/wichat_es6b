@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef,useCallback} from 'react';
-import { Container, Typography, Button, Box, Grid, Paper, Snackbar,Alert, TextField } from '@mui/material';
+import { Container, Typography, Button, Box, Paper, Snackbar, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Game from './game';
@@ -39,7 +39,6 @@ const Jugar = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const preguntaActual = questions[indice] || { opciones: [], respuesta_correcta: null, userAnswer: null, answered: false };
   const timerRef = useRef(null);
-  const [loadingQuestion, setLoadingQuestion] = useState(false);
   
   // Chat functionality
   const [chatMessages, setChatMessages] = useState([]);

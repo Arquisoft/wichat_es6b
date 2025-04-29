@@ -4,7 +4,7 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import AddUser from './AddUser';
 import { MemoryRouter } from 'react-router-dom';
-import { SessionContext } from '../sessionContext'; // Import the SessionContext
+import { SessionContext } from '../context/SessionContext'; // Import the SessionContext
 
 const mockAxios = new MockAdapter(axios);
 

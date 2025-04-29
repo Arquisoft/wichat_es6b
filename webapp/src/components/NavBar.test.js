@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter  } from 'react-router-dom';
 import NavBar from './NavBar';
-import { SessionContext } from '../sessionContext'; 
+import { SessionContext } from '../context/SessionContext'; 
 
 describe('NavBar component', () => {
     it('should render logo when not logged', async () => {
