@@ -1,5 +1,4 @@
 config:
-  # La URL base de tu API Gateway
   target: "http://localhost:8000"
   phases:
     - duration: 60
@@ -13,7 +12,6 @@ config:
       arrivalRate: 10
       rampTo: 20
       name: "Pico de Carga"
-  # Variables globales útiles
   variables:
     username: "user{{ $randomNumber(1, 100000) }}"
     password: "password123"
@@ -21,7 +19,6 @@ config:
     thematic: "Geografia"
 
 scenarios:
-  # Escenario Principal: Intenta registrar y luego Inicia Sesión + Juega
   - name: "Ciclo de Usuario (Registro o Login)"
     flow:
       - post:

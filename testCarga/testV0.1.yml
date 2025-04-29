@@ -1,5 +1,4 @@
 config:
-  # La URL base de tu API Gateway
   target: "http://localhost:8000"
   phases:
     # Fases de carga
@@ -16,21 +15,19 @@ config:
       name: "Pico de Carga"
   # Configuración HTTP para manejar tiempos de espera
   http:
-    timeout: 30  # Timeout en segundos para cada solicitud
-    maxSockets: 100  # Límite de conexiones simultáneas
-  # Umbrales de rendimiento
+    timeout: 30 
+    maxSockets: 100  
   ensure:
-    p95: 8000  # 95% de respuestas en menos de 8 segundos
-    maxErrorRate: 5  # Tasa máxima de error permitida (5%)
-  # Variables globales útiles
+    p95: 8000  
+    maxErrorRate: 5  
   variables:
     username: "user{{ $randomNumber(1, 100000) }}"
     password: "password123"
     language: "es"
-    thematic: "Futbolistas"  # Cambiado a Futbolistas para coincidir con tu ejemplo
+    thematic: "Futbolistas" 
 
 scenarios:
-  # Escenario Principal: Intenta registrar y luego Inicia Sesión + Juega
+
   - name: "Ciclo de Usuario (Registro o Login)"
     flow:
       # 1. Intentar Registrarse
@@ -38,18 +35,16 @@ scenarios:
           url: "/adduser"
           json:
             username: "{{ username }}"
-            password: "{{ password }}"
-          # Permitir que la solicitud continúe incluso si falla porque el usuario ya existe
+            password: "{{ password }}" 
           expect:
             - statusCode: 200 # O 201 si es CREATED
-            - statusCode: 409 # Para "usuario ya existe"
             - statusCode: 400 # Para Bad Request
           capture:
             json: "$"
             as: "registerResponse"
             strict: false
 
-      # 2. Iniciar Sesión (se ejecuta siempre, funcionará si se registró o si ya existía)
+      # 2. Iniciar Sesión 
       - post:
           url: "/login"
           json:
@@ -64,15 +59,15 @@ scenarios:
       # --- Pausa ---
       - think: 1
 
-      # 3. Flujo de Juego (Requiere token válido obtenido del login)
+      # 3. Flujo de Juego 
       - log: "Continuando flujo para {{ username }} con token {{ authToken }}"
       
-      # Corregido: Ruta generateQuestions (sin la 's' extra)
+   
       - get:
           url: "/generateQuestions?language={{ language }}&thematic={{ thematic }}"
           headers:
             Authorization: "Bearer {{ authToken }}"
-          timeout: 30000  # 30 segundos para permitir respuestas lentas
+          timeout: 30000  # 30 segundos 
           capture:
             - json: "$"
               as: "questionData"
@@ -88,7 +83,7 @@ scenarios:
               value: "{{ responseTime }}"
       
       - log: "Pregunta generada en {{ responseTime }}ms: {{ questionData.responseQuestion }}"
-      - think: 5  # Simula tiempo para que el usuario responda la pregunta
+      - think: 5  
 
       - get:
           url: "/nextQuestion"
@@ -98,7 +93,7 @@ scenarios:
             - statusCode: 200
       - think: 0.5
 
-      # 4. Guardar la partida (Requiere token)
+      # 4. Guardar la partida 
       - post:
           url: "/savegame"
           json:
@@ -129,10 +124,9 @@ scenarios:
             - name: "savegame_response_time"
               value: "{{ responseTime }}"
 
-      # --- Pausa ---
       - think: 2
 
-      # 5. Consultar Estadísticas e Historial (Requiere token)
+      # 5. Consultar Estadísticas e Historial 
       - get:
           url: "/stats/{{ username }}"
           headers:
@@ -148,7 +142,6 @@ scenarios:
           expect:
             - statusCode: 200
 
-  # --- Los otros escenarios (Consultar Rankings, Health Check) se mantienen igual ---
 
   - name: "Consultar Rankings Públicos"
     weight: 0.2
@@ -168,7 +161,7 @@ scenarios:
             - statusCode: 200
       - think: 5
       
-  # Nuevo escenario específico para probar solo generateQuestions
+ 
   - name: "Solo Generar Preguntas"
     weight: 0.3
     flow:
