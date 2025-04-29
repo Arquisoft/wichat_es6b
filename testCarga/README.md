@@ -1,4 +1,4 @@
-# 📊 Test de Carga para API REST con Artillery
+# 📊 Test de Carga  con Artillery
 
 Este proyecto incluye un test de carga con [Artillery](https://artillery.io/) para simular usuarios interactuando con una API REST. El test incluye acciones típicas como: registrar usuarios, iniciar sesión, generar preguntas, guardar partidas y consultar estadísticas.
 
