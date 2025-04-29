@@ -69,7 +69,7 @@ describe('AddUser component', () => {
     // Wait for the error Snackbar to be open
     await waitFor(() => {
       expect(screen.getByText(/internal server error/i)).toBeInTheDocument();
-    });
+    }); 
   });
 
 });
