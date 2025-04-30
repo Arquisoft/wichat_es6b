@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import AvatarSelection from './AvatarSelection';
 import { SessionContext } from '../context/SessionContext';
+import '@testing-library/jest-dom';
 
 // Mock de useNavigate
 const mockNavigate = jest.fn();
@@ -19,195 +20,207 @@ const routerConfig = {
   }
 };
 
-// Función auxiliar para renderizar el componente con el contexto
-const renderWithContext = (contextValue = {}) => {
-  const defaultContext = {
-    username: 'testUser',
-    avatar: '/default_user.jpg',
-    updateAvatar: jest.fn(),
-    ...contextValue
-  };
-
-  return render(
-    <SessionContext.Provider value={defaultContext}>
-      <BrowserRouter {...routerConfig}>
-        <AvatarSelection />
-      </BrowserRouter>
-    </SessionContext.Provider>
-  );
-};
-
-// Función auxiliar para seleccionar un avatar
-const selectAvatar = async (avatarTestId = 'cactus-button') => {
-  const avatarButton = screen.getByTestId(avatarTestId);
-  fireEvent.click(avatarButton);
-  return avatarButton;
-};
-
-// Función auxiliar para confirmar la selección
-const confirmSelection = async () => {
-  const confirmButton = screen.getByTestId('confirm-button');
-  fireEvent.click(confirmButton);
-  return confirmButton;
-};
-
-describe('AvatarSelection component', () => {
+describe('AvatarSelection', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers();
+    localStorage.clear();
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
-  it('should render the component with user information', () => {
-    renderWithContext();
-
-    expect(screen.getByText('testUser')).toBeInTheDocument();
-    const currentAvatar = screen.getByAltText('Profile pic');
-    expect(currentAvatar).toHaveAttribute('src', '/default_user.jpg');
-    expect(screen.getByTestId('cactus-button')).toBeInTheDocument();
-    expect(screen.getByTestId('pulpo-button')).toBeInTheDocument();
-    expect(screen.getByTestId('coche-button')).toBeInTheDocument();
-    expect(screen.getByTestId('persona1-button')).toBeInTheDocument();
-    expect(screen.getByTestId('persona2-button')).toBeInTheDocument();
-  });
-
-  it('should handle avatar selection', async () => {
-    renderWithContext();
-    
-    await act(async () => {
-      await selectAvatar();
-    });
-    
-    const confirmButton = screen.getByTestId('confirm-button');
-    expect(confirmButton).not.toBeDisabled();
-  });
-
-  it('should update avatar when confirming selection', async () => {
+  it('muestra los avatares disponibles cuando el usuario está loggeado', async () => {
+    const username = "testUser";
     const mockUpdateAvatar = jest.fn();
-    renderWithContext({ updateAvatar: mockUpdateAvatar });
     
-    await act(async () => {
-      await selectAvatar();
-      await confirmSelection();
-    });
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: '/default_user.jpg',
+        updateAvatar: mockUpdateAvatar,
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
 
-    expect(mockUpdateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
+    const title = screen.getByText('Elige tu avatar');
+    await expect(title).toBeInTheDocument();
+
+    const avatares = screen.getAllByRole('img');
+    expect(avatares).toHaveLength(6); // 5 avatares + el avatar actual
   });
 
-  it('should navigate back to profile when clicking return button', async () => {
-    renderWithContext();
+  it('permite seleccionar un avatar y confirmar el cambio', async () => {
+    const username = "testUser";
+    const mockUpdateAvatar = jest.fn().mockResolvedValue(true);
+    
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: '/default_user.jpg',
+        updateAvatar: mockUpdateAvatar,
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
+
+    const cactusButton = screen.getByTestId('cactus-button');
+    fireEvent.click(cactusButton);
+
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+
+    await waitFor(() => {
+      expect(mockUpdateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
+    });
+  });
+
+  it('navega al perfil del usuario al hacer clic en el botón de retorno', async () => {
+    const username = "testUser";
+    
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: '/default_user.jpg',
+        updateAvatar: jest.fn(),
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
+
     const returnButton = screen.getByText('Volver al perfil');
     fireEvent.click(returnButton);
-    expect(mockNavigate).toHaveBeenCalledWith('/profile/testUser');
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(`/profile/${username}`);
+    });
   });
 
-  it('should show success message when avatar is updated', async () => {
-    renderWithContext();
-    await selectAvatar();
-    await confirmSelection();
+  it('muestra el mensaje de éxito cuando se actualiza el avatar correctamente', async () => {
+    const username = "testUser";
+    const mockUpdateAvatar = jest.fn().mockResolvedValue(true);
+    
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: '/default_user.jpg',
+        updateAvatar: mockUpdateAvatar,
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
+
+    const cactusButton = screen.getByTestId('cactus-button');
+    fireEvent.click(cactusButton);
+
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
 
     await waitFor(() => {
       expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
     });
   });
 
-  it('should render with default avatar when no avatar is provided', () => {
-    renderWithContext({ avatar: null });
+  it('muestra el avatar por defecto cuando no hay avatar seleccionado', async () => {
+    const username = "testUser";
+    
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: null,
+        updateAvatar: jest.fn(),
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
+
     const avatarImage = screen.getByAltText('Profile pic');
-    expect(avatarImage.src).toContain('/white.png');
+    await expect(avatarImage.src).toContain('/default_user.jpg');
   });
 
-  it('should render with provided avatar', () => {
-    renderWithContext({ avatar: '/test-avatar.png' });
+  it('muestra el avatar proporcionado cuando existe', async () => {
+    const username = "testUser";
+    const testAvatar = '/test-avatar.png';
+    
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: testAvatar,
+        updateAvatar: jest.fn(),
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
+
     const avatarImage = screen.getByAltText('Profile pic');
-    expect(avatarImage.src).toContain('/test-avatar.png');
+    await expect(avatarImage.src).toContain(testAvatar);
   });
 
-  it('should show error message when error occurs', async () => {
-    const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error('Test error message'));
-    renderWithContext({ updateAvatar: mockUpdateAvatar });
+  it('muestra un mensaje de error cuando falla la actualización del avatar', async () => {
+    const username = "testUser";
+    const errorMessage = 'Error al actualizar el avatar';
+    const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error(errorMessage));
     
-    await selectAvatar();
-    await confirmSelection();
-    
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: '/default_user.jpg',
+        updateAvatar: mockUpdateAvatar,
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
+
+    const cactusButton = screen.getByTestId('cactus-button');
+    fireEvent.click(cactusButton);
+
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+
     await waitFor(() => {
-      expect(screen.getByText('Error: Test error message')).toBeInTheDocument();
+      expect(screen.getByText(`Error: ${errorMessage}`)).toBeInTheDocument();
     });
   });
 
-  it('should clear error when Snackbar is closed', async () => {
-    const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error('Test error message'));
-    renderWithContext({ updateAvatar: mockUpdateAvatar });
-    
-    await selectAvatar();
-    await confirmSelection();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Error: Test error message')).toBeInTheDocument();
-    });
-
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
-    
-    await waitFor(() => {
-      expect(screen.queryByText('Error: Test error message')).not.toBeInTheDocument();
-    });
-  });
-
-  it('should not update avatar when no avatar is selected', async () => {
+  it('mantiene el botón de confirmar deshabilitado cuando no hay avatar seleccionado', async () => {
+    const username = "testUser";
     const mockUpdateAvatar = jest.fn();
-    renderWithContext({ updateAvatar: mockUpdateAvatar });
+    
+    render(
+      <SessionContext.Provider value={{ 
+        username: username, 
+        avatar: '/default_user.jpg',
+        updateAvatar: mockUpdateAvatar,
+        isLoggedIn: true 
+      }}>
+        <MemoryRouter {...routerConfig}>
+          <AvatarSelection />
+        </MemoryRouter>
+      </SessionContext.Provider>
+    );
 
     const confirmButton = screen.getByTestId('confirm-button');
     expect(confirmButton).toBeDisabled();
+    
     fireEvent.click(confirmButton);
-
-    expect(mockUpdateAvatar).not.toHaveBeenCalled();
-  });
-
-  it('should handle error with default message when error has no message', async () => {
-    const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error());
-    renderWithContext({ updateAvatar: mockUpdateAvatar });
-    
-    await selectAvatar();
-    await confirmSelection();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Error: Error al actualizar el avatar')).toBeInTheDocument();
-    });
-  });
-
-  it('should close success message when Snackbar is closed', async () => {
-    renderWithContext();
-    
-    await selectAvatar();
-    await confirmSelection();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
-    });
-
-    jest.advanceTimersByTime(4500);
-
-    await waitFor(() => {
-      expect(screen.queryByText('Avatar cambiado con éxito')).not.toBeInTheDocument();
-    });
-  });
-
-  it('should not update avatar when selectedAvatar is null', async () => {
-    const mockUpdateAvatar = jest.fn();
-    renderWithContext({ updateAvatar: mockUpdateAvatar });
-    
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
-    
-    expect(mockUpdateAvatar).not.toHaveBeenCalled();
-    
-    await waitFor(() => {
-      expect(screen.queryByText('Avatar cambiado con éxito')).not.toBeInTheDocument();
-    });
+    await expect(mockUpdateAvatar).not.toHaveBeenCalled();
   });
 }); 

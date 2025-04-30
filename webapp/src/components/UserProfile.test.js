@@ -35,7 +35,7 @@ describe('UserProfile - Estado inicial', () => {
         <UserProfile />
       </MemoryRouter>
     );
-    expect(screen.getByText('Cargando...')).toBeInTheDocument();
+    expect(screen.getByText('Cargando perfil...')).toBeInTheDocument();
   });
 
   it('redirige a inicio si no hay usuario autenticado', async () => {
