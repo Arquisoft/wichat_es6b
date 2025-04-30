@@ -11,6 +11,14 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
+// Configuración de las flags futuras de React Router
+const routerConfig = {
+  future: {
+    v7_startTransition: true,
+    v7_relativeSplatPath: true
+  }
+};
+
 describe('AvatarSelection component', () => {
   const mockContextValue = {
     username: 'testUser',
@@ -20,12 +28,17 @@ describe('AvatarSelection component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it('should render the component with user information', () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -44,7 +57,7 @@ describe('AvatarSelection component', () => {
   it('should handle avatar selection', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -60,7 +73,7 @@ describe('AvatarSelection component', () => {
   it('should update avatar when confirming selection', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -78,7 +91,7 @@ describe('AvatarSelection component', () => {
   it('should navigate back to profile when clicking return button', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -93,7 +106,7 @@ describe('AvatarSelection component', () => {
   it('should show success message when avatar is updated', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -117,7 +130,7 @@ describe('AvatarSelection component', () => {
         avatar: null,
         updateAvatar: jest.fn()
       }}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -133,7 +146,7 @@ describe('AvatarSelection component', () => {
         avatar: '/test-avatar.png',
         updateAvatar: jest.fn()
       }}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -151,7 +164,7 @@ describe('AvatarSelection component', () => {
         avatar: null,
         updateAvatar: mockUpdateAvatar
       }}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -177,7 +190,7 @@ describe('AvatarSelection component', () => {
         avatar: null,
         updateAvatar: mockUpdateAvatar
       }}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -210,7 +223,7 @@ describe('AvatarSelection component', () => {
         avatar: null,
         updateAvatar: mockUpdateAvatar
       }}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -232,7 +245,7 @@ describe('AvatarSelection component', () => {
         avatar: null,
         updateAvatar: jest.fn()
       }}>
-        <BrowserRouter>
+        <BrowserRouter {...routerConfig}>
           <AvatarSelection />
         </BrowserRouter>
       </SessionContext.Provider>
@@ -246,6 +259,74 @@ describe('AvatarSelection component', () => {
     
     await waitFor(() => {
       expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
+    });
+  });
+
+  it('should not update avatar when no avatar is selected', async () => {
+    render(
+      <SessionContext.Provider value={mockContextValue}>
+        <BrowserRouter {...routerConfig}>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+
+    const confirmButton = screen.getByTestId('confirm-button');
+    expect(confirmButton).toBeDisabled();
+    fireEvent.click(confirmButton);
+
+    expect(mockContextValue.updateAvatar).not.toHaveBeenCalled();
+  });
+
+  it('should handle error with default message when error has no message', async () => {
+    const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error());
+    
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: null,
+        updateAvatar: mockUpdateAvatar
+      }}>
+        <BrowserRouter {...routerConfig}>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    
+    const avatarButton = screen.getByTestId('cactus-button');
+    fireEvent.click(avatarButton);
+
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Error: Error al actualizar el avatar')).toBeInTheDocument();
+    });
+  });
+
+  it('should close success message when Snackbar is closed', async () => {
+    render(
+      <SessionContext.Provider value={mockContextValue}>
+        <BrowserRouter {...routerConfig}>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    
+    const avatarButton = screen.getByTestId('cactus-button');
+    fireEvent.click(avatarButton);
+    
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
+    });
+
+    jest.advanceTimersByTime(4500);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Avatar cambiado con éxito')).not.toBeInTheDocument();
     });
   });
 }); 
