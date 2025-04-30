@@ -86,12 +86,15 @@ const Settings = () => {
         <div className="selector">
           {difficultyOptions.map((option) => (
             <div
-              key={option.name}
-              className={`option ${option.name.toLowerCase()} ${difficulty === option.name ? 'active' : ''}`}
-              onClick={() => handleDifficultyChange(option.name)}
-            >
-              {option.name}
-            </div>
+            key={option.name}
+            className={`option ${option.name.toLowerCase()} ${difficulty === option.name ? 'active' : ''}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => handleDifficultyChange(option.name)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleDifficultyChange(option.name); }}
+          >
+            {option.name}
+          </div>
           ))}
         </div>
 
@@ -102,12 +105,15 @@ const Settings = () => {
         <div className="selector">
           {categoryOptions.map((category) => (
             <div
-              key={category}
-              className={`option ${selectedCategories.includes(category) ? 'active' : ''}`}
-              onClick={() => handleCategoryToggle(category)}
-            >
-              {category}
-            </div>
+            key={category}
+            className={`option ${selectedCategories.includes(category) ? 'active' : ''}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => handleCategoryToggle(category)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCategoryToggle(category); }}
+          >
+            {category}
+          </div>
           ))}
         </div>
 
