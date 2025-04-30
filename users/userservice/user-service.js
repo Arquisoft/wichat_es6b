@@ -17,7 +17,28 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri);
 
 
+class UserService {
+  static async createUser(username, password) {
+      const sanitizedUsername = username ? 
+          username.trim().replace(/[<>&"'`]/g, '') : '';
 
+      const existingUser = await User.exists({
+          username: { $eq: sanitizedUsername }
+      }).exec();
+
+      if (existingUser) {
+          throw new Error('Username already exists');
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const userInstance = new User();
+      userInstance.username = sanitizedUsername;
+      userInstance.password = hashedPassword;
+
+      await userInstance.save();
+      return userInstance;
+  }
+}
 // Function to validate required fields in the request body
 function validateRequiredFields(req, requiredFields) {
     for (const field of requiredFields) {
@@ -38,29 +59,12 @@ app.post('/adduser', async (req, res) => {
         //const username = validator.escape(req.body.username.trim());
         // Alternativa sin el paquete validator
         // Sanitize and validate username
-        const sanitizedUsername = req.body.username ? 
-            req.body.username.trim().replace(/[<>&"'`]/g, '') : '';
-
-        // Use Mongoose's built-in methods instead of direct query construction
-        const existingUser = await User.exists({
-            username: { $eq: sanitizedUsername }
-        }).exec();
-
-        if (existingUser) {
-            return res.status(400).json({ error: 'Username already exists' });
-        }
-
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-        // Create user instance using Mongoose model
-        const userInstance = new User();
-        userInstance.username = sanitizedUsername;
-        userInstance.password = hashedPassword;
-
-        // Save using instance method
-        await userInstance.save();
+        const user = await UserService.createUser(
+          req.body.username, 
+          req.body.password
+      );
         
-        res.json(userInstance);
+      res.json(user);
     } catch (error) {
         res.status(400).json({ error: error.message }); 
 }});
