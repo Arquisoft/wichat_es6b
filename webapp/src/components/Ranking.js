@@ -47,9 +47,6 @@ EfficiencyCircle.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-EfficiencyCircle.defaultProps = {
-  value: 0,
-};
 
 
 const Ranking = () => {
