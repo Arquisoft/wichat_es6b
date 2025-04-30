@@ -8,6 +8,14 @@ import UserProfile from './UserProfile';
 const mockAxios = new MockAdapter(axios);
 const mockNavigate = jest.fn();
 
+// Configuración de las flags futuras de React Router
+const routerConfig = {
+  future: {
+    v7_startTransition: true,
+    v7_relativeSplatPath: true
+  }
+};
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
@@ -16,20 +24,24 @@ jest.mock('react-router-dom', () => ({
 
 // Tests separados por funcionalidad
 describe('UserProfile - Estado inicial', () => {
+  beforeEach(() => {
+    mockAxios.reset();
+  });
+
   it('muestra mensaje de carga al inicio', () => {
     mockAxios.onGet().reply(200, {});
     render(
-      <MemoryRouter>
+      <MemoryRouter {...routerConfig}>
         <UserProfile />
       </MemoryRouter>
     );
-    expect(screen.getByText('Cargando perfil...')).toBeInTheDocument();
+    expect(screen.getByText('Cargando...')).toBeInTheDocument();
   });
 
   it('redirige a inicio si no hay usuario autenticado', async () => {
     localStorage.removeItem('username');
     render(
-      <MemoryRouter>
+      <MemoryRouter {...routerConfig}>
         <UserProfile />
       </MemoryRouter>
     );
@@ -53,7 +65,7 @@ describe('UserProfile - Estadísticas', () => {
   
     it('muestra total de partidas jugadas', async () => {
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -66,7 +78,7 @@ describe('UserProfile - Estadísticas', () => {
   
     it('muestra puntos totales', async () => {
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -79,7 +91,7 @@ describe('UserProfile - Estadísticas', () => {
   
     it('muestra tiempo promedio', async () => {
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -95,7 +107,7 @@ describe('UserProfile - Estadísticas', () => {
       mockAxios.onGet(`${apiEndpoint}/stats/testuser`).reply(404, { error: 'User not found' });
       
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -139,7 +151,7 @@ describe('UserProfile - Estadísticas', () => {
       mockAxios.onGet(`${apiEndpoint}/history/testuser`).reply(200, []);
       
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -154,7 +166,7 @@ describe('UserProfile - Estadísticas', () => {
       mockAxios.onGet(`${apiEndpoint}/history/testuser`).reply(200, [mockGame]);
       
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -173,7 +185,7 @@ describe('UserProfile - Estadísticas', () => {
       });
       
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -203,7 +215,7 @@ describe('UserProfile - Estadísticas', () => {
   
     it('navega a /game al hacer clic en Jugar', async () => {
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );
@@ -218,7 +230,7 @@ describe('UserProfile - Estadísticas', () => {
   
     it('navega a /ranking al hacer clic en Rankings', async () => {
       render(
-        <MemoryRouter>
+        <MemoryRouter {...routerConfig}>
           <UserProfile />
         </MemoryRouter>
       );

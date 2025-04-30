@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import AvatarSelection from './AvatarSelection';
 import { SessionContext } from '../context/SessionContext';
@@ -76,7 +76,11 @@ describe('AvatarSelection component', () => {
 
   it('should handle avatar selection', async () => {
     renderWithContext();
-    await selectAvatar();
+    
+    await act(async () => {
+      await selectAvatar();
+    });
+    
     const confirmButton = screen.getByTestId('confirm-button');
     expect(confirmButton).not.toBeDisabled();
   });
@@ -85,8 +89,10 @@ describe('AvatarSelection component', () => {
     const mockUpdateAvatar = jest.fn();
     renderWithContext({ updateAvatar: mockUpdateAvatar });
     
-    await selectAvatar();
-    await confirmSelection();
+    await act(async () => {
+      await selectAvatar();
+      await confirmSelection();
+    });
 
     expect(mockUpdateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
   });
