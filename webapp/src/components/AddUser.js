@@ -1,10 +1,9 @@
 // src/components/AddUser.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Box, Container, Typography, TextField, Button, Snackbar } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Box, Typography, TextField, Button, Snackbar } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
-const defaultTheme = createTheme();
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
 const AddUser = () => {

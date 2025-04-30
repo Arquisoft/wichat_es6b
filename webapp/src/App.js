@@ -1,17 +1,14 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import { Typewriter } from "react-simple-typewriter";
 import Typography from '@mui/material/Typography';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import QuizIcon from '@mui/icons-material/Quiz';
 import ChatIcon from '@mui/icons-material/Chat';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Grid, List, ListItem, ListItemIcon, ListItemText, Button, Paper } from '@mui/material';
-import FlipCard from './components/FlipCard';
 import { SessionContext } from './context/SessionContext';
 import { SessionProvider } from './context/SessionContext';
 import Game from './game/gameManager';
@@ -175,7 +172,6 @@ function App() {
         {/* Main content container - añade espacio para el header */}
         <Box
             sx={{
-              flexGrow: 1,
               flexGrow: 1,
               display: 'flex',
               flexDirection: 'column',
