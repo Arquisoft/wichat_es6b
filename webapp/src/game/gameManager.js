@@ -67,7 +67,7 @@ const Jugar = () => {
       updateDifficultyAndTime(storedDifficulty);
     }
   }, [updateDifficultyAndTime]);
-  const finishGame = async (finalScore) => {
+  const finishGame = useCallback(async (finalScore) => {
     const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
     setGameFinished(true);
   
@@ -101,7 +101,7 @@ const Jugar = () => {
       setSnackbarMessage('Error al guardar el juego');
       setSnackbarOpen(true);
     }
-  };
+  }, [gameStartTime, setGameFinished, setScore, questions, apiEndpoint, setSnackbarMessage, setSnackbarOpen]);
   // Fix: moved handleTimeout outside to avoid dependency issues
   const handleTimeout = useCallback(() => {
     setShowTimeoutMessage(true);
@@ -125,13 +125,12 @@ const Jugar = () => {
       if (indice < questions.length - 1) {
         setIndice(prevIndice => prevIndice + 1);
         setQuestionStartTime(Date.now());
-
         setTimeLeft(maxTime); // Reset timer for next question
       } else {
         finishGame(score);
       }
     }, 3000);
-  }, [indice, maxTime, questions, score, finishGame]);
+  }, [setShowTimeoutMessage, clearChat, questions, indice, setQuestions, maxTime, setIndice, setQuestionStartTime, setTimeLeft, finishGame, score]);
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
