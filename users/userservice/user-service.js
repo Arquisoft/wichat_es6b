@@ -37,18 +37,22 @@ app.post('/adduser', async (req, res) => {
        // const validator = require('validator');
         //const username = validator.escape(req.body.username.trim());
         // Alternativa sin el paquete validator
-        const username = req.body.username ? req.body.username.trim().replace(/[<>&"'`]/g, '') : '';
-        const existingUser = await User.findOne({ username });
+        // Sanitize and validate username
+        const sanitizedUsername = req.body.username ? 
+            req.body.username.trim().replace(/[<>&"'`]/g, '') : '';
+
+        // Create a query object using Mongoose schema
+        const query = User.where({ username: sanitizedUsername });
+        const existingUser = await query.findOne();
 
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
-        // Encrypt the password before saving it
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const newUser = new User({
-            username: req.body.username,
+            username: sanitizedUsername, // Use sanitized username
             password: hashedPassword,
         });
 
