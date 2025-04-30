@@ -41,6 +41,16 @@ scenarios:
           capture:
             - json: "$.token"
               as: "authToken"
+                    
+      - post: 
+          url: "/login"
+          json:
+            username: "wrongUser"
+            password: "wrongPss"
+          expect:
+            - statusCode: 401
+
+      
 
       - think: 1
 

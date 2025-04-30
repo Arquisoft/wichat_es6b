@@ -7,7 +7,7 @@ Este proyecto incluye un test de carga con [Artillery](https://artillery.io/) pa
 
 ## Ver Resultado Test de carga 
 Una version de los test de carga ya se puede ver en el siguiente link 
- - [Test de carga](https://app.artillery.io/share/sh_de116e83caeb52eb2db5e2c075a21c94dd7fe24eb40beaee2142e19d3b955c24)
+ - [Test de carga](https://app.artillery.io/share/sh_edc67efc3338ffd5ce3597f2630437a28429b2e2658deca47bee992c195cff7b)
 ## 🔧 Requisitos Previos
 
 Antes de ejecutar el test, asegúrate de tener lo siguiente instalado:
