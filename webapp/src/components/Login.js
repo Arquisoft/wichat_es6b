@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar, Box, Tabs, Tab } from '@mui/material';
 import { Typewriter } from "react-simple-typewriter";
-import { SessionContext } from '../sessionContext';
+import { SessionContext } from '../context/SessionContext';
 
 const Login = () => {
   const [tabValue, setTabValue] = useState(0); // 0 para Login, 1 para Signup
@@ -185,7 +185,7 @@ const Login = () => {
         {tabValue === 0 ? (
           // Login Form
           <>
-            <Typography component="h1" variant="h5" sx={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: 600 }}>
+            <Typography component="h1" variant="h5"  data-testid="login-title" sx={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: 600, }}>
               Login
             </Typography>
             <TextField
@@ -206,6 +206,7 @@ const Login = () => {
             <Button
               variant="contained"
               color="primary"
+              data-testid="login-button"
               fullWidth
               onClick={loginUser}
               sx={{
@@ -232,7 +233,7 @@ const Login = () => {
         ) : (
           // Signup Form
           <>
-            <Typography component="h1" variant="h5" sx={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: 600 }}>
+            <Typography component="h1" variant="h5" data-testid="signup-title" sx={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: 600 }}>
               Signup
             </Typography>
             <TextField
@@ -262,6 +263,7 @@ const Login = () => {
               variant="contained"
               color="primary"
               fullWidth
+              data-testid="signup-button"
               onClick={signupUser}
               sx={{
                 backgroundColor: '#2575fc',
