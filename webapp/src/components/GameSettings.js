@@ -84,18 +84,16 @@ const Settings = () => {
         </Typography>
 
         <div className="selector">
-          {difficultyOptions.map((option) => (
-            <div
+        {difficultyOptions.map((option) => (
+          <button
             key={option.name}
             className={`option ${option.name.toLowerCase()} ${difficulty === option.name ? 'active' : ''}`}
-            role="button"
-            tabIndex={0}
             onClick={() => handleDifficultyChange(option.name)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleDifficultyChange(option.name); }}
+            type="button"
           >
             {option.name}
-          </div>
-          ))}
+          </button>
+        ))}
         </div>
 
         <Typography variant="h6" gutterBottom align="left" style={{ marginTop: '2rem' }}>
@@ -103,18 +101,16 @@ const Settings = () => {
         </Typography>
 
         <div className="selector">
-          {categoryOptions.map((category) => (
-            <div
+        {categoryOptions.map((category) => (
+          <button
             key={category}
             className={`option ${selectedCategories.includes(category) ? 'active' : ''}`}
-            role="button"
-            tabIndex={0}
             onClick={() => handleCategoryToggle(category)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCategoryToggle(category); }}
+            type="button"
           >
             {category}
-          </div>
-          ))}
+          </button>
+        ))}
         </div>
 
         <Box
