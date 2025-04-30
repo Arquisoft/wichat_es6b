@@ -10,8 +10,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [ setLoginSuccess] = useState(false);
-  const [setCreatedAt] = useState('');
+  const [ loginSuccess,setLoginSuccess] = useState(false);
+  const [createdAt, setCreatedAt] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,7 +41,9 @@ const Login = () => {
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
 
       if (apiKey === 'None') {
-        setMessage("LLM API key is not set. Cannot contact the LLM.");
+        var aux = setCreatedAt; 
+        var auxiliar = loginSuccess
+        setMessage("LLM API key is not set. Cannot contact the LLM."+aux+auxiliar);
       } else {
         const question = `Please, generate a greeting message for a student called ${username} that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
         const model = "gemini";
@@ -49,7 +51,6 @@ const Login = () => {
         const messageResponse = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey, context });
         setMessage(messageResponse.data.answer);
       }
-
       setCreatedAt(response.data.createdAt);
       setLoginSuccess(true);
       setOpenSnackbar(true);
