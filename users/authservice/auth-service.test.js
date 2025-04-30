@@ -5,11 +5,11 @@ const User = require('./auth-model');
 
 let mongoServer;
 let app;
-
+const NEW_USER_PASSWORD = 'testpassword';
 //test user
 const user = {
   username: 'testuser',
-  password: 'testpassword',
+  password: NEW_USER_PASSWORD,
 };
 
 async function addUser(user){
