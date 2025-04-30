@@ -329,4 +329,32 @@ describe('AvatarSelection component', () => {
       expect(screen.queryByText('Avatar cambiado con éxito')).not.toBeInTheDocument();
     });
   });
+
+  it('should not update avatar when selectedAvatar is null', async () => {
+    const mockUpdateAvatar = jest.fn();
+    
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: null,
+        updateAvatar: mockUpdateAvatar
+      }}>
+        <BrowserRouter {...routerConfig}>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    
+    // No seleccionamos ningún avatar, por lo que selectedAvatar será null
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+    
+    // Verificamos que updateAvatar no fue llamado
+    expect(mockUpdateAvatar).not.toHaveBeenCalled();
+    
+    // Verificamos que no se muestra ningún mensaje de éxito
+    await waitFor(() => {
+      expect(screen.queryByText('Avatar cambiado con éxito')).not.toBeInTheDocument();
+    });
+  });
 }); 
