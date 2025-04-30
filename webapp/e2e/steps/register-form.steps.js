@@ -31,35 +31,67 @@ defineFeature(feature, test => {
       username = "testuser" + Math.random().toString(36).substring(7);
       password = "testpassword123";
       confirmPassword = "testpassword123";
-      // Click en la pestaña de Signup
-      await expect(page).toClick("/html/body/div/div/div[2]/div/div/div[1]/div/div/button[2]");
-  
+      
+      // Click en la pestaña de Signup - using proper XPath
+      await page.waitForXPath('//*[@id="root"]/div/div[2]/div/div/button');
+      const signupTabElement = await page.$x('//*[@id="root"]/div/div[2]/div/div/button');
+      await signupTabElement[0].click();
     });
 
     when('I fill the data in the form and press submit', async () => {
-      await expect(page).toFill('/html/body/div/div/div[2]/div/div/div[2]/div/input', username);
-      await expect(page).toFill('/html/body/div/div/div[2]/div/div/div[3]/div/input', password);
-      await expect(page).toFill('/html/body/div/div/div[2]/div/div/div[4]/div/input', confirmPassword);
-      await expect(page).toClick('/html/body/div/div/div[2]/div/div/button');
+      // Wait for form fields to be visible after tab change
+      await page.waitForXPath('//input[@placeholder="Username" or @name="username"]');
+      
+      // Get references to form elements using XPath
+      const [usernameInput] = await page.$x('//input[@placeholder="Username" or @name="username"]');
+      const [passwordInput] = await page.$x('//input[@placeholder="Password" or @name="password"]');
+      const [confirmPasswordInput] = await page.$x('//input[@placeholder="Confirm Password" or @name="confirmPassword"]');
+      const [submitButton] = await page.$x('//button[@type="submit"]');
+      
+      // Fill in the form fields
+      await usernameInput.type(username);
+      await passwordInput.type(password);
+      await confirmPasswordInput.type(confirmPassword);
+      
+      // Submit the form
+      await submitButton.click();
     });
 
     then('A confirmation message should be shown in the screen', async () => {
-      await expect(page).toMatch('Registration successful! Please log in.');
+      // Wait for the confirmation message to appear
+      await page.waitForXPath('//div[contains(text(), "Registration successful")]');
+      
+      // Verify the confirmation message
+      const confirmationElements = await page.$x('//div[contains(text(), "Registration successful")]');
+      expect(confirmationElements.length).toBeGreaterThan(0);
     });
 
     /*
     // Test adicional: intentar iniciar sesión con el usuario registrado
     then('I should be able to login with the new account', async () => {
       // Click en la pestaña de Login
-      await expect(page).toClick('[role="tab"]', { name: /login/i });
+      const [loginTab] = await page.$x('//button[contains(text(), "Login")]');
+      await loginTab.click();
       
-      // Llenar formulario de login
-      await expect(page).toFill('[label="Username"]', username);
-      await expect(page).toFill('[label="Password"]', password);
-      await expect(page).toClick('[data-testid="login-button"]');
-
-      // Verificar redirección al dashboard
-      await expect(page).toMatch('Bienvenido');
+      // Wait for form fields to be visible
+      await page.waitForXPath('//input[@placeholder="Username" or @name="username"]');
+      
+      // Get references to login form elements
+      const [usernameInput] = await page.$x('//input[@placeholder="Username" or @name="username"]');
+      const [passwordInput] = await page.$x('//input[@placeholder="Password" or @name="password"]');
+      const [loginButton] = await page.$x('//button[@type="submit"]');
+      
+      // Fill in login credentials
+      await usernameInput.type(username);
+      await passwordInput.type(password);
+      
+      // Submit login form
+      await loginButton.click();
+      
+      // Verify redirection to dashboard
+      await page.waitForXPath('//div[contains(text(), "Bienvenido")]');
+      const welcomeElements = await page.$x('//div[contains(text(), "Bienvenido")]');
+      expect(welcomeElements.length).toBeGreaterThan(0);
     });
     */
   });
@@ -67,5 +99,4 @@ defineFeature(feature, test => {
   afterAll(async () => {
     await browser.close();
   });
-
 });
