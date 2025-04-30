@@ -43,7 +43,8 @@ const Login = () => {
       if (apiKey === 'None') {
         var aux = setCreatedAt; 
         var auxiliar = loginSuccess
-        setMessage("LLM API key is not set. Cannot contact the LLM."+aux+auxiliar);
+        var help = createdAt; 
+        setMessage("LLM API key is not set. Cannot contact the LLM."+aux+auxiliar+help);
       } else {
         const question = `Please, generate a greeting message for a student called ${username} that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.`;
         const model = "gemini";
