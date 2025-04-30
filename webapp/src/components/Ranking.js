@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types'; // Añade esta importación
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, CircularProgress } from '@mui/material';
@@ -41,6 +42,12 @@ const EfficiencyCircle = ({ value }) => {
     </Box>
   );
 };
+
+EfficiencyCircle.propTypes = {
+  value: PropTypes.number.isRequired,
+};
+
+
 
 const Ranking = () => {
   const navigate = useNavigate();

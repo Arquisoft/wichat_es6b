@@ -84,15 +84,16 @@ const Settings = () => {
         </Typography>
 
         <div className="selector">
-          {difficultyOptions.map((option) => (
-            <div
-              key={option.name}
-              className={`option ${option.name.toLowerCase()} ${difficulty === option.name ? 'active' : ''}`}
-              onClick={() => handleDifficultyChange(option.name)}
-            >
-              {option.name}
-            </div>
-          ))}
+        {difficultyOptions.map((option) => (
+          <button
+            key={option.name}
+            className={`option ${option.name.toLowerCase()} ${difficulty === option.name ? 'active' : ''}`}
+            onClick={() => handleDifficultyChange(option.name)}
+            type="button"
+          >
+            {option.name}
+          </button>
+        ))}
         </div>
 
         <Typography variant="h6" gutterBottom align="left" style={{ marginTop: '2rem' }}>
@@ -100,15 +101,16 @@ const Settings = () => {
         </Typography>
 
         <div className="selector">
-          {categoryOptions.map((category) => (
-            <div
-              key={category}
-              className={`option ${selectedCategories.includes(category) ? 'active' : ''}`}
-              onClick={() => handleCategoryToggle(category)}
-            >
-              {category}
-            </div>
-          ))}
+        {categoryOptions.map((category) => (
+          <button
+            key={category}
+            className={`option ${selectedCategories.includes(category) ? 'active' : ''}`}
+            onClick={() => handleCategoryToggle(category)}
+            type="button"
+          >
+            {category}
+          </button>
+        ))}
         </div>
 
         <Box
