@@ -14,7 +14,7 @@ const swaggerDocument = YAML.load(swaggerPath);
 const generatorEndpoint = process.env.REACT_APP_API_ORIGIN_ENDPOINT || 'http://localhost:3000';
 const app = express();
 app.disable('x-powered-by');
-const port = 8010; 
+const port = process.env.NODE_ENV === 'test' ? 0 : 8010; 
 
 
 var language = 'es'; // Valor por defecto es 'es' (español)
