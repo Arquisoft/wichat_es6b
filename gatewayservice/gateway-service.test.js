@@ -2,6 +2,12 @@ const request = require('supertest');
 const axios = require('axios');
 const app = require('./gateway-service'); 
 
+// Test-only credentials (not real passwords)
+const TEST_USER_PASSWORD = 'testpassword';
+const WRONG_USER_PASSWORD = 'wrongpass';
+const NEW_USER_PASSWORD = 'newpassword';
+const DUPLICATE_USER_PASSWORD = 'password';
+
 afterAll(async () => {
     app.close();
   });
@@ -47,7 +53,7 @@ describe('Gateway Service', () => {
     it('should forward login request to auth service successfully', async () => {
       const response = await request(app)
         .post('/login')
-        .send({ username: 'testuser', password: 'testpassword' });
+        .send({ username: 'testuser', password: TEST_USER_PASSWORD });
 
       expect(response.statusCode).toBe(200);
       expect(response.body.token).toBe('mockedToken');
@@ -61,7 +67,7 @@ describe('Gateway Service', () => {
 
       const response = await request(app)
         .post('/login')
-        .send({ username: 'wronguser', password: 'wrongpass' });
+        .send({ username: 'wronguser', password: WRONG_USER_PASSWORD });
 
       expect(response.statusCode).toBe(401);
       expect(response.body.error).toBe('Invalid credentials');
@@ -73,7 +79,7 @@ describe('Gateway Service', () => {
     it('should forward add user request to user service successfully', async () => {
       const response = await request(app)
         .post('/adduser')
-        .send({ username: 'newuser', password: 'newpassword' });
+        .send({ username: 'newuser', password: NEW_USER_PASSWORD });
 
       expect(response.statusCode).toBe(200);
       expect(response.body.userId).toBe('mockedUserId');
@@ -87,7 +93,7 @@ describe('Gateway Service', () => {
 
       const response = await request(app)
         .post('/adduser')
-        .send({ username: 'existinguser', password: 'password' });
+        .send({ username: 'existinguser', password: DUPLICATE_USER_PASSWORD });
 
       expect(response.statusCode).toBe(400);
       expect(response.body.error).toBe('Username already exists');
