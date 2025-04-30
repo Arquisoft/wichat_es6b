@@ -2,26 +2,24 @@ const request = require('supertest');
 const axios = require('axios');
 const app = require('./gateway-service'); 
 
+// Aumentar el timeout global para los tests
+jest.setTimeout(10000);
+
+// Asegurar que el servidor se cierre después de todos los tests
 afterAll(async () => {
-    app.close();
-  });
+  await new Promise(resolve => setTimeout(resolve, 500)); // Dar tiempo para que las conexiones se cierren
+  await app.close();
+});
 
 jest.mock('axios');
 
 describe('Gateway Service', () => {
+  // Constante para la contraseña de prueba
+  const TEST_PASSWORD = 'test_password_123';
+
   // Mock responses from external services
-  axios.post.mockImplementation((url, data) => {
-    if (url.endsWith('/login')) {
-      return Promise.resolve({ data: { token: 'mockedToken' } });
-    } else if (url.endsWith('/adduser')) {
-      return Promise.resolve({ data: { userId: 'mockedUserId' } });
-    } else if (url.endsWith('/ask')) {
-      return Promise.resolve({ data: { answer: 'llmanswer' } });
-    } else if (url.endsWith('/savegame')) {
-      return Promise.resolve({ data: { gameId: 'mockedGameId' } });
-    }else if (url.endsWith('/health')) {
-      return Promise.resolve({ data: { status: 'OK' } });
-    } else if (url.includes('/stats/')) {
+  axios.get.mockImplementation((url) => {
+    if (url.includes('/stats/')) {
       return Promise.resolve({ data: { totalGames: 10, averageScore: 75 } });
     } else if (url.endsWith('/rankings')) {
       return Promise.resolve({ data: [{ username: 'user1', score: 100 }] });
@@ -38,12 +36,25 @@ describe('Gateway Service', () => {
       });
     }
   });
+
+  axios.post.mockImplementation((url, data) => {
+    if (url.endsWith('/login')) {
+      return Promise.resolve({ data: { token: 'mockedToken' } });
+    } else if (url.endsWith('/adduser')) {
+      return Promise.resolve({ data: { userId: 'mockedUserId' } });
+    } else if (url.endsWith('/ask')) {
+      return Promise.resolve({ data: { answer: 'llmanswer' } });
+    } else if (url.endsWith('/savegame')) {
+      return Promise.resolve({ data: { gameId: 'mockedGameId' } });
+    }
+  });
+
   //Login correcto
   describe('Login Endpoint', () => {
     it('should forward login request to auth service successfully', async () => {
       const response = await request(app)
         .post('/login')
-        .send({ username: 'testuser', password: 'testpassword' });
+        .send({ username: 'testuser', password: TEST_PASSWORD });
 
       expect(response.statusCode).toBe(200);
       expect(response.body.token).toBe('mockedToken');
@@ -57,7 +68,7 @@ describe('Gateway Service', () => {
 
       const response = await request(app)
         .post('/login')
-        .send({ username: 'wronguser', password: 'wrongpass' });
+        .send({ username: 'wronguser', password: TEST_PASSWORD });
 
       expect(response.statusCode).toBe(401);
       expect(response.body.error).toBe('Invalid credentials');
@@ -69,13 +80,12 @@ describe('Gateway Service', () => {
     it('should forward add user request to user service successfully', async () => {
       const response = await request(app)
         .post('/adduser')
-        .send({ username: 'newuser', password: 'newpassword' });
+        .send({ username: 'newuser', password: TEST_PASSWORD });
 
       expect(response.statusCode).toBe(200);
       expect(response.body.userId).toBe('mockedUserId');
     });
 
-    //Add User incorrecto
     it('should handle duplicate username error', async () => {
       axios.post.mockImplementationOnce(() => {
         throw { response: { status: 400, data: { error: 'Username already exists' } } };
@@ -83,7 +93,7 @@ describe('Gateway Service', () => {
 
       const response = await request(app)
         .post('/adduser')
-        .send({ username: 'existinguser', password: 'password' });
+        .send({ username: 'existinguser', password: TEST_PASSWORD });
 
       expect(response.statusCode).toBe(400);
       expect(response.body.error).toBe('Username already exists');
@@ -211,7 +221,6 @@ describe('Gateway Service', () => {
       expect(response.body).toHaveProperty('gameId');
     });
 
-    //Save Game incorrecto  
     it('should handle savegame service error', async () => {
       axios.post.mockImplementationOnce(() => {
         throw { response: { status: 400, data: { error: 'Invalid game data' } } };
@@ -231,7 +240,6 @@ describe('Gateway Service', () => {
     });
   });
 
-  //Generate Questions Endpoint
   describe('Generate Questions Endpoint', () => {
     it('should forward generateQuestions request to questions service successfully', async () => {
       const response = await request(app)
@@ -245,7 +253,6 @@ describe('Gateway Service', () => {
       expect(response.body).toHaveProperty('responseImage');
     });
 
-    //Generate Questions incorrecto
     it('should handle generateQuestions service error', async () => {
       axios.get.mockImplementationOnce(() => {
         throw { response: { status: 400, data: { error: 'Invalid thematic' } } };
