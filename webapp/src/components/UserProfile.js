@@ -296,6 +296,18 @@ const UserProfile = () => {
           >
             Ver Rankings
           </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#2e7d32',
+              '&:hover': {
+                backgroundColor: '#1b5e20',
+              },
+            }}
+            onClick={() => navigate('/profile/edit')}
+          >
+            Editar Perfil
+          </Button>
         </Box>
         <Dialog
           open={openDialog}

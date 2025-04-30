@@ -14,7 +14,7 @@ const swaggerDocument = YAML.load(swaggerPath);
 const generatorEndpoint = process.env.REACT_APP_API_ORIGIN_ENDPOINT || 'http://localhost:3000';
 const app = express();
 app.disable('x-powered-by');
-const port = 8010;
+const port = process.env.NODE_ENV === 'test' ? 0 : 8010; 
 
 
 var language = 'es'; // Valor por defecto es 'es' (español)
@@ -205,37 +205,6 @@ app.get('/generateQuestion', async (req, res) => {
     }
 });
 
-// Ruta para generar automáticamente una nueva pregunta cada vez que se responde la anterior
-app.get('/nextQuestion', async (req, res) => {
-    try {
-        language = req.query.language || 'es'; // Asegurar que haya un lenguaje por defecto
-        queries = [];
-        
-        if (numberOfQuestions === 0) {
-            gameId = null;
-        }
-
-        await getQueriesByThematic(req.query.thematic);
-        await generateQuestions();
-        numberOfQuestions++;
-
-        if (numberOfQuestions >= maxQuestions) {
-            numberOfQuestions = 0;
-        }
-
-        // Enviar la pregunta generada automáticamente
-        var response = {
-            responseQuestion: question,
-            responseOptions: options,
-            responseCorrectOption: correctOption,
-            responseImage: image,
-        };
-
-        res.status(200).json(response);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
 
 
 // // Ruta para la raíz

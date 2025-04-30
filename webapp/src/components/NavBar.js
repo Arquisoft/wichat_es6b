@@ -20,7 +20,6 @@ function NavBar() {
   const pages = [
     { path: '/game', text: "Jugar" },
     { path: '/ranking', text: "Ranking" },
-
   ];
 
   const logo = (
@@ -35,7 +34,7 @@ function NavBar() {
         {/* Logo a la izquierda */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {logo}
-          {isLoggedIn && (
+          {isLoggedIn && ( //Comprobar si esta logueado para mostrar el menu
             <Box sx={{ display: 'flex', ml: 2 }}>
               {pages.map((page) => (
                 <Button
@@ -48,11 +47,12 @@ function NavBar() {
                   {page.text}
                 </Button>
               ))}
-               {isLoggedIn && (
+              {isLoggedIn && (
                 <Button
                   component={Link}
                   to="/settings"
                   size="large"
+                  data-testid="settings-button"
                   sx={{
                     color: 'white',
                     '&:hover': { backgroundColor: '#5f7e94' },
@@ -87,7 +87,6 @@ function NavBar() {
                   <Avatar src={avatar} alt="Profile pic" sx={{ width: 33, height: 33 }} 
                     aria-label="current user account"
                   />
-                  
                 </IconButton>
               </Button>
               <IconButton

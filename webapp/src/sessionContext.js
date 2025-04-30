@@ -4,17 +4,20 @@ import { v4 as uuidv4 } from 'uuid';
 const SessionContext = createContext();
 
 const SessionProvider = ({ children }) => {
+    
     const [sessionId, setSessionId] = useState('');
     const [username, setUsername] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [avatar, setAvatar] = useState('/default_user.jpg');
   
+    //This hook recovers user data if available in localstorage when the sessprovider is created
     useEffect(() => {
       const storedSessionId = localStorage.getItem('sessionId');
       if (storedSessionId) {
         setSessionId(storedSessionId);
         setIsLoggedIn(true);
         
+        // Here you can get the username using the sessionID
         const storedUsername = localStorage.getItem('username');
         if (storedUsername) {
           setUsername(storedUsername);
@@ -26,42 +29,34 @@ const SessionProvider = ({ children }) => {
         }
       }
     }, []);
-    
+  
     const createSession = (username) => {
       const newSessionId = uuidv4();
       setSessionId(newSessionId);
       setUsername(username);
       setIsLoggedIn(true);
-      
-      // Recuperar el último avatar usado por este usuario o usar el default
-      const lastAvatar = localStorage.getItem(`avatar_${username}`);
-      const avatarToUse = lastAvatar || '/white.png';
-      
       localStorage.setItem('sessionId', newSessionId);
       localStorage.setItem('username', username);
-      localStorage.setItem('avatar', avatarToUse);
-      setAvatar(avatarToUse);
+      localStorage.setItem('avatar', '/default_user.jpg');
     };
   
     const destroySession = () => {
       localStorage.removeItem('sessionId');
       localStorage.removeItem('username');
-      localStorage.removeItem('avatar');
       setSessionId('');
       setUsername('');
       setIsLoggedIn(false);
-      setAvatar('/white.png');
+      setAvatar('/default_user.jpg');
     };
 
     const updateAvatar = (newAvatar) => {
       setAvatar(newAvatar);
       localStorage.setItem('avatar', newAvatar);
-      // Guardar el avatar específico para este usuario
-      localStorage.setItem(`avatar_${username}`, newAvatar);
     };
   
     return (
-      <SessionContext.Provider
+        // This values are the props we can access from the child objects
+        <SessionContext.Provider
         value={{
           sessionId: sessionId || '',
           username: username || '',
@@ -75,6 +70,6 @@ const SessionProvider = ({ children }) => {
         {children}
       </SessionContext.Provider>
     );
-};
+  };
 
 export { SessionContext, SessionProvider };
