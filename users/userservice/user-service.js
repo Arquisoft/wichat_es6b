@@ -41,9 +41,10 @@ app.post('/adduser', async (req, res) => {
         const sanitizedUsername = req.body.username ? 
             req.body.username.trim().replace(/[<>&"'`]/g, '') : '';
 
-        // Create a query object using Mongoose schema
-        const query = User.where({ username: sanitizedUsername });
-        const existingUser = await query.findOne();
+        // Use Mongoose's built-in methods instead of direct query construction
+        const existingUser = await User.exists({
+            username: { $eq: sanitizedUsername }
+        }).exec();
 
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });
@@ -51,13 +52,15 @@ app.post('/adduser', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        const newUser = new User({
-            username: sanitizedUsername, // Use sanitized username
-            password: hashedPassword,
-        });
+        // Create user instance using Mongoose model
+        const userInstance = new User();
+        userInstance.username = sanitizedUsername;
+        userInstance.password = hashedPassword;
 
-        await newUser.save();
-        res.json(newUser);
+        // Save using instance method
+        await userInstance.save();
+        
+        res.json(userInstance);
     } catch (error) {
         res.status(400).json({ error: error.message }); 
 }});
