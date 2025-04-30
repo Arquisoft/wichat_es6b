@@ -18,7 +18,6 @@ class Game {
 
   async fetchQuestions(callback) {
     console.log("Fetching questions...");
-    //const tipoPreguntas = ["Geografia", "Cultura", "Pintores", "Futbolistas", "Cantantes"];
     
     const urls = Array.from({ length: 10 }, () => {
         const thematic = this.tipoPreguntas[Math.floor(Math.random() * this.tipoPreguntas.length)];
@@ -63,6 +62,10 @@ class Game {
                 callback([...questionsArray]); // Usamos [...questionsArray] para evitar mutaciones externas
             }
         }
+
+        // Actualizamos this.questions y devolvemos el array completo
+        this.questions = questionsArray.filter(q => q !== null);
+        return this.questions;
     } catch (error) {
         console.error("Error fetching questions:", error);
         return null;

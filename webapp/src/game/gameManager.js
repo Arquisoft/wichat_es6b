@@ -24,7 +24,7 @@ const Jugar = () => {
   const [timeLeft, setTimeLeft] = useState(40);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
-  const [setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [hint, setHint] = useState({});
@@ -323,7 +323,7 @@ const Jugar = () => {
         gameInstance.cancelRequests();
       }
     };
-  }, [navigate, selectedCategories,setLoading]);
+  }, [navigate, selectedCategories]);
 
   // Fix: Timer management
   useEffect(() => {
