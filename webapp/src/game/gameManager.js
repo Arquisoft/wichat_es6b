@@ -67,7 +67,41 @@ const Jugar = () => {
       updateDifficultyAndTime(storedDifficulty);
     }
   }, [updateDifficultyAndTime]);
-
+  const finishGame = async (finalScore) => {
+    const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
+    setGameFinished(true);
+  
+    try {
+      const username = localStorage.getItem('username');
+      console.log("Score:", finalScore); // Usar el puntaje actualizado
+      setScore(finalScore); // Actualizar el puntaje final
+  
+      // Preparar datos para guardar
+      const gameData = {
+        id: `game_${Date.now()}`,
+        username,
+        points: finalScore, // Usar el puntaje actualizado
+        avgtime: totalGameTime / questions.length,
+        questions: questions.map((q) => ({
+          questionId: q.id,
+          question: q.pregunta,
+          correct: q.userAnswer === q.respuesta_correcta,
+          timeSpent: q.timeSpent || 0,
+          imageUrl: q.imagen // Añadimos la URL de la imagen
+        })),
+      };
+  
+      // Guardar el historial del juego
+      await axios.post(`${apiEndpoint}/savegame`, gameData);
+  
+      setSnackbarMessage('¡Juego guardado correctamente!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Error guardando el historial del juego:', error);
+      setSnackbarMessage('Error al guardar el juego');
+      setSnackbarOpen(true);
+    }
+  };
   // Fix: moved handleTimeout outside to avoid dependency issues
   const handleTimeout = useCallback(() => {
     setShowTimeoutMessage(true);
@@ -91,14 +125,13 @@ const Jugar = () => {
       if (indice < questions.length - 1) {
         setIndice(prevIndice => prevIndice + 1);
         setQuestionStartTime(Date.now());
-        let aux = hint
-        aux = usedhint
+
         setTimeLeft(maxTime); // Reset timer for next question
       } else {
         finishGame(score);
       }
     }, 3000);
-  }, [indice, maxTime, questions, score]);
+  }, [indice, maxTime, questions, score, finishGame,hint, usedhint]);
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
@@ -108,7 +141,8 @@ const Jugar = () => {
       // Agregar mensaje del usuario al chat
       setChatMessages(prev => [...prev, { sender: 'user', text: userInputText }]);
       setChatInput("");
-  
+      setSelectedCategories(); 
+
       console.log("Pide cargar pista");
       
       // Verificar que estemos en una pregunta válida
@@ -137,9 +171,11 @@ const Jugar = () => {
           const newMessages = [...prev];
           // Reemplazar el último mensaje (que debería ser "Pensando...")
           if (newMessages.length > 0) {
+            let aux = hint
+            aux = usedhint
             newMessages[newMessages.length - 1] = { 
               sender: 'bot', 
-              text: `Pista: ${actualHint || "No pude generar una pista"}` 
+              text: `Pista: ${actualHint || "No pude generar una pista"+aux}` 
             };
           }
           return newMessages;
@@ -287,7 +323,7 @@ const Jugar = () => {
         gameInstance.cancelRequests();
       }
     };
-  }, [navigate, selectedCategories]);
+  }, [navigate, selectedCategories,setLoading]);
 
   // Fix: Timer management
   useEffect(() => {
@@ -364,41 +400,7 @@ const Jugar = () => {
   };
 
   // Finalizar el juego
-  const finishGame = async (finalScore) => {
-    const totalGameTime = (Date.now() - gameStartTime) / 1000; // tiempo total en segundos
-    setGameFinished(true);
-  
-    try {
-      const username = localStorage.getItem('username');
-      console.log("Score:", finalScore); // Usar el puntaje actualizado
-      setScore(finalScore); // Actualizar el puntaje final
-  
-      // Preparar datos para guardar
-      const gameData = {
-        id: `game_${Date.now()}`,
-        username,
-        points: finalScore, // Usar el puntaje actualizado
-        avgtime: totalGameTime / questions.length,
-        questions: questions.map((q) => ({
-          questionId: q.id,
-          question: q.pregunta,
-          correct: q.userAnswer === q.respuesta_correcta,
-          timeSpent: q.timeSpent || 0,
-          imageUrl: q.imagen // Añadimos la URL de la imagen
-        })),
-      };
-  
-      // Guardar el historial del juego
-      await axios.post(`${apiEndpoint}/savegame`, gameData);
-  
-      setSnackbarMessage('¡Juego guardado correctamente!');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Error guardando el historial del juego:', error);
-      setSnackbarMessage('Error al guardar el juego');
-      setSnackbarOpen(true);
-    }
-  };
+
   
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
