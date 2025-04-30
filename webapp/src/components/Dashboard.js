@@ -9,7 +9,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { username: contextUsername } = useContext(SessionContext);
   const [welcomeMessage, setWelcomeMessage] = useState('');
-  const [createdAt, setCreatedAt] = useState('');
+  const [createdAt] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   

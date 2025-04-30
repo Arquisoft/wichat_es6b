@@ -1,8 +1,7 @@
 import React, { useState, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Typography, TextField, Button, Snackbar, Box, Tabs, Tab } from '@mui/material';
-import { Typewriter } from "react-simple-typewriter";
+import { Typography, TextField, Button, Snackbar, Box, Tabs, Tab } from '@mui/material';
 import { SessionContext } from '../context/SessionContext';
 
 const Login = () => {

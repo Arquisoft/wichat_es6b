@@ -220,7 +220,7 @@ const Jugar = () => {
         gameInstance.cancelRequests();
       }
     };
-  } , [navigate, setSelectedCategories]);
+  } , [navigate, setSelectedCategories,selectedCategories]);
 
   
 
@@ -247,7 +247,7 @@ const Jugar = () => {
         timerRef.current = null;
       }
     };
-  }, [indice, questions.length]);
+  }, [indice, questions.length, gameFinished, maxTime]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
