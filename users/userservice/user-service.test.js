@@ -4,6 +4,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const User = require('./user-model');
 
+const NEW_USER_PASSWORD = 'testpassword';
 
 let mongoServer;
 let app;
@@ -24,7 +25,7 @@ describe('User Service', () => {
   it('should add a new user on POST /adduser', async () => {
     const newUser = {
       username: 'testuser',
-      password: 'testpassword',
+      password: NEW_USER_PASSWORD,
     };
 
     const response = await request(app).post('/adduser').send(newUser);
