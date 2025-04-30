@@ -4,21 +4,24 @@
   "main": "guardarPreguntaBaseDatos.js",
   "scripts": {
     "start": "node questions.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "axios": "^1.8.2",
     "express": "^4.21.2",
     "socket.io": "^4.8.1",
-    "supertest": "^7.1.0",
     "swagger": "^0.0.1",
     "swagger-ui": "^5.20.3",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.7.1",
     "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "axios": "^1.9.0",
+    "jest": "^29.7.0",
+    "supertest": "^7.1.0"
   }
 }
