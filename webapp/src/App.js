@@ -173,7 +173,6 @@ function App() {
         <Box
             sx={{
               flexGrow: 1,
-              flexGrow: 1,
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
