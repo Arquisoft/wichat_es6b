@@ -26,7 +26,7 @@ const llmConfigs = {
   },
   empathy: {
     url: () => 'https://empathyai.prod.empathy.co/v1/chat/completions',
-    transformRequest: (question, context =  'Deberas hablar en gallego' ) => ({
+    transformRequest: (question, context =  'Deberas hablar en español' ) => ({
       model: "qwen/Qwen2.5-Coder-7B-Instruct",
       stream: false,
       messages: [
@@ -44,9 +44,6 @@ const llmConfigs = {
 
 // Function to validate required fields in the request body
 function validateRequiredFields(req, requiredFields) {
-  if (!req.body) {
-    throw new Error("Invalid JSON body");
-  }
   for (const field of requiredFields) {
     if (!(field in req.body)) {
       throw new Error(`Missing required field: ${field}`);
@@ -68,13 +65,11 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '
 
     const headers= config.headers ? config.headers(apiKey) : { 'Content-Type': 'application/json' };
     
-	console.log(url); 
     const response = await axios.post(url, requestData, { headers });
 
     return config.transformResponse(response);
 
   } catch (error) {
-    console.error(`Error sending question to ${model}:`, error.message || error);
     throw error;
   }
 }
@@ -83,9 +78,7 @@ app.post('/ask', async (req, res) => {
   try {
     // Check if required fields are present in the request body
     validateRequiredFields(req, ['question', 'model', 'apiKey']);
-    
-
-    console.log('Body recibido:', req.body); // ← Añade esto
+  
 
     const { question, model, apiKey, context } = req.body;
     const answer = await sendQuestionToLLM(question, apiKey, model,context);
