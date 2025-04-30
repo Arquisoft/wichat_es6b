@@ -8,6 +8,13 @@ afterAll(() => {
   server.close();
 });
 
+// Función auxiliar para hacer las llamadas a la API
+const makeQuestionRequest = async (thematic = 'Futbolistas', language = 'es') => {
+  return request(server)
+    .get('/generateQuestion')
+    .query({ thematic, language });
+};
+
 describe('Question Service', () => {
   beforeEach(() => {
     // Mock de la respuesta de Wikidata
@@ -31,9 +38,7 @@ describe('Question Service', () => {
   });
 
   it('should generate a question successfully', async () => {
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'Futbolistas', language: 'es' });
+    const response = await makeQuestionRequest();
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('responseQuestion');
@@ -43,18 +48,14 @@ describe('Question Service', () => {
   });
 
   it('should handle invalid thematic', async () => {
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'InvalidThematic', language: 'es' });
+    const response = await makeQuestionRequest('InvalidThematic');
 
     expect(response.statusCode).toBe(400);
     expect(response.body).toHaveProperty('error');
   });
 
   it('should handle invalid language', async () => {
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'Futbolistas', language: 'invalid' });
+    const response = await makeQuestionRequest('Futbolistas', 'invalid');
 
     expect(response.statusCode).toBe(400);
     expect(response.body).toHaveProperty('error');
@@ -65,45 +66,35 @@ describe('Question Service', () => {
       throw new Error('Wikidata API error');
     });
 
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'Futbolistas', language: 'es' });
+    const response = await makeQuestionRequest();
 
     expect(response.statusCode).toBe(400);
     expect(response.body).toHaveProperty('error');
   });
 
   it('should generate questions in English', async () => {
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'Futbolistas', language: 'en' });
+    const response = await makeQuestionRequest('Futbolistas', 'en');
 
     expect(response.statusCode).toBe(200);
     expect(response.body.responseQuestion).toBe('What is the name of this footballer?');
   });
 
   it('should generate questions in Spanish', async () => {
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'Futbolistas', language: 'es' });
+    const response = await makeQuestionRequest();
 
     expect(response.statusCode).toBe(200);
     expect(response.body.responseQuestion).toBe('¿Cuál es el nombre de este futbolista?');
   });
 
   it('should return exactly 4 options', async () => {
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'Futbolistas', language: 'es' });
+    const response = await makeQuestionRequest();
 
     expect(response.statusCode).toBe(200);
     expect(response.body.responseOptions.length).toBe(4);
   });
 
   it('should have one correct answer among options', async () => {
-    const response = await request(server)
-      .get('/generateQuestion')
-      .query({ thematic: 'Futbolistas', language: 'es' });
+    const response = await makeQuestionRequest();
 
     expect(response.statusCode).toBe(200);
     expect(response.body.responseOptions).toContain(response.body.responseCorrectOption);

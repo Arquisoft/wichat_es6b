@@ -7,7 +7,7 @@ jest.mock('axios');
 
 // Cerrar el servidor después de todas las pruebas
 afterAll(async () => {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Aumentamos el tiempo de espera
+  await new Promise(resolve => setTimeout(resolve, 1000));
   await server.close();
 });
 
@@ -34,266 +34,129 @@ beforeEach(() => {
   });
 });
 
+// Función auxiliar para hacer peticiones a la API
+const makeQuestionRequest = async (thematic, language) => {
+  return request(server)
+    .get('/generateQuestion')
+    .query({ thematic, language });
+};
+
+// Función auxiliar para validar la estructura de las consultas
+const validateQueryStructure = (category) => {
+  expect(Array.isArray(category)).toBe(true);
+  category.forEach(query => {
+    expect(Array.isArray(query)).toBe(true);
+    expect(query.length).toBe(2);
+    expect(typeof query[0]).toBe('string');
+    expect(typeof query[1]).toBe('string');
+  });
+};
+
+// Función auxiliar para validar consultas SPARQL
+const validateSparqlQuery = (query) => {
+  expect(query).toContain('SELECT');
+  expect(query).toContain('WHERE');
+  expect(
+    query.includes('FILTER') || 
+    query.includes('SERVICE wikibase:label') ||
+    query.includes('OPTIONAL')
+  ).toBe(true);
+};
+
+// Función auxiliar para validar textos de preguntas
+const validateQuestionText = (questionText, language) => {
+  const regex = language === 'es' ? /^[¿]?[A-Z].*\?$/ : /^[A-Z].*\?$/;
+  expect(questionText).toMatch(regex);
+};
+
 describe('all_questions.js', () => {
-  // Verificar que queries existe y tiene la estructura correcta
   it('should have queries object with es and en languages', () => {
     expect(queries).toBeDefined();
     expect(queries).toHaveProperty('es');
     expect(queries).toHaveProperty('en');
   });
 
-  // Verificar la estructura de las consultas en español
-  describe('Spanish queries', () => {
-    const spanishQueries = queries.es;
+  // Función auxiliar para probar consultas en un idioma específico
+  const testLanguageQueries = (language) => {
+    const languageQueries = queries[language];
+    const categories = ['Geografia', 'Cultura', 'Pintores', 'Futbolistas', 'Cantantes'];
 
-    it('should have all required categories', () => {
-      expect(spanishQueries).toHaveProperty('Geografia');
-      expect(spanishQueries).toHaveProperty('Cultura');
-      expect(spanishQueries).toHaveProperty('Pintores');
-      expect(spanishQueries).toHaveProperty('Futbolistas');
-      expect(spanishQueries).toHaveProperty('Cantantes');
-    });
+    describe(`${language} queries`, () => {
+      it('should have all required categories', () => {
+        categories.forEach(category => {
+          expect(languageQueries).toHaveProperty(category);
+        });
+      });
 
-    it('should have correct structure for each category', () => {
-      Object.values(spanishQueries).forEach(category => {
-        expect(Array.isArray(category)).toBe(true);
-        category.forEach(query => {
-          expect(Array.isArray(query)).toBe(true);
-          expect(query.length).toBe(2);
-          expect(typeof query[0]).toBe('string'); // SPARQL query
-          expect(typeof query[1]).toBe('string'); // Question text
+      it('should have correct structure for each category', () => {
+        Object.values(languageQueries).forEach(validateQueryStructure);
+      });
+
+      it('should have valid SPARQL queries', () => {
+        Object.values(languageQueries).forEach(category => {
+          category.forEach(query => validateSparqlQuery(query[0]));
+        });
+      });
+
+      it('should have valid question texts', () => {
+        Object.values(languageQueries).forEach(category => {
+          category.forEach(query => validateQuestionText(query[1], language));
         });
       });
     });
+  };
 
-    it('should have valid SPARQL queries', () => {
-      Object.values(spanishQueries).forEach(category => {
-        category.forEach(query => {
-          const sparqlQuery = query[0];
-          expect(sparqlQuery).toContain('SELECT');
-          expect(sparqlQuery).toContain('WHERE');
-          expect(
-            sparqlQuery.includes('FILTER') || 
-            sparqlQuery.includes('SERVICE wikibase:label') ||
-            sparqlQuery.includes('OPTIONAL')
-          ).toBe(true);
-        });
-      });
-    });
+  testLanguageQueries('es');
+  testLanguageQueries('en');
 
-    it('should have valid question texts', () => {
-      Object.values(spanishQueries).forEach(category => {
-        category.forEach(query => {
-          const questionText = query[1];
-          expect(questionText).toMatch(/^[¿]?[A-Z].*\?$/); // Debe empezar con mayúscula y terminar con ?
-        });
-      });
-    });
-  });
-
-  // Verificar la estructura de las consultas en inglés
-  describe('English queries', () => {
-    const englishQueries = queries.en;
-
-    it('should have all required categories', () => {
-      expect(englishQueries).toHaveProperty('Geografia');
-      expect(englishQueries).toHaveProperty('Cultura');
-      expect(englishQueries).toHaveProperty('Pintores');
-      expect(englishQueries).toHaveProperty('Futbolistas');
-      expect(englishQueries).toHaveProperty('Cantantes');
-    });
-
-    it('should have correct structure for each category', () => {
-      Object.values(englishQueries).forEach(category => {
-        expect(Array.isArray(category)).toBe(true);
-        category.forEach(query => {
-          expect(Array.isArray(query)).toBe(true);
-          expect(query.length).toBe(2);
-          expect(typeof query[0]).toBe('string'); // SPARQL query
-          expect(typeof query[1]).toBe('string'); // Question text
-        });
-      });
-    });
-
-    it('should have valid SPARQL queries', () => {
-      Object.values(englishQueries).forEach(category => {
-        category.forEach(query => {
-          const sparqlQuery = query[0];
-          expect(sparqlQuery).toContain('SELECT');
-          expect(sparqlQuery).toContain('WHERE');
-          expect(
-            sparqlQuery.includes('FILTER') || 
-            sparqlQuery.includes('SERVICE wikibase:label') ||
-            sparqlQuery.includes('OPTIONAL')
-          ).toBe(true);
-        });
-      });
-    });
-
-    it('should have valid question texts', () => {
-      Object.values(englishQueries).forEach(category => {
-        category.forEach(query => {
-          const questionText = query[1];
-          expect(questionText).toMatch(/^[A-Z].*\?$/); // Debe empezar con mayúscula y terminar con ?
-        });
-      });
-    });
-  });
-
-  // Verificar que las consultas en español e inglés son equivalentes
   it('should have equivalent structure in both languages', () => {
     const spanishCategories = Object.keys(queries.es);
     const englishCategories = Object.keys(queries.en);
-
     expect(spanishCategories).toEqual(englishCategories);
-    expect(spanishCategories.length).toBe(englishCategories.length);
-  });
-
-  // Verificar que las consultas SPARQL son válidas para cada categoría
-  describe('SPARQL query validation', () => {
-    const validateSparqlQuery = (query) => {
-      expect(query).toContain('SELECT');
-      expect(query).toContain('WHERE');
-      expect(
-        query.includes('FILTER') || 
-        query.includes('SERVICE wikibase:label') ||
-        query.includes('OPTIONAL')
-      ).toBe(true);
-    };
-
-    it('should have valid SPARQL queries for Geografia', () => {
-      const spanishQuery = queries.es.Geografia[0][0];
-      const englishQuery = queries.en.Geografia[0][0];
-      validateSparqlQuery(spanishQuery);
-      validateSparqlQuery(englishQuery);
-    });
-
-    it('should have valid SPARQL queries for Cultura', () => {
-      const spanishQuery = queries.es.Cultura[0][0];
-      const englishQuery = queries.en.Cultura[0][0];
-      validateSparqlQuery(spanishQuery);
-      validateSparqlQuery(englishQuery);
-    });
-
-    it('should have valid SPARQL queries for Pintores', () => {
-      const spanishQuery = queries.es.Pintores[0][0];
-      const englishQuery = queries.en.Pintores[0][0];
-      validateSparqlQuery(spanishQuery);
-      validateSparqlQuery(englishQuery);
-    });
-
-    it('should have valid SPARQL queries for Futbolistas', () => {
-      const spanishQuery = queries.es.Futbolistas[0][0];
-      const englishQuery = queries.en.Futbolistas[0][0];
-      validateSparqlQuery(spanishQuery);
-      validateSparqlQuery(englishQuery);
-    });
-
-    it('should have valid SPARQL queries for Cantantes', () => {
-      const spanishQuery = queries.es.Cantantes[0][0];
-      const englishQuery = queries.en.Cantantes[0][0];
-      validateSparqlQuery(spanishQuery);
-      validateSparqlQuery(englishQuery);
-    });
   });
 });
 
 describe('All Questions Service', () => {
-  describe('Geografia queries', () => {
-    it('should generate a geography question in Spanish', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Geografia', language: 'es' });
+  // Función auxiliar para probar preguntas de una categoría
+  const testCategoryQuestions = (category, spanishQuestion, englishQuestion) => {
+    describe(`${category} queries`, () => {
+      it(`should generate a ${category.toLowerCase()} question in Spanish`, async () => {
+        const response = await makeQuestionRequest(category, 'es');
+        expect(response.statusCode).toBe(200);
+        expect(response.body.responseQuestion).toBe(spanishQuestion);
+        expect(response.body.responseOptions.length).toBe(4);
+        expect(response.body.responseImage).toBeDefined();
+      });
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('¿Que país es el que aparece en la siguiente imagen?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
+      it(`should generate a ${category.toLowerCase()} question in English`, async () => {
+        const response = await makeQuestionRequest(category, 'en');
+        expect(response.statusCode).toBe(200);
+        expect(response.body.responseQuestion).toBe(englishQuestion);
+        expect(response.body.responseOptions.length).toBe(4);
+        expect(response.body.responseImage).toBeDefined();
+      });
     });
+  };
 
-    it('should generate a geography question in English', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Geografia', language: 'en' });
+  testCategoryQuestions('Geografia', 
+    '¿Que país es el que aparece en la siguiente imagen?',
+    'What country is the one that appears in the following image?'
+  );
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('What country is the one that appears in the following image?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
-    });
-  });
+  testCategoryQuestions('Cultura',
+    '¿Que monumento español es este?',
+    'What Spanish monument is this?'
+  );
 
-  describe('Cultura queries', () => {
-    it('should generate a culture question in Spanish', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Cultura', language: 'es' });
+  testCategoryQuestions('Pintores',
+    '¿Cuál es el nombre de este pintor?',
+    'What is the name of this painter?'
+  );
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('¿Que monumento español es este?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
-    });
-
-    it('should generate a culture question in English', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Cultura', language: 'en' });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('What Spanish monument is this?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
-    });
-  });
-
-  describe('Pintores queries', () => {
-    it('should generate a painter question in Spanish', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Pintores', language: 'es' });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('¿Cuál es el nombre de este pintor?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
-    });
-
-    it('should generate a painter question in English', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Pintores', language: 'en' });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('What is the name of this painter?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
-    });
-  });
-
-  describe('Cantantes queries', () => {
-    it('should generate a singer question in Spanish', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Cantantes', language: 'es' });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('¿Cuál es el nombre de este cantante?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
-    });
-
-    it('should generate a singer question in English', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Cantantes', language: 'en' });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body.responseQuestion).toBe('What is the name of this singer?');
-      expect(response.body.responseOptions.length).toBe(4);
-      expect(response.body.responseImage).toBeDefined();
-    });
-  });
+  testCategoryQuestions('Cantantes',
+    '¿Cuál es el nombre de este cantante?',
+    'What is the name of this singer?'
+  );
 
   describe('Error handling', () => {
     it('should handle Wikidata API errors', async () => {
@@ -301,28 +164,19 @@ describe('All Questions Service', () => {
         throw new Error('Wikidata API error');
       });
 
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Geografia', language: 'es' });
-
+      const response = await makeQuestionRequest('Geografia', 'es');
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('error');
     });
 
     it('should handle invalid thematic', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'InvalidThematic', language: 'es' });
-
+      const response = await makeQuestionRequest('InvalidThematic', 'es');
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('error');
     });
 
     it('should handle invalid language', async () => {
-      const response = await request(server)
-        .get('/generateQuestion')
-        .query({ thematic: 'Geografia', language: 'invalid' });
-
+      const response = await makeQuestionRequest('Geografia', 'invalid');
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('error');
     });

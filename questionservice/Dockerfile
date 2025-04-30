@@ -13,10 +13,8 @@ RUN npm install
 # Copiar el código fuente de la aplicación después de instalar las dependencias
 COPY . .
 
-
 # Exponer el puerto en el que corre la aplicación
 EXPOSE 8010
-
 
 # Ejecutar la aplicación
 CMD ["node", "questions.js"]

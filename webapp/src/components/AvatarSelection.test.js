@@ -19,13 +19,39 @@ const routerConfig = {
   }
 };
 
-describe('AvatarSelection component', () => {
-  const mockContextValue = {
+// Función auxiliar para renderizar el componente con el contexto
+const renderWithContext = (contextValue = {}) => {
+  const defaultContext = {
     username: 'testUser',
     avatar: '/default_user.jpg',
     updateAvatar: jest.fn(),
+    ...contextValue
   };
 
+  return render(
+    <SessionContext.Provider value={defaultContext}>
+      <BrowserRouter {...routerConfig}>
+        <AvatarSelection />
+      </BrowserRouter>
+    </SessionContext.Provider>
+  );
+};
+
+// Función auxiliar para seleccionar un avatar
+const selectAvatar = async (avatarTestId = 'cactus-button') => {
+  const avatarButton = screen.getByTestId(avatarTestId);
+  fireEvent.click(avatarButton);
+  return avatarButton;
+};
+
+// Función auxiliar para confirmar la selección
+const confirmSelection = async () => {
+  const confirmButton = screen.getByTestId('confirm-button');
+  fireEvent.click(confirmButton);
+  return confirmButton;
+};
+
+describe('AvatarSelection component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -36,13 +62,7 @@ describe('AvatarSelection component', () => {
   });
 
   it('should render the component with user information', () => {
-    render(
-      <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
+    renderWithContext();
 
     expect(screen.getByText('testUser')).toBeInTheDocument();
     const currentAvatar = screen.getByAltText('Profile pic');
@@ -55,68 +75,33 @@ describe('AvatarSelection component', () => {
   });
 
   it('should handle avatar selection', async () => {
-    render(
-      <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-
-    const cactusButton = screen.getByTestId('cactus-button');
-    fireEvent.click(cactusButton);
-
+    renderWithContext();
+    await selectAvatar();
     const confirmButton = screen.getByTestId('confirm-button');
     expect(confirmButton).not.toBeDisabled();
   });
 
   it('should update avatar when confirming selection', async () => {
-    render(
-      <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
+    const mockUpdateAvatar = jest.fn();
+    renderWithContext({ updateAvatar: mockUpdateAvatar });
+    
+    await selectAvatar();
+    await confirmSelection();
 
-    const cactusButton = screen.getByTestId('cactus-button');
-    fireEvent.click(cactusButton);
-
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
-
-    expect(mockContextValue.updateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
+    expect(mockUpdateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
   });
 
   it('should navigate back to profile when clicking return button', async () => {
-    render(
-      <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-
+    renderWithContext();
     const returnButton = screen.getByText('Volver al perfil');
     fireEvent.click(returnButton);
-
     expect(mockNavigate).toHaveBeenCalledWith('/profile/testUser');
   });
 
   it('should show success message when avatar is updated', async () => {
-    render(
-      <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-
-    const cactusButton = screen.getByTestId('cactus-button');
-    fireEvent.click(cactusButton);
-
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
+    renderWithContext();
+    await selectAvatar();
+    await confirmSelection();
 
     await waitFor(() => {
       expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
@@ -124,57 +109,23 @@ describe('AvatarSelection component', () => {
   });
 
   it('should render with default avatar when no avatar is provided', () => {
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: null,
-        updateAvatar: jest.fn()
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
+    renderWithContext({ avatar: null });
     const avatarImage = screen.getByAltText('Profile pic');
     expect(avatarImage.src).toContain('/white.png');
   });
 
   it('should render with provided avatar', () => {
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: '/test-avatar.png',
-        updateAvatar: jest.fn()
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
+    renderWithContext({ avatar: '/test-avatar.png' });
     const avatarImage = screen.getByAltText('Profile pic');
     expect(avatarImage.src).toContain('/test-avatar.png');
   });
 
   it('should show error message when error occurs', async () => {
     const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error('Test error message'));
+    renderWithContext({ updateAvatar: mockUpdateAvatar });
     
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: null,
-        updateAvatar: mockUpdateAvatar
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-    
-    const avatarButton = screen.getByTestId('cactus-button');
-    fireEvent.click(avatarButton);
-
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
+    await selectAvatar();
+    await confirmSelection();
     
     await waitFor(() => {
       expect(screen.getByText('Error: Test error message')).toBeInTheDocument();
@@ -183,24 +134,10 @@ describe('AvatarSelection component', () => {
 
   it('should clear error when Snackbar is closed', async () => {
     const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error('Test error message'));
+    renderWithContext({ updateAvatar: mockUpdateAvatar });
     
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: null,
-        updateAvatar: mockUpdateAvatar
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-    
-    const avatarButton = screen.getByTestId('cactus-button');
-    fireEvent.click(avatarButton);
-
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
+    await selectAvatar();
+    await confirmSelection();
     
     await waitFor(() => {
       expect(screen.getByText('Error: Test error message')).toBeInTheDocument();
@@ -214,90 +151,23 @@ describe('AvatarSelection component', () => {
     });
   });
 
-  it('should handle avatar selection and update', async () => {
-    const mockUpdateAvatar = jest.fn();
-    
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: null,
-        updateAvatar: mockUpdateAvatar
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-    
-    const avatarButton = screen.getByTestId('cactus-button');
-    fireEvent.click(avatarButton);
-    
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
-    
-    expect(mockUpdateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
-  });
-
-  it('should show success message after avatar update', async () => {
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: null,
-        updateAvatar: jest.fn()
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-    
-    const avatarButton = screen.getByTestId('cactus-button');
-    fireEvent.click(avatarButton);
-    
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
-    });
-  });
-
   it('should not update avatar when no avatar is selected', async () => {
-    render(
-      <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
+    const mockUpdateAvatar = jest.fn();
+    renderWithContext({ updateAvatar: mockUpdateAvatar });
 
     const confirmButton = screen.getByTestId('confirm-button');
     expect(confirmButton).toBeDisabled();
     fireEvent.click(confirmButton);
 
-    expect(mockContextValue.updateAvatar).not.toHaveBeenCalled();
+    expect(mockUpdateAvatar).not.toHaveBeenCalled();
   });
 
   it('should handle error with default message when error has no message', async () => {
     const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error());
+    renderWithContext({ updateAvatar: mockUpdateAvatar });
     
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: null,
-        updateAvatar: mockUpdateAvatar
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-    
-    const avatarButton = screen.getByTestId('cactus-button');
-    fireEvent.click(avatarButton);
-
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
+    await selectAvatar();
+    await confirmSelection();
     
     await waitFor(() => {
       expect(screen.getByText('Error: Error al actualizar el avatar')).toBeInTheDocument();
@@ -305,19 +175,10 @@ describe('AvatarSelection component', () => {
   });
 
   it('should close success message when Snackbar is closed', async () => {
-    render(
-      <SessionContext.Provider value={mockContextValue}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
+    renderWithContext();
     
-    const avatarButton = screen.getByTestId('cactus-button');
-    fireEvent.click(avatarButton);
-    
-    const confirmButton = screen.getByTestId('confirm-button');
-    fireEvent.click(confirmButton);
+    await selectAvatar();
+    await confirmSelection();
     
     await waitFor(() => {
       expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
@@ -332,27 +193,13 @@ describe('AvatarSelection component', () => {
 
   it('should not update avatar when selectedAvatar is null', async () => {
     const mockUpdateAvatar = jest.fn();
+    renderWithContext({ updateAvatar: mockUpdateAvatar });
     
-    render(
-      <SessionContext.Provider value={{
-        username: 'testUser',
-        avatar: null,
-        updateAvatar: mockUpdateAvatar
-      }}>
-        <BrowserRouter {...routerConfig}>
-          <AvatarSelection />
-        </BrowserRouter>
-      </SessionContext.Provider>
-    );
-    
-    // No seleccionamos ningún avatar, por lo que selectedAvatar será null
     const confirmButton = screen.getByTestId('confirm-button');
     fireEvent.click(confirmButton);
     
-    // Verificamos que updateAvatar no fue llamado
     expect(mockUpdateAvatar).not.toHaveBeenCalled();
     
-    // Verificamos que no se muestra ningún mensaje de éxito
     await waitFor(() => {
       expect(screen.queryByText('Avatar cambiado con éxito')).not.toBeInTheDocument();
     });
