@@ -4,24 +4,28 @@ import Footer from './Footer';
 
 
 describe('Footer component', () => {
-    it('should render elements', async () => {
+    it('should render elements', async () => { 
         render(
             <Footer />
         );
-        await screen.findByText(/© WICHAT-ES6B/);
+        //Comprobamos que esten los enlaces en el footer
+        await screen.findByText(/© WICHAT-ES6B/); 
+  
+        //const link1 = screen.getByText(/© WICHAT-ES6B/);
+        //await expect(link1).toBeInTheDocument();
+        await expect(screen.getByText(/© WICHAT-ES6B/)).toBeInTheDocument();
     
-        const link1 = screen.getByText(/© WICHAT-ES6B/);
-        await expect(link1).toBeInTheDocument();
+        // const link2 = screen.getByText(/API de preguntas/);
+        // await expect(link2).toBeInTheDocument();
+        await expect(screen.getByText(/API de preguntas/)).toBeInTheDocument();
     
-        const link2 = screen.getByText(/API de preguntas/);
-        await expect(link2).toBeInTheDocument();
-    
-        const link3 = screen.getByText(/API del historial/);
-        await expect(link3).toBeInTheDocument();
+        // const link3 = screen.getByText(/API del historial/);
+        // await expect(link3).toBeInTheDocument();
+        await expect(screen.getByText(/API del historial/)).toBeInTheDocument();
 
-        const link4 = screen.getByText(/API de usuarios/);
-        await expect(link4).toBeInTheDocument();
-    
+        // const link4 = screen.getByText(/API de usuarios/);
+        // await expect(link4).toBeInTheDocument();
+        await expect(screen.getByText(/API de usuarios/)).toBeInTheDocument();
       });
     
     });

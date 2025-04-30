@@ -23,7 +23,7 @@ import HomeRanking from './components/HomeRanking';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import GameSettings from './components/GameSettings';
-
+import AvatarSelection from './components/AvatarSelection';
 
 import './App.css';
 
@@ -196,6 +196,7 @@ function App() {
                 <Route path="/ranking" element={<Ranking />} />
                 <Route path="/settings" element={<GameSettings />} />
                 <Route path="/profile/:username" element={<UserProfile />} />
+                <Route path="/profile/edit" element={<AvatarSelection />} />
               </Routes>
           </Box>
           <Footer/>

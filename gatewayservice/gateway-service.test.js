@@ -19,11 +19,7 @@ describe('Gateway Service', () => {
       return Promise.resolve({ data: { answer: 'llmanswer' } });
     } else if (url.endsWith('/savegame')) {
       return Promise.resolve({ data: { gameId: 'mockedGameId' } });
-    }
-  });
-
-  axios.get.mockImplementation((url, config) => {
-    if (url.endsWith('/health')) {
+    }else if (url.endsWith('/health')) {
       return Promise.resolve({ data: { status: 'OK' } });
     } else if (url.includes('/stats/')) {
       return Promise.resolve({ data: { totalGames: 10, averageScore: 75 } });
@@ -264,3 +260,4 @@ describe('Gateway Service', () => {
     });
   });
 });
+
