@@ -1,9 +1,11 @@
 {
   "name": "questionservice",
   "version": "1.0.0",
+  "description": "",
+  "main": "questions.js",
   "scripts": {
-    "start": "node questions.js",
-    "test": "jest"
+    "test": "jest --coverage --testResultsProcessor=jest-sonar-reporter",
+    "start": "node questions.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +20,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^7.0.0"
+    "jest-sonar-reporter": "^2.0.0",
+    "supertest": "^6.3.4"
   }
 }
