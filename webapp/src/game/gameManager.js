@@ -131,7 +131,7 @@ const Jugar = () => {
         finishGame(score);
       }
     }, 3000);
-  }, [indice, maxTime, questions, score, finishGame,hint, usedhint]);
+  }, [indice, maxTime, questions, score, finishGame]);
 
   const handleChatSubmit = async () => {
     if (chatInput.trim() && !chatLocked) {
