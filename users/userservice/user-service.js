@@ -16,29 +16,26 @@ app.use(express.json());
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri);
 
-
 class UserService {
+  static async findUserByUsername(username) {
+    // Sanitize username
+    const sanitizedUsername = username ? username.trim().replace(/[<>&"'`]/g, '') : '';
+    return await User.findOne({ username: sanitizedUsername });
+  }
+
   static async createUser(username, password) {
-      const sanitizedUsername = username ? 
-          username.trim().replace(/[<>&"'`]/g, '') : '';
+    const sanitizedUsername = username ? username.trim().replace(/[<>&"'`]/g, '') : '';
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const user = new User({
+      username: sanitizedUsername,
+      password: hashedPassword,
+    });
 
-      const existingUser = await User.exists({
-          username: { $eq: sanitizedUsername }
-      }).exec();
-
-      if (existingUser) {
-          throw new Error('Username already exists');
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const userInstance = new User();
-      userInstance.username = sanitizedUsername;
-      userInstance.password = hashedPassword;
-
-      await userInstance.save();
-      return userInstance;
+    return await user.save();
   }
 }
+
 // Function to validate required fields in the request body
 function validateRequiredFields(req, requiredFields) {
     for (const field of requiredFields) {
@@ -58,13 +55,13 @@ app.post('/adduser', async (req, res) => {
        // const validator = require('validator');
         //const username = validator.escape(req.body.username.trim());
         // Alternativa sin el paquete validator
-        // Sanitize and validate username
-        const user = await UserService.createUser(
-          req.body.username, 
-          req.body.password
-      );
-        
-      res.json(user);
+        const existingUser = await UserService.findUserByUsername(req.body.username);
+        if (existingUser) {
+            return res.status(400).json({ error: 'Username already exists' });
+        }
+
+        const newUser = await UserService.createUser(req.body.username, req.body.password);
+        res.json(newUser);
     } catch (error) {
         res.status(400).json({ error: error.message }); 
 }});
