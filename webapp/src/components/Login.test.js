@@ -26,25 +26,25 @@ describe('Login Component', () => {
     mockCreateSession.mockClear();
   });
 
-  it('renders login form by default', () => {
+  it('Carga la pantalla de login', () => {
     renderWithContext();
     expect(screen.getByTestId('login-title')).toBeInTheDocument();
   });
 
-  it('switches to signup form on tab click', () => {
+  it('Se escoge registrarse', () => {
     renderWithContext();
     fireEvent.click(screen.getByText('Signup'));
     expect(screen.getByTestId('signup-title')).toBeInTheDocument();
   });
 
-  it('shows error if login fields are empty', async () => {
+  it('Error si los campos estan vacios', async () => {
     renderWithContext();
     fireEvent.click(screen.getByTestId('login-button'));
     await waitFor(() => screen.getByText(/Please complete all fields/i));
     expect(screen.getByText(/Please complete all fields/i)).toBeInTheDocument();
   });
 
-  it('performs login and shows greeting if API key is set', async () => {
+  it('Se loggea y muestra mensaje si funciona el LLM', async () => {
     const originalEnv = process.env;
     process.env = { ...originalEnv, REACT_APP_API_ENDPOINT: 'http://localhost:8000', REACT_APP_LLM_API_KEY: 'test-key' };
 
@@ -61,10 +61,10 @@ describe('Login Component', () => {
     expect(localStorage.getItem('username')).toBe('testuser');
     expect(mockCreateSession).toHaveBeenCalledWith('testuser');
 
-    process.env = originalEnv; // restore
+    process.env = originalEnv;
   });
 
-  it('shows error if passwords do not match on signup', async () => {
+  it('Muestra error con password incorrecta', async () => {
     renderWithContext();
     fireEvent.click(screen.getByText('Signup'));
     fireEvent.change(screen.getByLabelText('Username'), { target: { value: 'user' } });
@@ -75,7 +75,7 @@ describe('Login Component', () => {
     expect(screen.getByText(/Passwords do not match/i)).toBeInTheDocument();
   });
 
-  it('successfully signs up with valid input', async () => {
+  it('Registro exitoso', async () => {
     mock.onPost('http://localhost:8000/adduser').reply(200);
 
     renderWithContext();
