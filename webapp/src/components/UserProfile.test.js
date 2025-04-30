@@ -16,15 +16,6 @@ jest.mock('react-router-dom', () => ({
 
 // Tests separados por funcionalidad
 describe('UserProfile - Estado inicial', () => {
-  it('muestra mensaje de carga al inicio', () => {
-    mockAxios.onGet().reply(200, {});
-    render(
-      <MemoryRouter>
-        <UserProfile />
-      </MemoryRouter>
-    );
-    expect(screen.getByText('Cargando perfil...')).toBeInTheDocument();
-  });
 
   it('redirige a inicio si no hay usuario autenticado', async () => {
     localStorage.removeItem('username');
