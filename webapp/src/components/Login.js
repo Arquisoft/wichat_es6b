@@ -239,6 +239,7 @@ const Login = () => {
             </Typography>
             <TextField
               margin="normal"
+              id="usernameAWA"
               fullWidth
               label="Username"
               value={username}
@@ -246,6 +247,7 @@ const Login = () => {
             />
             <TextField
               margin="normal"
+              id="passwordAWA"
               fullWidth
               label="Password"
               type="password"
@@ -254,6 +256,7 @@ const Login = () => {
             />
             <TextField
               margin="normal"
+              id="passwordConfirmAWA"
               fullWidth
               label="Confirm Password"
               type="password"
@@ -263,6 +266,7 @@ const Login = () => {
             <Button
               variant="contained"
               color="primary"
+              id="botonAWA"
               fullWidth
               data-testid="signup-button"
               onClick={signupUser}

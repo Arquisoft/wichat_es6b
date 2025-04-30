@@ -5,21 +5,28 @@ const feature = loadFeature('./features/register-form.feature');
 
 let page;
 let browser;
+const APP_URL = process.env.APP_URL || 'http://localhost:3000/login';
 
 defineFeature(feature, test => {
   
   beforeAll(async () => {
     browser = process.env.GITHUB_ACTIONS
       ? await puppeteer.launch({headless: "new", args: ['--no-sandbox', '--disable-setuid-sandbox']})
-      : await puppeteer.launch({ headless: false, slowMo: 100 });
+      : await puppeteer.launch({ 
+          headless: false, 
+          slowMo: 100,
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
     page = await browser.newPage();
     setDefaultOptions({ timeout: 10000 });
 
     await page
-      .goto("http://localhost:3000/login", {
+      .goto(`${APP_URL}`, {
         waitUntil: "networkidle0",
       })
-      .catch(() => {});
+      .catch((error) => {
+        console.error('Error navigating to app:', error);
+      });
   });
 
   test('The user is not registered in the site', ({given, when, then}) => {
@@ -32,68 +39,43 @@ defineFeature(feature, test => {
       password = "testpassword123";
       confirmPassword = "testpassword123";
       
-      // Click en la pestaña de Signup - using proper XPath
-      await page.waitForXPath('//*[@id="root"]/div/div[2]/div/div/button');
-      const signupTabElement = await page.$x('//*[@id="root"]/div/div[2]/div/div/button');
-      await signupTabElement[0].click();
+      // Click en la pestaña de Signup usando evaluate con XPath
+      await page.waitForFunction(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, {}, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[2]');
+      
+      await page.evaluate(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        if (element) element.click();
+      }, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[2]');
     });
 
     when('I fill the data in the form and press submit', async () => {
-      // Wait for form fields to be visible after tab change
-      await page.waitForXPath('//input[@placeholder="Username" or @name="username"]');
-      
-      // Get references to form elements using XPath
-      const [usernameInput] = await page.$x('//input[@placeholder="Username" or @name="username"]');
-      const [passwordInput] = await page.$x('//input[@placeholder="Password" or @name="password"]');
-      const [confirmPasswordInput] = await page.$x('//input[@placeholder="Confirm Password" or @name="confirmPassword"]');
-      const [submitButton] = await page.$x('//button[@type="submit"]');
-      
-      // Fill in the form fields
-      await usernameInput.type(username);
-      await passwordInput.type(password);
-      await confirmPasswordInput.type(confirmPassword);
-      
-      // Submit the form
-      await submitButton.click();
+      // Esperar a que los campos del formulario estén visibles
+      await expect(page).toFill('input[id="usernameAWA"]', username);
+      await expect(page).toFill('input[id="passwordAWA"]', password);
+      await expect(page).toFill('input[id="passwordConfirmAWA"]', confirmPassword);
+      await expect(page).toClick('button[id="botonAWA"]')
     });
 
     then('A confirmation message should be shown in the screen', async () => {
-      // Wait for the confirmation message to appear
-      await page.waitForXPath('//div[contains(text(), "Registration successful")]');
+      // Esperar a que aparezca el mensaje de confirmación
+      await page.waitForFunction(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, {}, '//div[contains(text(), "Registration successful")]');
       
-      // Verify the confirmation message
-      const confirmationElements = await page.$x('//div[contains(text(), "Registration successful")]');
-      expect(confirmationElements.length).toBeGreaterThan(0);
+      // Verificar el mensaje de confirmación
+      const confirmationExists = await page.evaluate(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, '//div[contains(text(), "Registration successful")]');
+      
+      expect(confirmationExists).toBe(true);
     });
 
-    /*
-    // Test adicional: intentar iniciar sesión con el usuario registrado
-    then('I should be able to login with the new account', async () => {
-      // Click en la pestaña de Login
-      const [loginTab] = await page.$x('//button[contains(text(), "Login")]');
-      await loginTab.click();
-      
-      // Wait for form fields to be visible
-      await page.waitForXPath('//input[@placeholder="Username" or @name="username"]');
-      
-      // Get references to login form elements
-      const [usernameInput] = await page.$x('//input[@placeholder="Username" or @name="username"]');
-      const [passwordInput] = await page.$x('//input[@placeholder="Password" or @name="password"]');
-      const [loginButton] = await page.$x('//button[@type="submit"]');
-      
-      // Fill in login credentials
-      await usernameInput.type(username);
-      await passwordInput.type(password);
-      
-      // Submit login form
-      await loginButton.click();
-      
-      // Verify redirection to dashboard
-      await page.waitForXPath('//div[contains(text(), "Bienvenido")]');
-      const welcomeElements = await page.$x('//div[contains(text(), "Bienvenido")]');
-      expect(welcomeElements.length).toBeGreaterThan(0);
-    });
-    */
+    
   });
 
   afterAll(async () => {
