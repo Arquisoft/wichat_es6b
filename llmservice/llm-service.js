@@ -44,12 +44,16 @@ const llmConfigs = {
 
 // Function to validate required fields in the request body
 function validateRequiredFields(req, requiredFields) {
+  if (!req.body) {
+    throw new Error("Invalid JSON body");
+  }
   for (const field of requiredFields) {
     if (!(field in req.body)) {
       throw new Error(`Missing required field: ${field}`);
     }
   }
 }
+
 
 // Generic function to send questions to LLM
 async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '') {
@@ -71,7 +75,7 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini', context = '
 
   } catch (error) {
     console.error(`Error sending question to ${model}:`, error.message || error);
-    return null;
+    throw error;
   }
 }
 
@@ -79,6 +83,9 @@ app.post('/ask', async (req, res) => {
   try {
     // Check if required fields are present in the request body
     validateRequiredFields(req, ['question', 'model', 'apiKey']);
+    
+
+    console.log('Body recibido:', req.body); // ← Añade esto
 
     const { question, model, apiKey, context } = req.body;
     const answer = await sendQuestionToLLM(question, apiKey, model,context);
