@@ -10,8 +10,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [loginSuccess, setLoginSuccess] = useState(false);
-  const [createdAt, setCreatedAt] = useState('');
+  const [ setLoginSuccess] = useState(false);
+  const [setCreatedAt] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState('');
 

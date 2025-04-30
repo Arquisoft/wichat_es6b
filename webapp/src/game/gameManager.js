@@ -22,18 +22,18 @@ const Jugar = () => {
   const [score, setScore] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
-  const [difficulty, setDifficulty] = useState('Fácil');
+  const [setDifficulty] = useState('Fácil');
   const [selectedCategories, setSelectedCategories] = 
     useState(["Geografia", "Cultura", "Futbolistas", "Pintores", "Cantantes"]);
   const [maxTime, setMaxTime] = useState(40); 
   const [timeLeft, setTimeLeft] = useState(40);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [hint, setHint] = useState({});
-  const [usedHint, setUsedHint] = useState({});
+  const [setHint] = useState({});
+  const [setUsedHint] = useState({});
   const [loadingHint, setLoadingHint] = useState(false);
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
@@ -101,25 +101,43 @@ const Jugar = () => {
       }, 1000); // Espera de 1 segundo
     }
   };
-
+  const handleTimeout = () => {
+    setShowTimeoutMessage(true);
+  
+    setTimeout(() => {
+      setShowTimeoutMessage(false);
+      clearChat();
+  
+      const updatedQuestions = [...questions];
+      updatedQuestions[indice] = {
+        ...updatedQuestions[indice],
+        userAnswer: null,
+        timeSpent: maxTime,
+        answered: true
+      };
+      setQuestions(updatedQuestions);
+  
+      // No suma puntos si no responde
+      const updatedScore = score;
+  
+      if (indice < questions.length - 1) {
+        console.log("Indice:", indice);
+        setIndice(indice + 1);
+        console.log("IndiceNuevo:", indice);
+        setQuestionStartTime(Date.now());
+        setScore(updatedScore); // asegura que el score se actualiza
+      } else {
+        finishGame(updatedScore); //  pasa el score final
+      }
+    }, 3000);
+  };
   const clearChat = () => {
     // Reiniciar el estado del chat
     setChatMessages([]);
     console.log("Chat limpio y listo para la siguiente pregunta");
   };
 
-  const LoadingProgressBar = () => {
-    return (
-      <Container sx={{ textAlign: "center", mt: 5 }}>
-        <Typography variant="h6" gutterBottom>
-          Cargando preguntas...
-        </Typography>
-        <Box className="progress-container">
-          <div className="progress-bar"></div>
-        </Box>
-      </Container>
-    );
-  };
+
 
   const fetchHint = async (questionMade) => {
     console.log("gallo");
@@ -171,16 +189,6 @@ const Jugar = () => {
 };
 
 
-  const loadContext = async () => {
-    try {
-      const response = await fetch('/hintContext.txt'); // Ruta relativa al `public/`
-      if (!response.ok) throw new Error("No se pudo cargar el contexto.");
-      return await response.text();
-    } catch (error) {
-      console.error("Error cargando el contexto:", error);
-      return "Genera una pista en español sobre la respuesta correcta sin revelar directamente la respuesta.";
-    }
-  };
 
 
   useEffect(() => {
@@ -247,7 +255,7 @@ const Jugar = () => {
         timerRef.current = null;
       }
     };
-  }, [indice, questions.length, gameFinished, maxTime]);
+  }, [indice, handleTimeout,questions.length, gameFinished, maxTime]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
@@ -292,36 +300,7 @@ const Jugar = () => {
   };
 
   //marca pregunta como fallida si se acaba el tiempo
-  const handleTimeout = () => {
-  setShowTimeoutMessage(true);
 
-  setTimeout(() => {
-    setShowTimeoutMessage(false);
-    clearChat();
-
-    const updatedQuestions = [...questions];
-    updatedQuestions[indice] = {
-      ...updatedQuestions[indice],
-      userAnswer: null,
-      timeSpent: maxTime,
-      answered: true
-    };
-    setQuestions(updatedQuestions);
-
-    // No suma puntos si no responde
-    const updatedScore = score;
-
-    if (indice < questions.length - 1) {
-      console.log("Indice:", indice);
-      setIndice(indice + 1);
-      console.log("IndiceNuevo:", indice);
-      setQuestionStartTime(Date.now());
-      setScore(updatedScore); // asegura que el score se actualiza
-    } else {
-      finishGame(updatedScore); //  pasa el score final
-    }
-  }, 3000);
-};
 
 
 
