@@ -1,9 +1,9 @@
 {
   "name": "questionservice",
   "version": "1.0.0",
-  "main": "guardarPreguntaBaseDatos.js",
-  "scripts": {
-        "start": "node gateway-service.js",
+  "main": "questions.js",
+    "scripts": {
+        "start": "node questions.js",
         "test": "jest"
     },
   "keywords": [],

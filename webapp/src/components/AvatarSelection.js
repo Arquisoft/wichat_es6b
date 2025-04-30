@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Button, Container, Typography, Divider, Snackbar, Box } from '@mui/material';
+import { Button, Container, Typography, Divider, Snackbar, Box, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { SessionContext } from '../context/SessionContext';
 import { getCactus, getPulpo, getCoche, getPersona1, getPersona2 } from './Avatars';
 import { useNavigate } from 'react-router-dom';
@@ -16,16 +17,24 @@ const AvatarSelection = () => {
         setSelectedAvatar(avatarPath);
     };
 
-    const handleAvatarChange = () => {
+    const handleAvatarChange = async () => {
         if (selectedAvatar) {
-            updateAvatar(selectedAvatar);
-            setSnackbarMessage('Avatar cambiado con éxito');
-            setOpenSnackbar(true);
+            try {
+                await updateAvatar(selectedAvatar);
+                setSnackbarMessage('Avatar cambiado con éxito');
+                setOpenSnackbar(true);
+            } catch (err) {
+                setError(err.message || 'Error al actualizar el avatar');
+            }
         }
     };
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
+    };
+
+    const handleCloseError = () => {
+        setError('');
     };
 
     return (
@@ -180,8 +189,18 @@ const AvatarSelection = () => {
                 <Snackbar 
                     open={!!error} 
                     autoHideDuration={4500} 
-                    onClose={() => setError('')} 
+                    onClose={handleCloseError}
                     message={`Error: ${error}`}
+                    action={
+                        <IconButton
+                            size="small"
+                            aria-label="close"
+                            color="inherit"
+                            onClick={handleCloseError}
+                        >
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    }
                 />
             )}
         </Container>

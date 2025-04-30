@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import AvatarSelection from './AvatarSelection';
 import { SessionContext } from '../context/SessionContext';
@@ -31,14 +31,9 @@ describe('AvatarSelection component', () => {
       </SessionContext.Provider>
     );
 
-    // Verificar que se muestra el nombre de usuario
     expect(screen.getByText('testUser')).toBeInTheDocument();
-
-    // Verificar que se muestra el avatar actual
     const currentAvatar = screen.getByAltText('Profile pic');
     expect(currentAvatar).toHaveAttribute('src', '/default_user.jpg');
-
-    // Verificar que se muestran todos los avatares disponibles
     expect(screen.getByTestId('cactus-button')).toBeInTheDocument();
     expect(screen.getByTestId('pulpo-button')).toBeInTheDocument();
     expect(screen.getByTestId('coche-button')).toBeInTheDocument();
@@ -46,7 +41,7 @@ describe('AvatarSelection component', () => {
     expect(screen.getByTestId('persona2-button')).toBeInTheDocument();
   });
 
-  it('should handle avatar selection', () => {
+  it('should handle avatar selection', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
         <BrowserRouter>
@@ -55,16 +50,14 @@ describe('AvatarSelection component', () => {
       </SessionContext.Provider>
     );
 
-    // Seleccionar un avatar
     const cactusButton = screen.getByTestId('cactus-button');
     fireEvent.click(cactusButton);
 
-    // Verificar que el botón de confirmar está habilitado
     const confirmButton = screen.getByTestId('confirm-button');
     expect(confirmButton).not.toBeDisabled();
   });
 
-  it('should update avatar when confirming selection', () => {
+  it('should update avatar when confirming selection', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
         <BrowserRouter>
@@ -73,19 +66,16 @@ describe('AvatarSelection component', () => {
       </SessionContext.Provider>
     );
 
-    // Seleccionar un avatar
     const cactusButton = screen.getByTestId('cactus-button');
     fireEvent.click(cactusButton);
 
-    // Confirmar la selección
     const confirmButton = screen.getByTestId('confirm-button');
     fireEvent.click(confirmButton);
 
-    // Verificar que se llamó a updateAvatar con el avatar correcto
     expect(mockContextValue.updateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
   });
 
-  it('should navigate back to profile when clicking return button', () => {
+  it('should navigate back to profile when clicking return button', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
         <BrowserRouter>
@@ -94,15 +84,13 @@ describe('AvatarSelection component', () => {
       </SessionContext.Provider>
     );
 
-    // Hacer clic en el botón de volver
     const returnButton = screen.getByText('Volver al perfil');
     fireEvent.click(returnButton);
 
-    // Verificar que se llamó a navigate con la ruta correcta
     expect(mockNavigate).toHaveBeenCalledWith('/profile/testUser');
   });
 
-  it('should show success message when avatar is updated', () => {
+  it('should show success message when avatar is updated', async () => {
     render(
       <SessionContext.Provider value={mockContextValue}>
         <BrowserRouter>
@@ -111,13 +99,153 @@ describe('AvatarSelection component', () => {
       </SessionContext.Provider>
     );
 
-    // Seleccionar y confirmar un avatar
     const cactusButton = screen.getByTestId('cactus-button');
     fireEvent.click(cactusButton);
+
     const confirmButton = screen.getByTestId('confirm-button');
     fireEvent.click(confirmButton);
 
-    // Verificar que se muestra el mensaje de éxito
-    expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
+    });
+  });
+
+  it('should render with default avatar when no avatar is provided', () => {
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: null,
+        updateAvatar: jest.fn()
+      }}>
+        <BrowserRouter>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    const avatarImage = screen.getByAltText('Profile pic');
+    expect(avatarImage.src).toContain('/white.png');
+  });
+
+  it('should render with provided avatar', () => {
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: '/test-avatar.png',
+        updateAvatar: jest.fn()
+      }}>
+        <BrowserRouter>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    const avatarImage = screen.getByAltText('Profile pic');
+    expect(avatarImage.src).toContain('/test-avatar.png');
+  });
+
+  it('should show error message when error occurs', async () => {
+    const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error('Test error message'));
+    
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: null,
+        updateAvatar: mockUpdateAvatar
+      }}>
+        <BrowserRouter>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    
+    const avatarButton = screen.getByTestId('cactus-button');
+    fireEvent.click(avatarButton);
+
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Error: Test error message')).toBeInTheDocument();
+    });
+  });
+
+  it('should clear error when Snackbar is closed', async () => {
+    const mockUpdateAvatar = jest.fn().mockRejectedValue(new Error('Test error message'));
+    
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: null,
+        updateAvatar: mockUpdateAvatar
+      }}>
+        <BrowserRouter>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    
+    const avatarButton = screen.getByTestId('cactus-button');
+    fireEvent.click(avatarButton);
+
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Error: Test error message')).toBeInTheDocument();
+    });
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+    
+    await waitFor(() => {
+      expect(screen.queryByText('Error: Test error message')).not.toBeInTheDocument();
+    });
+  });
+
+  it('should handle avatar selection and update', async () => {
+    const mockUpdateAvatar = jest.fn();
+    
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: null,
+        updateAvatar: mockUpdateAvatar
+      }}>
+        <BrowserRouter>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    
+    const avatarButton = screen.getByTestId('cactus-button');
+    fireEvent.click(avatarButton);
+    
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+    
+    expect(mockUpdateAvatar).toHaveBeenCalledWith('/icono_cactus.png');
+  });
+
+  it('should show success message after avatar update', async () => {
+    render(
+      <SessionContext.Provider value={{
+        username: 'testUser',
+        avatar: null,
+        updateAvatar: jest.fn()
+      }}>
+        <BrowserRouter>
+          <AvatarSelection />
+        </BrowserRouter>
+      </SessionContext.Provider>
+    );
+    
+    const avatarButton = screen.getByTestId('cactus-button');
+    fireEvent.click(avatarButton);
+    
+    const confirmButton = screen.getByTestId('confirm-button');
+    fireEvent.click(confirmButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Avatar cambiado con éxito')).toBeInTheDocument();
+    });
   });
 }); 
