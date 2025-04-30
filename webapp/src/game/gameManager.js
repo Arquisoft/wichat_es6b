@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useCallback} from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Container, Typography, Button, Box, Paper, Snackbar, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -9,20 +9,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import "./OutTimeMessage.css";
 import "./ProgressBar.css";
 
-
-
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-const apiKey =  process.env.REACT_APP_LLM_API_KEY || 'None';
-
+const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
 
 const Jugar = () => {
-
   const navigate = useNavigate();
   const [indice, setIndice] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [questionStartTime, setQuestionStartTime] = useState(null);
-  const [setDifficulty] = useState('Fácil');
   const [selectedCategories, setSelectedCategories] = 
     useState(["Geografia", "Cultura", "Futbolistas", "Pintores", "Cantantes"]);
   const [maxTime, setMaxTime] = useState(40); 
@@ -46,7 +41,6 @@ const Jugar = () => {
   const [chatLocked, setChatLocked] = useState(false);
 
   const updateDifficultyAndTime = useCallback((selectedDifficulty) => {
-    setDifficulty(selectedDifficulty);
     switch (selectedDifficulty) {
       case 'Fácil':
         setMaxTime(40);
@@ -65,43 +59,17 @@ const Jugar = () => {
         setTimeLeft(40);
         break;
     }
-  }, [setMaxTime, setTimeLeft, setDifficulty]);
+  }, []);
   
   useEffect(() => {
     const storedDifficulty = localStorage.getItem('gameDifficulty');
     if (storedDifficulty) {
       updateDifficultyAndTime(storedDifficulty);
     }
-  }, [updateDifficultyAndTime,setSelectedCategories]);
+  }, [updateDifficultyAndTime]);
 
-  const handleChatSubmit = async () => {
-    if (chatInput.trim() && !chatLocked) {
-      setChatLocked(true);
-      // Agregar mensaje del usuario al chat
-      setChatMessages([...chatMessages, { sender: 'user', text: chatInput }]);
-      setChatInput("");
-  
-      console.log("Pide cargar pista");
-  
-      // Si no está cargada, llamar a fetchHint para cargarla
-      let actualHint = await fetchHint(chatInput); 
-      console.log("Pista cargada");
-  
-      // Introducir un delay antes de mostrar la pista
-      setTimeout(() => {
-        const hintValue = actualHint || "Pista no disponible";
-        console.log("Se devuelve por chat:", hintValue);
-  
-        // Agregar la respuesta del bot al chat
-        setChatMessages(prev => [
-          ...prev,
-          { sender: 'bot', text: `Pista: ${hintValue}` }
-        ]);
-        setChatLocked(false);
-      }, 1000); // Espera de 1 segundo
-    }
-  };
-  const handleTimeout = () => {
+  // Fix: moved handleTimeout outside to avoid dependency issues
+  const handleTimeout = useCallback(() => {
     setShowTimeoutMessage(true);
   
     setTimeout(() => {
@@ -109,67 +77,158 @@ const Jugar = () => {
       clearChat();
   
       const updatedQuestions = [...questions];
-      updatedQuestions[indice] = {
-        ...updatedQuestions[indice],
-        userAnswer: null,
-        timeSpent: maxTime,
-        answered: true
-      };
-      setQuestions(updatedQuestions);
+      if (updatedQuestions[indice]) {
+        updatedQuestions[indice] = {
+          ...updatedQuestions[indice],
+          userAnswer: null,
+          timeSpent: maxTime,
+          answered: true
+        };
+        setQuestions(updatedQuestions);
+      }
   
       // No suma puntos si no responde
-      const updatedScore = score;
-  
       if (indice < questions.length - 1) {
-        console.log("Indice:", indice);
-        setIndice(indice + 1);
-        console.log("IndiceNuevo:", indice);
+        setIndice(prevIndice => prevIndice + 1);
         setQuestionStartTime(Date.now());
-        setScore(updatedScore); // asegura que el score se actualiza
+        setTimeLeft(maxTime); // Reset timer for next question
       } else {
-        finishGame(updatedScore); //  pasa el score final
+        finishGame(score);
       }
     }, 3000);
+  }, [indice, maxTime, questions, score]);
+
+  const handleChatSubmit = async () => {
+    if (chatInput.trim() && !chatLocked) {
+      const userInputText = chatInput.trim();
+      setChatLocked(true);
+      
+      // Agregar mensaje del usuario al chat
+      setChatMessages(prev => [...prev, { sender: 'user', text: userInputText }]);
+      setChatInput("");
+  
+      console.log("Pide cargar pista");
+      
+      // Verificar que estemos en una pregunta válida
+      if (indice >= questions.length || !questions[indice]) {
+        setChatMessages(prev => [
+          ...prev,
+          { sender: 'bot', text: `Lo siento, no puedo proporcionar pistas en este momento.` }
+        ]);
+        setChatLocked(false);
+        return;
+      }
+  
+      // Mostrar mensaje de "pensando..."
+      setChatMessages(prev => [
+        ...prev,
+        { sender: 'bot', text: `Pensando...` }
+      ]);
+      
+      try {
+        // Si no está cargada, llamar a fetchHint para cargarla
+        let actualHint = await fetchHint(userInputText); 
+        console.log("Pista cargada");
+    
+        // Reemplazar el mensaje de "pensando..." con la pista real
+        setChatMessages(prev => {
+          const newMessages = [...prev];
+          // Reemplazar el último mensaje (que debería ser "Pensando...")
+          if (newMessages.length > 0) {
+            newMessages[newMessages.length - 1] = { 
+              sender: 'bot', 
+              text: `Pista: ${actualHint || "No pude generar una pista"}` 
+            };
+          }
+          return newMessages;
+        });
+      } catch (error) {
+        console.error("Error al obtener la pista:", error);
+        
+        // Reemplazar el mensaje de "pensando..." con un mensaje de error
+        setChatMessages(prev => {
+          const newMessages = [...prev];
+          if (newMessages.length > 0) {
+            newMessages[newMessages.length - 1] = { 
+              sender: 'bot', 
+              text: `Lo siento, hubo un error al obtener la pista.` 
+            };
+          }
+          return newMessages;
+        });
+      } finally {
+        setChatLocked(false);
+      }
+    }
   };
+
   const clearChat = () => {
     // Reiniciar el estado del chat
     setChatMessages([]);
     console.log("Chat limpio y listo para la siguiente pregunta");
   };
 
-
-
   const fetchHint = async (questionMade) => {
     console.log("gallo");
     
-    if (loadingHint) return; // Mantenemos esta verificación para evitar llamadas simultáneas
+    if (loadingHint) return "Espera un momento..."; // Mantenemos esta verificación para evitar llamadas simultáneas
     setLoadingHint(true);
     
     let fetchedHint = "";
     try {
+      // Verificar que exista una pregunta actual y sus propiedades
+      if (!questions[indice]) {
+        console.error("No hay pregunta actual para el índice:", indice);
+        setLoadingHint(false);
+        return "No se puede obtener pista en este momento";
+      }
+      
       const questionText = questions[indice].pregunta;
+      // Verificar que la respuesta correcta exista
+      if (questions[indice].respuesta_correcta === undefined || 
+          !questions[indice].opciones || 
+          !questions[indice].opciones[questions[indice].respuesta_correcta]) {
+        console.error("Datos de pregunta incompletos:", questions[indice]);
+        setLoadingHint(false);
+        return "Datos de pregunta incorrectos";
+      }
+      
       const correctAnswer = questions[indice].opciones[questions[indice].respuesta_correcta];
-
-      const tipoDePregunta = questions[indice].tipo;  
-      const context = "No digas la respuesta correcta de manera explicita. Tipo de pregunta: " + getContext(tipoDePregunta) +
+      const tipoDePregunta = questions[indice].tipo || "general";
+      
+      // Usar getContext con un valor por defecto en caso de error
+      let contextInfo;
+      try {
+        contextInfo = getContext(tipoDePregunta);
+      } catch (e) {
+        console.error("Error obteniendo contexto:", e);
+        contextInfo = "pregunta general";
+      }
+      
+      const context = "No digas la respuesta correcta de manera explicita. Tipo de pregunta: " + contextInfo +
               ". Responde también teniendo en cuenta esto: " + questionMade;
 
       console.log("Contexto seleccionado:", context);
-
       console.log("Consultando la pista para:", questionText);
       console.log("Texto de la persona: ", questionMade);
       
       const question = `Respuesta correcta: ${correctAnswer}.`;
       const model = "gemini";
-      const response = await axios.post(`${apiEndpoint}/askllm`, {
-        question,
-        model,
-        apiKey,
-        context
-      });
+      
+      try {
+        const response = await axios.post(`${apiEndpoint}/askllm`, {
+          question,
+          model,
+          apiKey,
+          context
+        });
 
-      console.log("Respuesta de la API:", response.data);
-      fetchedHint = response.data.answer || "Pista no disponible";
+        console.log("Respuesta de la API:", response.data);
+        fetchedHint = response.data.answer || "Pista no disponible";
+      } catch (apiError) {
+        console.error("Error en la llamada a la API:", apiError);
+        fetchedHint = "Error al comunicarse con el servicio de pistas";
+      }
 
       // Actualizamos siempre la pista, sobreescribiendo la anterior si es necesario
       setHint(prev => ({ ...prev, [indice]: fetchedHint }));
@@ -178,18 +237,17 @@ const Jugar = () => {
       // Mantenemos registro de que ya se usó la pista (puedes adaptarlo según necesidad)
       setUsedHint(prev => ({ ...prev, [indice]: true }));
     } catch (error) {
+      console.error("Error general en fetchHint:", error);
       setHint(prevHints => ({
         ...prevHints,
         [indice]: "Error obteniendo pista"
       }));
+      fetchedHint = "Error al procesar la pista";
     }
     
     setLoadingHint(false);
     return fetchedHint;
-};
-
-
-
+  };
 
   useEffect(() => {
     const username = localStorage.getItem('username');
@@ -203,7 +261,6 @@ const Jugar = () => {
 
     const storedCategories = localStorage.getItem('selectedCategories');
    
-
     var auxCategories = selectedCategories;
 
     if(storedCategories!==null){
@@ -228,34 +285,40 @@ const Jugar = () => {
         gameInstance.cancelRequests();
       }
     };
-  } , [navigate, setSelectedCategories,selectedCategories]);
+  }, [navigate, selectedCategories]);
 
-  
-
-  //reinicia el tiempo por pregunta
+  // Fix: Timer management
   useEffect(() => {
     if (gameFinished || questions.length === 0) return;
 
+    // Reset timer when moving to a new question
     setTimeLeft(maxTime);
 
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    // Create new timer
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
           clearInterval(timerRef.current);
-          setTimeout(() => handleTimeout(), 0);
+          handleTimeout();
           return 0;
         }
         return prevTime - 1;
       });
     }, 1000);
 
+    // Cleanup function
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     };
-  }, [indice, handleTimeout,questions.length, gameFinished, maxTime]);
+  }, [indice, questions.length, gameFinished, maxTime, handleTimeout]);
   
   // Manejar la selección de respuesta
   const handleAnswerSelect = (answerIndex) => {
@@ -288,21 +351,15 @@ const Jugar = () => {
   
     setTimeout(() => {
       if (indice < questions.length - 1) {
-        console.log("Indice:", indice);
-        setIndice(indice + 1);
-        console.log("IndiceNuevo:", indice);
+        setIndice(prevIndice => prevIndice + 1);
         setQuestionStartTime(Date.now());
         setScore(updatedScore);
+        setTimeLeft(maxTime); // Reset timer for the next question
       } else {
         finishGame(updatedScore);
       }
     }, 3000);
   };
-
-  //marca pregunta como fallida si se acaba el tiempo
-
-
-
 
   // Finalizar el juego
   const finishGame = async (finalScore) => {
@@ -341,12 +398,11 @@ const Jugar = () => {
     }
   };
   
-  
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
 
-  if (questions.length ===0|| (!questions[indice] && !gameFinished && indice < questions.length - 1)) {
+  if (questions.length === 0 || (!questions[indice] && !gameFinished && indice < questions.length - 1)) {
     return (
       <Container sx={{ textAlign: "center", mt: 5 }}>
         <Typography variant="h6" gutterBottom>
@@ -768,7 +824,6 @@ const Jugar = () => {
           </Box>
         </Box>
 
-
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
@@ -782,4 +837,5 @@ const Jugar = () => {
     </>
   );
 }
+
 export default Jugar;
