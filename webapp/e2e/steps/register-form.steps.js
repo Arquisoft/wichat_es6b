@@ -32,8 +32,8 @@ defineFeature(feature, test => {
       password = "testpassword123";
       confirmPassword = "testpassword123";
       // Click en la pestaña de Signup
-      const signupTab = await page.$x("/html/body/div/div/div[2]/div/div/div[1]/div/div/button[2]");
-      await signupTab[0].click();   
+      await expect(page).toClick("/html/body/div/div/div[2]/div/div/div[1]/div/div/button[2]");
+  
     });
 
     when('I fill the data in the form and press submit', async () => {
