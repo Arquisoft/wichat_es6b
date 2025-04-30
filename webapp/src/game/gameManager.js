@@ -27,8 +27,8 @@ const Jugar = () => {
   const [setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [setHint] = useState({});
-  const [setUsedHint] = useState({});
+  const [hint, setHint] = useState({});
+  const [usedhint, setUsedHint] = useState({});
   const [loadingHint, setLoadingHint] = useState(false);
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
@@ -91,6 +91,8 @@ const Jugar = () => {
       if (indice < questions.length - 1) {
         setIndice(prevIndice => prevIndice + 1);
         setQuestionStartTime(Date.now());
+        let aux = hint
+        aux = usedhint
         setTimeLeft(maxTime); // Reset timer for next question
       } else {
         finishGame(score);
