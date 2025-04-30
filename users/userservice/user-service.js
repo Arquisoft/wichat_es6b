@@ -16,25 +16,7 @@ app.use(express.json());
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri);
 
-class UserService {
-  static async findUserByUsername(username) {
-    // Sanitize username
-    const sanitizedUsername = username ? username.trim().replace(/[<>&"'`]/g, '') : '';
-    return await User.findOne({ username: sanitizedUsername });
-  }
 
-  static async createUser(username, password) {
-    const sanitizedUsername = username ? username.trim().replace(/[<>&"'`]/g, '') : '';
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const user = new User({
-      username: sanitizedUsername,
-      password: hashedPassword,
-    });
-
-    return await user.save();
-  }
-}
 
 // Function to validate required fields in the request body
 function validateRequiredFields(req, requiredFields) {
@@ -55,12 +37,22 @@ app.post('/adduser', async (req, res) => {
        // const validator = require('validator');
         //const username = validator.escape(req.body.username.trim());
         // Alternativa sin el paquete validator
-        const existingUser = await UserService.findUserByUsername(req.body.username);
+        const username = req.body.username ? req.body.username.trim().replace(/[<>&"'`]/g, '') : '';
+        const existingUser = await User.findOne({ username: username.toString() });
+
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
-        const newUser = await UserService.createUser(req.body.username, req.body.password);
+        // Encrypt the password before saving it
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+        const newUser = new User({
+            username: req.body.username,
+            password: hashedPassword,
+        });
+
+        await newUser.save();
         res.json(newUser);
     } catch (error) {
         res.status(400).json({ error: error.message }); 
