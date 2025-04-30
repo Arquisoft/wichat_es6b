@@ -69,8 +69,6 @@ describe('Generación de preguntas sobre futbolistas', () => {
     expect(correctOccurrences).toBe(1); // Debe haber exactamente 1 respuesta correcta
   });
 
-
-
   it('should generate a question with 4 options, an image, and a correct answer', async () => {
     const response = await request(server)
       .get('/generateQuestion')
