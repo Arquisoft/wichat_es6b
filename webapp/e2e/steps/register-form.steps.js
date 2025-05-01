@@ -35,7 +35,7 @@ defineFeature(feature, test => {
     let confirmPassword;
 
     given('An unregistered user', async () => {
-      username = "testuser" + Math.random().toString(36).substring(7);
+      username = "testuserreg";
       password = "testpassword123";
       confirmPassword = "testpassword123";
       

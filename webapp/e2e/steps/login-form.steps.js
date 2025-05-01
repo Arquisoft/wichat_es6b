@@ -78,6 +78,7 @@ defineFeature(feature, test => {
     });
 
     then('Dashboard page should be shown in the screen', async () => {
+      console.log("Current URL:", await page.url());
       await expect(page.url()).toContain('/dashboard');
     });
   });
