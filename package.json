@@ -38,6 +38,10 @@
   },
   "homepage": "https://github.com/Arquisoft/wichat_es6b#readme",
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "expect-puppeteer": "^11.0.0",
+    "jest-cucumber": "^4.5.0",
+    "jest-puppeteer": "^11.0.0",
+    "mongodb-memory-server": "^10.1.4"
   }
 }
