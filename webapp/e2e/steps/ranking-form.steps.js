@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const { defineFeature, loadFeature } = require('jest-cucumber');
 const setDefaultOptions = require('expect-puppeteer').setDefaultOptions;
 const feature = loadFeature('./features/ranking-form.feature'); 
-const { loginUser } = require('../testUtils');
+const { loginUser, registerUser } = require('../testUtils');
 
 let page;
 let browser;
@@ -21,6 +21,9 @@ defineFeature(feature, test => {
     page = await browser.newPage();
     setDefaultOptions({ timeout: 100000 });
 
+    let username = "testuser" + Math.random().toString(36).substring(7);
+    await registerUser(username,"testpassword123",page);
+    await loginUser(username,"testpassword123",page);
     await page
       .goto(`${APP_URL}`, {
         waitUntil: "networkidle0",
