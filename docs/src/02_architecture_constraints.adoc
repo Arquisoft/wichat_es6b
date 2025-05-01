@@ -34,13 +34,14 @@ Constraints, like building codes, budgets, or client needs, must always be consi
 |===
 |Constraint|Explanation
 |Javascript|The programming language of the project is Javascript, in order to take advantage of some of the frameworks available.
-|React|The use of React.js framefork for the frontend.
-|Node|The use of Node.js framework for the backend.
+|React|The use of React.js library for the frontend.
+|Node|The use of Node.js platform for the backend.
 |Express|A framework used by Node.js in order to make a structure for application witout a huge complexity.
 |MongoDB|The database will be MongoDb, a NoSQL database system.
 |Wikidata|It will be used to generate questions.
 |Github|All the shares information will be stored at the repo of the project.
 |LLM integration|As the system gives hints to the players, a way of comunicating with a LLM (Long Language Model) sush as Gemini or Mistral is needed.
+|Gemini|Gemini is the LLM chosen to use
 |Docker|In order to deploy all the services and make them accesible online, Docker will be used to ease and automate the deployment process.
 |APIs usage|Some of the services will work as an Application Programming Interface.
 |Time mangement|In order to have a complete experience while using the app, timeouts and timers are needed.
