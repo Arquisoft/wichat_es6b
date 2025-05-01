@@ -263,6 +263,7 @@ const Jugar = () => {
         fetchedHint = response.data.answer || "Pista no disponible";
       } catch (apiError) {
         console.error("Error en la llamada a la API:", apiError);
+        setSelectedCategories(); 
         fetchedHint = "Error al comunicarse con el servicio de pistas";
       }
 
