@@ -2202,41 +2202,45 @@ Additionally, when a release is made, the acceptance tests are also executed, en
 </div>
 <div class="sect3">
 <h4 id="_gateway_test">14.1.1. Gateway Test</h4>
-
+<div class="paragraph">
+<p>Tests API Gateway functionality by verifying request routing between services, authentication middleware, and error handling. Includes endpoint validation for /login, /adduser, /stats, /rankings, and /history, plus health checks.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_llmservice_test">14.1.2. llmService Test</h4>
+<h4 id="_llmservice_test">14.1.2. LlmService Test</h4>
 <div class="paragraph">
 <p>These tests verify that the service responds as expected when the parameters are correct, as well as when there is an error in the parameters — for example, if a parameter is missing, if a non-existent LLM model is selected, or if the POST request fails.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_questionsservice_test">14.1.3. questionsService Test</h4>
-
+<h4 id="_questionsservice_test">14.1.3. QuestionsService Test</h4>
+<div class="paragraph">
+<p>Validates WikiData integration for trivia question generation, testing category filtering, multilingual support, and question format. Ensures proper handling of API responses and errors.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_authservice_test">14.1.4. authservice Test</h4>
-
+<h4 id="_authservice_test">14.1.4. Authservice Test</h4>
+<div class="paragraph">
+<p>Verifies user authentication including JWT tokens, login process, and password encryption. Tests token validation, session management, and security features.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_historyservice_test">14.1.5. historyservice Test</h4>
-
+<h4 id="_historyservice_test">14.1.5. Historyservice Test</h4>
+<div class="paragraph">
+<p>Checks game record management by testing storage of results, statistics retrieval, and ranking calculations. Validates data consistency and error handling.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_usersservice_test">14.1.6. usersService Test</h4>
-
+<h4 id="_usersservice_test">14.1.6. UsersService Test</h4>
+<div class="paragraph">
+<p>Tests user management features including registration, username validation, and MongoDB interactions. Verifies user data handling and profile operations.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_webapp_test">14.1.7. webapp Test</h4>
-
+<h4 id="_webapp_test">14.1.7. Webapp Test</h4>
+<div class="paragraph">
+<p>Validates frontend UI components using React Testing Library. Tests component rendering, user interactions, and state management for login, game interface, and profile views.</p>
 </div>
-<div class="sect3">
-<h4 id="_service_tests">14.1.8. Service Tests</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_webapp_tests">14.1.9. Webapp Tests</h4>
-
 </div>
 </div>
 <div class="sect2">
@@ -2309,7 +2313,7 @@ This endpoint also showed the highest response time when the number of concurren
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-05-01 13:19:35 +0200
+Last updated 2025-05-01 16:59:42 +0200
 </div>
 </div>
 </body>
