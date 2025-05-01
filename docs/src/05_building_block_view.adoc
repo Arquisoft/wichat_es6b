@@ -117,23 +117,25 @@ In summary:
 
 === Level 2: Internal Components and Control Flow
 
-This level presents a deeper look into the internal architecture and flow of information between components:
+This level provides a more detailed view of the internal architecture and the flow of data between components:
 
-- The **user** interacts with a central **Gateway**, which acts as a controller for all communication. It routes requests between the frontend, backend services, and external systems.
+- The **User** interacts with a central **Gateway**, which acts as the main controller for the entire system.  
+  All communication flows through the Gateway, ensuring centralized routing and access control.
 
-- The **Frontend** includes a key module called **Game**, which:
-  - Displays questions and collects user answers.
-  - Requests hints from the LLM.
-  - Interacts exclusively with the **Gateway**.
+- The **Frontend** contains a key module called **Game**, responsible for:
+  * Displaying questions and collecting user responses.
+  * Requesting contextual hints from the LLM.
+  * Communicating exclusively with the Gateway.
 
-- The **Backend** is composed of several components:
-  - **User Module**: Responsible for managing all user-related logic.
-    - Includes:
-      - **Authentication Service**
-      - **Authorization Service**
-      - **History Service** (tracks gameplay, results, and timing)
-  - All backend logic passes through the **Gateway**, which centralizes access control and service orchestration.
+- The **Backend** is structured into several core modules:
 
-- **External services**:
-  - **LLM API**: The frontend (via the gateway) interacts with the LLM to retrieve context-aware hints for the questions.
-  - **Wikidata API**: Accessed by the backend to dynamically build the question/answer dataset used during gameplay.
+  * **User Module** – Handles user-related logic and data.
+    - **Authentication Service**: Verifies user identities.
+    - **Authorization Service**: Manages access rights.
+    - **History Service**: Records gameplay data, such as correct/incorrect answers and timing.
+
+  All backend modules are accessed through the Gateway, maintaining a clean and centralized communication flow.
+
+- **External Services** integrated into the system:
+  * **LLM API** – The Game module (via the Gateway) interacts with the LLM to retrieve intelligent hints.
+  * **Wikidata API** – The Backend accesses Wikidata to dynamically retrieve question-and-answer content used in the game.
