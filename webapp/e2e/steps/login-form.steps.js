@@ -43,21 +43,21 @@ defineFeature(feature, test => {
 
   test('The user is already registered in the site', ({ given, when, then }) => {
     let password;
-    
+
     given('A registered user', async () => {
       password = "testpassword123"
     });
 
     when('I fill the data in the form and press login', async () => {
-
       await expect(page).toFill('input[id="usernameLoginw"]', username);
       await expect(page).toFill('input[id="passwordLoginw"]', password);
-      await expect(page).toClick('button[id="botonLoginw"]');
+      await expect(page).toClick('button[id="botonLoginw"]')
     });
 
     then('Dashboard page should be shown in the screen', async () => {
-      console.log("Current URL:", await page.url());
-      await expect(page.url()).toContain('/dashboard');
+     await expect(page).toMatchElement("button", { text: /jugar/i });
+      await expect(page).toMatchElement("button", { text: /VER RANKINGS/i });
+      await expect(page).toMatchElement("button", { text: /VER MI PERFIL/i });
     });
   });
 

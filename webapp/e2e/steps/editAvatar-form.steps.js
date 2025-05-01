@@ -90,4 +90,3 @@ defineFeature(feature, test => {
     await browser.close();
   });
 });
-

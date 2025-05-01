@@ -52,6 +52,7 @@ async function loginUser(username, password, page) {
 }
 
 async function registerUser(username, password, page) {
+    
   try {
       console.log("🔄 Iniciando registro de usuario...");
       // Configurar timeout más largo para la navegación
