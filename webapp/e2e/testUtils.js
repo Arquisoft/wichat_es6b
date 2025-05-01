@@ -16,7 +16,34 @@ async function loginUser(username, password, page) {
         if (!response.ok()) {
             throw new Error(`Error al cargar la página: ${response.status()}`);
         }
+        // Click on Signup tab
+        await page.waitForFunction(xpath => {
+            const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            return element !== null;
+        }, {}, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[2]');
+        
+        await page.evaluate(xpath => {
+            const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (element) element.click();
+        }, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[2]');
 
+        // Fill registration form
+        await page.type('input[id="usernameAWA"]', username);
+        await page.type('input[id="passwordAWA"]', password);
+        await page.type('input[id="passwordConfirmAWA"]', password);
+        await page.click('button[id="botonAWA"]');
+
+        // Wait for registration to complete
+        // Click on Signup tab
+        await page.waitForFunction(xpath => {
+            const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            return element !== null;
+        }, {}, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
+        
+        await page.evaluate(xpath => {
+            const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (element) element.click();
+        }, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
         // Esperar a que los elementos estén disponibles
         await page.waitForSelector('input[id="usernameLoginw"]', { timeout: 60000 });
         await page.waitForSelector('input[id="passwordLoginw"]', { timeout: 60000 });
