@@ -60,7 +60,7 @@ For multiple environments or alternative deployments please copy and adapt this 
 ****
 endif::arc42help[]
 
-image::07-deploymentDiagramv2.png["Vista de despliegue"]
+image::07-deploymentDiagramv3.png["Vista de despliegue"]
 
 Motivation::
 
@@ -75,7 +75,7 @@ Mapping of Building Blocks to Infrastructure::
 | Element | Description
 |Client| The client will always be a web browser such as Safari or Firefox, by a HTTP request. 
 | WebApp | This is the frontend of the application. THe function of the game does not need to store information, everything is dynamic, so there is no need is having the game in an independent service.
-| Gateway | The gateway service contain all the information required to users: their account, the scores they had and so on. These modules connect to the same database, a mongoDB located at the same machine as the application, but not being part of it.
+| Gateway | The gateway service recieves all the request from any service and handle where to give the request.
 | Questions | This service connects with de Wikidata API, and requests some types of questions known by our application.
 | Wikidata | Service where questions are collected. SparQL is required to use the API
 | LLM | The LLM decided to support hint requests are Mistral and Gemini. The idea is to give a prompt with the context of how to answer client questions with hints.
@@ -92,4 +92,6 @@ Every interaction between services is done by HTTP requests, and they have defin
 |History Service | 8004
 |Questions Service | 8010
 |WebApp | 3000
+|Grafana | 9091
+|Prometheus | 9090
 |===
