@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const { defineFeature, loadFeature } = require('jest-cucumber');
 const setDefaultOptions = require('expect-puppeteer').setDefaultOptions;
 const feature = loadFeature('./features/editAvatar-form.feature');
-const { loginUser } = require('../testUtils');
+const { loginUser, registerUser } = require('../testUtils');
 
 let page;
 let browser;
@@ -25,8 +25,9 @@ defineFeature(feature, test => {
     await page.setDefaultNavigationTimeout(60000);
     await page.setDefaultTimeout(60000);
 
-    // Login y navegación
-    await loginUser("testuserreg", "testpassword123", page);
+    username = "testuser" + Math.random().toString(36).substring(7);
+    await registerUser(username,"testpassword123",page);
+    await loginUser(username,"testpassword123",page);
     
     // Esperar a que la página esté lista antes de navegar
     await page.waitForFunction(() => document.readyState === 'complete');

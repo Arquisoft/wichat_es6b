@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const { defineFeature, loadFeature } = require('jest-cucumber');
 const setDefaultOptions = require('expect-puppeteer').setDefaultOptions;
 const feature = loadFeature('./features/login-form.feature');
+const { registerUser } = require('../testUtils');
 
 let page;
 let browser;
@@ -20,6 +21,11 @@ defineFeature(feature, test => {
     page = await browser.newPage();
     setDefaultOptions({ timeout: 100000 });
 
+    username = "testuser" + Math.random().toString(36).substring(7);
+    await registerUser(username,"testpassword123",page);
+    console.log("✅ Registro completado");
+    
+
     await page
       .goto(`${APP_URL}`, {
         waitUntil: "networkidle0",
@@ -35,12 +41,10 @@ defineFeature(feature, test => {
   });
 
   test('The user is already registered in the site', ({ given, when, then }) => {
-    let username;
     let password;
 
     given('A registered user', async () => {
-      username = "testuserreg";
-      password = "testpassword123";
+      password = "testpassword123"
     });
 
     when('I fill the data in the form and press login', async () => {
@@ -67,6 +71,16 @@ defineFeature(feature, test => {
     });
 
     when('I fill the data in the form and press login', async () => {
+      await page.waitForFunction(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, {}, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
+      
+      await page.evaluate(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        if (element) element.click();
+      }, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
+
       await expect(page).toFill('input[id="usernameLoginw"]', username);
       await expect(page).toFill('input[id="passwordLoginw"]', password);
       await expect(page).toClick('button[id="botonLoginw"]')
