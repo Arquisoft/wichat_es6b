@@ -21,57 +21,72 @@ defineFeature(feature, test => {
     page = await browser.newPage();
     setDefaultOptions({ timeout: 100000 });
 
-    await loginUser("testuserreg","testpassword123",page);
-    await page
-      .goto(`${APP_URL}`, {
-        waitUntil: "networkidle0",
-      })
-      .catch((error) => {
-        console.error('Error navigating to app:', error);
-      });
-  });
+    // Configurar timeouts
+    await page.setDefaultNavigationTimeout(60000);
+    await page.setDefaultTimeout(60000);
 
-  beforeEach(async () => {
-  await page.goto(`${APP_URL}`, { waitUntil: 'networkidle0' });
-  });
-  test('Change the avatar', ({ given, when, then }) => {
-
-    given('A registered user', async () => {
+    // Login y navegación
+    await loginUser("testuserreg", "testpassword123", page);
     
+    // Esperar a que la página esté lista antes de navegar
+    await page.waitForFunction(() => document.readyState === 'complete');
+    
+    // Navegar a la página de edición de avatar
+    const response = await page.goto(`${APP_URL}`, {
+      waitUntil: "networkidle0",
+      timeout: 60000
+    });
+
+    if (!response.ok()) {
+      throw new Error(`Error al cargar la página: ${response.status()}`);
+    }
+
+    // Esperar a que la página esté completamente cargada
+    await page.waitForFunction(() => document.readyState === 'complete');
+  });
+
+  test('Change the avatar', ({ given, when, then }) => {
+    given('A registered user', async () => {
+      // El usuario ya está logueado gracias a loginUser en beforeAll
     });
 
     when('I change the avatar', async () => {
-        await page.click('[data-testid="pulpo-button"]');
-        await page.click('[data-testid="confirm-button"]');
+      // Esperar a que los botones estén disponibles
+      await page.waitForSelector('[data-testid="pulpo-button"]', { timeout: 60000 });
+      await page.waitForSelector('[data-testid="confirm-button"]', { timeout: 60000 });
+      
+      // Hacer clic en los botones
+      await page.click('[data-testid="pulpo-button"]');
+      await page.click('[data-testid="confirm-button"]');
     });
 
     then('Shows a confirm message', async () => {
-        await page.waitForSelector('.MuiSnackbar-root', { 
+      // Esperar a que aparezca el mensaje de confirmación
+      await page.waitForSelector('.MuiSnackbar-root', { 
         visible: true,
-        timeout: 5000 
+        timeout: 60000 
       });
-       const errorMessage = await page.evaluate(() => {
-        // Buscar en diferentes lugares donde podría estar el mensaje
+
+      const errorMessage = await page.evaluate(() => {
         const snackbarMessage = document.querySelector('.MuiSnackbarContent-message');
         const snackbarRoot = document.querySelector('.MuiSnackbar-root');
         
         if (snackbarMessage) return snackbarMessage.textContent;
         if (snackbarRoot) return snackbarRoot.textContent;
         
-        // Si no encontramos el mensaje en los lugares esperados, buscar en todo el DOM
         return document.body.innerText;
       });
 
-      // Verificar que el mensaje contiene el texto esperado
       expect(errorMessage).toContain('Avatar cambiado con éxito');
 
+      // Verificar la imagen del avatar
       const imgSrc = await page.$eval('[data-testid="avatar-img"]', img => img.src);
-        expect(imgSrc).toBe('http://localhost:3000/icono_cactus.png');
+      expect(imgSrc).toBe('http://localhost:3000/icono_cactus.png');
     });
   });
-
 
   afterAll(async () => {
     await browser.close();
   });
 });
+

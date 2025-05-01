@@ -33,9 +33,7 @@ defineFeature(feature, test => {
 
   });
 
-  beforeEach(async () => {
-  await page.goto(`${APP_URL}`, { waitUntil: 'networkidle0' });
-  });
+
 
   test('Enter the ranking', ({given, when, then}) => {
     given('A registered user', async () => {

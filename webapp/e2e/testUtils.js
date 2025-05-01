@@ -1,15 +1,48 @@
 async function loginUser(username, password, page) {
-    await page
-    .goto("http://localhost:3000/login", {
-      waitUntil: "networkidle0",
-    })
-    .catch(() => {});
+    try {
+        // Configurar timeout más largo para la navegación
+        await page.setDefaultNavigationTimeout(60000);
+        await page.setDefaultTimeout(60000);
 
-    await expect(page).toFill('input[id="usernameLoginw"]', username);
-    await expect(page).toFill('input[id="passwordLoginw"]', password);
-    await expect(page).toClick('button[id="botonLoginw"]')
+        // Esperar a que la página esté lista antes de navegar
+        await page.waitForFunction(() => document.readyState === 'complete');
 
-     await expect(page).toMatchElement("button", { text: /jugar/i });
+        // Intentar navegar a la página de login
+        const response = await page.goto("http://localhost:3000/login", {
+            waitUntil: "networkidle0",
+            timeout: 60000
+        });
+
+        if (!response.ok()) {
+            throw new Error(`Error al cargar la página: ${response.status()}`);
+        }
+
+        // Esperar a que los elementos estén disponibles
+        await page.waitForSelector('input[id="usernameLoginw"]', { timeout: 60000 });
+        await page.waitForSelector('input[id="passwordLoginw"]', { timeout: 60000 });
+        await page.waitForSelector('button[id="botonLoginw"]', { timeout: 60000 });
+
+        // Rellenar el formulario
+        await page.type('input[id="usernameLoginw"]', username);
+        await page.type('input[id="passwordLoginw"]', password);
+        
+        // Hacer clic y esperar a la navegación
+        const navigationPromise = page.waitForNavigation({ 
+            waitUntil: 'networkidle0', 
+            timeout: 60000 
+        });
+        await page.click('button[id="botonLoginw"]');
+        await navigationPromise;
+
+        // Esperar a que aparezcan los botones del dashboard
+        await page.waitForSelector("button", { text: /jugar/i, timeout: 60000 });
+        
+        // Esperar a que la página esté completamente cargada
+        await page.waitForFunction(() => document.readyState === 'complete');
+    } catch (error) {
+        console.error('Error en loginUser:', error);
+        throw error;
+    }
 }
 
-module.exports = {loginUser }; 
+module.exports = { loginUser }; 

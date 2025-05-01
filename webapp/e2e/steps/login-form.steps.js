@@ -31,6 +31,7 @@ defineFeature(feature, test => {
 
   beforeEach(async () => {
   await page.goto(`${APP_URL}`, { waitUntil: 'networkidle0' });
+  await page.waitForSelector('input[id="usernameLoginw"]');
   });
 
   test('The user is already registered in the site', ({ given, when, then }) => {
