@@ -15,27 +15,27 @@ This project consists of 7 services: Gateway, llmService, questionsService, auth
 
 Tests API Gateway functionality by verifying request routing between services, authentication middleware, and error handling. Includes endpoint validation for /login, /adduser, /stats, /rankings, and /history, plus health checks.
 
-==== llmService Test
+==== LlmService Test
 
 These tests verify that the service responds as expected when the parameters are correct, as well as when there is an error in the parameters — for example, if a parameter is missing, if a non-existent LLM model is selected, or if the POST request fails.
 
-==== questionsService Test
+==== QuestionsService Test
 
 Validates WikiData integration for trivia question generation, testing category filtering, multilingual support, and question format. Ensures proper handling of API responses and errors.
 
-==== authservice Test
+==== Authservice Test
 
 Verifies user authentication including JWT tokens, login process, and password encryption. Tests token validation, session management, and security features.
 
-==== historyservice Test
+==== Historyservice Test
 
 Checks game record management by testing storage of results, statistics retrieval, and ranking calculations. Validates data consistency and error handling.
 
-==== usersService Test
+==== UsersService Test
 
 Tests user management features including registration, username validation, and MongoDB interactions. Verifies user data handling and profile operations.
 
-==== webapp Test
+==== Webapp Test
 Validates frontend UI components using React Testing Library. Tests component rendering, user interactions, and state management for login, game interface, and profile views.
 
 === Acceptance Tests

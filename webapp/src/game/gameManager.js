@@ -140,7 +140,6 @@ const Jugar = () => {
       // Agregar mensaje del usuario al chat
       setChatMessages(prev => [...prev, { sender: 'user', text: userInputText }]);
       setChatInput("");
-      setSelectedCategories(); 
 
       console.log("Pide cargar pista");
       

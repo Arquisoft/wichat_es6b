@@ -158,7 +158,7 @@ app.get('/rankings', async (req, res) => {
         },
       },
       { $sort: { totalPoints: -1 } },
-      { $limit: 10 },
+      { $limit: 5 },
     ]);
 
     res.json(ranking);
