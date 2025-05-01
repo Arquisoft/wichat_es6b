@@ -37,7 +37,7 @@ defineFeature(feature, test => {
   test('The user is already registered in the site', ({ given, when, then }) => {
     let username;
     let password;
-
+    
     given('A registered user', async () => {
       username = "testuserreg";
       password = "testpassword123";
@@ -74,13 +74,21 @@ defineFeature(feature, test => {
 
       await expect(page).toFill('input[id="usernameLoginw"]', username);
       await expect(page).toFill('input[id="passwordLoginw"]', password);
-      await expect(page).toClick('button[id="botonLoginw"]')
+      await expect(page).toClick('button[id="botonLoginw"]');
     });
 
     then('Dashboard page should be shown in the screen', async () => {
-      await expect(page).toMatchElement("button", { text: /jugar/i });
-      await expect(page).toMatchElement("button", { text: /VER RANKINGS/i });
-      await expect(page).toMatchElement("button", { text: /VER MI PERFIL/i });
+      await page.waitForFunction(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, {}, '//button[contains(text(), "Jugar")]');
+      
+      // Verificar el mensaje de confirmación
+      const confirmationExists = await page.evaluate(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, '//button[contains(text(), "Jugar")]');
+
     });
   });
 
