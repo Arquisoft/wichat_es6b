@@ -62,6 +62,7 @@ const AvatarSelection = () => {
                     alignItems: 'center'
                 }}>
                     <img 
+                        test
                         src={avatar || '/white.png'} 
                         alt="Profile pic" 
                         style={{ 
@@ -134,6 +135,7 @@ const AvatarSelection = () => {
                                     height: '100%',
                                     objectFit: 'cover'
                                 }} 
+                                data-testid="avatar-img"
                             />
                         </Box>
                         <Typography sx={{ color: 'white', fontWeight: 'bold' }}>
