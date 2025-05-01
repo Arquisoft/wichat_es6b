@@ -6,6 +6,9 @@ const feature = loadFeature('./features/register-form.feature');
 let page;
 let browser;
 const APP_URL = process.env.APP_URL || 'http://localhost:3000/login';
+let username = "testuser" + Math.random().toString(36).substring(7);
+let password = "testpassword123";
+let confirmPassword = "testpassword123";
 
 defineFeature(feature, test => {
   
@@ -30,14 +33,9 @@ defineFeature(feature, test => {
   });
 
   test('The user is not registered in the site', ({given, when, then}) => {
-    let username;
-    let password;
-    let confirmPassword;
+    
 
     given('An unregistered user', async () => {
-      username = "testuser" + Math.random().toString(36).substring(7);
-      password = "testpassword123";
-      confirmPassword = "testpassword123";
       
       // Click en la pestaña de Signup usando evaluate con XPath
       await page.waitForFunction(xpath => {
@@ -74,6 +72,39 @@ defineFeature(feature, test => {
       
       expect(confirmationExists).toBe(true);
     });
+    then('I should be able to login with the new account', async () => {
+      // Click en la pestaña de Login
+      await page.waitForFunction(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, {}, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
+      
+      await page.evaluate(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        if (element) element.click();
+      }, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
+
+      // Rellenar formulario de login
+      await expect(page).toFill('input[id="usernameLoginw"]', username);
+      await expect(page).toFill('input[id="passwordLoginw"]', password);
+      await expect(page).toClick('button[id="botonLoginw"]');
+
+      // Esperar a que aparezca el dashboard
+      await page.waitForFunction(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, {}, '//button[contains(text(), "Jugar")]');
+
+      // Verificar que estamos en el dashboard
+      const isDashboard = await page.evaluate(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, '//button[contains(text(), "Jugar")]');
+      
+      expect(isDashboard).toBe(true);
+    });
+
+    
 
     
   });

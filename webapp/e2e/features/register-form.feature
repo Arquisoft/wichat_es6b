@@ -4,3 +4,4 @@ Scenario: The user is not registered in the site
   Given An unregistered user
   When I fill the data in the form and press submit
   Then A confirmation message should be shown in the screen
+  Then I should be able to login with the new account
