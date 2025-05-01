@@ -41,24 +41,17 @@ const Jugar = () => {
   const [chatLocked, setChatLocked] = useState(false);
 
   const updateDifficultyAndTime = useCallback((selectedDifficulty) => {
-    switch (selectedDifficulty) {
-      case 'Fácil':
-        setMaxTime(40);
-        setTimeLeft(40);
-        break;
-      case 'Medio':
-        setMaxTime(30);
-        setTimeLeft(30);
-        break;
-      case 'Difícil':
-        setMaxTime(20);
-        setTimeLeft(20);
-        break;
-      default:
-        setMaxTime(40);
-        setTimeLeft(40);
-        break;
-    }
+    const difficultyMap = {
+        'Fácil': 40,
+        'Medio': 30,
+        'Difícil': 20
+    };
+
+    // Si la dificultad no está en el mapa, asigna el valor por defecto de 40
+    const time = difficultyMap[selectedDifficulty] || 40;
+
+    setMaxTime(time);
+    setTimeLeft(time);
   }, []);
   
   useEffect(() => {
@@ -170,11 +163,9 @@ const Jugar = () => {
           const newMessages = [...prev];
           // Reemplazar el último mensaje (que debería ser "Pensando...")
           if (newMessages.length > 0) {
-            let aux = hint
-            aux = usedhint
             newMessages[newMessages.length - 1] = { 
               sender: 'bot', 
-              text: `Pista: ${actualHint || "No pude generar una pista"+aux}` 
+              text: `Pista: ${actualHint || "No pude generar una pista"}${usedhint}` 
             };
           }
           return newMessages;
@@ -222,9 +213,7 @@ const Jugar = () => {
       
       const questionText = questions[indice].pregunta;
       // Verificar que la respuesta correcta exista
-      if (questions[indice].respuesta_correcta === undefined || 
-          !questions[indice].opciones || 
-          !questions[indice].opciones[questions[indice].respuesta_correcta]) {
+      if (!questions[indice]?.opciones?.[questions[indice]?.respuesta_correcta]) {
         console.error("Datos de pregunta incompletos:", questions[indice]);
         setLoadingHint(false);
         return "Datos de pregunta incorrectos";
@@ -298,7 +287,7 @@ const Jugar = () => {
 
     const storedCategories = localStorage.getItem('selectedCategories');
    
-    var auxCategories = selectedCategories;
+    let auxCategories = selectedCategories;
 
     if(storedCategories!==null){
       auxCategories = storedCategories.split(',').map(cat => cat.trim());
@@ -605,7 +594,7 @@ const Jugar = () => {
                 minHeight: 0, // <-- evita expansión forzada
               }}
             >
-              {chatMessages.map((msg, index) => (
+              {chatMessages.map((msg,index) => (
                 <Box
                   key={index}
                   sx={{
@@ -646,7 +635,12 @@ const Jugar = () => {
                 placeholder="Escribe un mensaje..."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleChatSubmit()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(); // Evitar el salto de línea al presionar Enter
+                    handleChatSubmit(); // Llamar a tu función de envío
+                  }
+                }}
                 sx={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
@@ -698,7 +692,7 @@ const Jugar = () => {
                 overflow: "hidden",
               }}
             >
-              {questions[indice] && questions[indice].imagen ? (
+              {questions[indice]?.imagen ? (
                 <img
                   src={questions[indice].imagen}
                   alt="Pregunta"
@@ -760,7 +754,7 @@ const Jugar = () => {
               flexGrow: 1,
               overflow: "hidden"
             }}>
-              {preguntaActual.opciones.map((opcion, i) => (
+              {preguntaActual.opciones.map((opcion,i) => (
                 <Button
                   key={i}
                   variant="contained"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor} from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { SessionContext } from '../context/SessionContext';
 import GameManager from './gameManager';
@@ -98,55 +98,4 @@ describe('GameManager', () => {
             expect(screen.getByText('+10')).toBeInTheDocument();
         });
     });
-
-    // it('should handle timeout correctly', async () => {
-    //     jest.useFakeTimers();
-    //     renderGameManager();
-        
-    //     await waitFor(() => {
-    //         expect(screen.queryByText('Cargando preguntas...')).not.toBeInTheDocument();
-    //     }, { timeout: 5000 });
-
-    //     act(() => {
-    //         jest.advanceTimersByTime(31000);
-    //     });
-
-    //     await waitFor(() => {
-    //         const timeoutMessage = screen.getByTestId('timeout-message');
-    //         expect(timeoutMessage).toBeInTheDocument();
-    //     });
-
-    //     jest.useRealTimers();
-    // });
-
-    // it('should handle game completion', async () => {
-    //     renderGameManager();
-        
-    //     await waitFor(() => {
-    //         expect(screen.queryByText('Cargando preguntas...')).not.toBeInTheDocument();
-    //     }, { timeout: 5000 });
-
-    //     const correctAnswer = screen.getByText(mockQuestions[0].opciones[0]);
-    //     fireEvent.click(correctAnswer);
-
-    //     await waitFor(() => {
-    //         expect(screen.getByText('¡Juego terminado!')).toBeInTheDocument();
-    //     });
-    // });
-
-    // it('should handle chat functionality', async () => {
-    //     renderGameManager();
-        
-    //     await waitFor(() => {
-    //         expect(screen.queryByText('Cargando preguntas...')).not.toBeInTheDocument();
-    //     }, { timeout: 5000 });
-
-    //     const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
-    //     fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
-    //     fireEvent.keyPress(chatInput, { key: 'Enter', code: 'Enter' });
-
-    //     await waitFor(() => {
-    //         expect(screen.getByText('Pista:')).toBeInTheDocument();
-    //     });
-    // });
 }); 

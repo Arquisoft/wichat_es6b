@@ -5,20 +5,6 @@ jest.mock('axios');
 
 describe('Game class', () => {
     let game;
-    const mockQuestions = [
-        {
-            responseQuestion: '¿Cuál es la capital de España?',
-            responseOptions: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'],
-            responseCorrectOption: 'Madrid',
-            responseImage: 'madrid.jpg'
-        },
-        {
-            responseQuestion: '¿Cuál es el río más largo del mundo?',
-            responseOptions: ['Amazonas', 'Nilo', 'Yangtsé', 'Misisipi'],
-            responseCorrectOption: 'Amazonas',
-            responseImage: 'amazonas.jpg'
-        }
-    ];
 
     beforeEach(() => {
         game = new Game(['Geografia', 'Cultura']);
