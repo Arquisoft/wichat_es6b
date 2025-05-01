@@ -6,6 +6,7 @@ const { registerUser } = require('../testUtils');
 
 let page;
 let browser;
+let username;
 const APP_URL = process.env.APP_URL || 'http://localhost:3000/login';
 
 defineFeature(feature, test => {

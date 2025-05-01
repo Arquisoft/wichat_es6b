@@ -21,7 +21,7 @@ defineFeature(feature, test => {
     page = await browser.newPage();
     setDefaultOptions({ timeout: 100000 });
 
-    username = "testuser" + Math.random().toString(36).substring(7);
+    let username = "testuser" + Math.random().toString(36).substring(7);
     await registerUser(username,"testpassword123",page);
     await loginUser(username,"testpassword123",page);
     await page
