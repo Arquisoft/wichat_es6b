@@ -18,7 +18,7 @@
 | Daniel Flores López | <a href="https://github.com/DanielFloresLopez"><img src="https://img.shields.io/badge/UO282894-Daniel Flores López-yellow"></a> |
 | David Rodríguez Chanca | <a href="https://github.com/DRChanca"><img src="https://img.shields.io/badge/UO289521-David Rodríguez Chanca-purple"></a> |
 | Sergio Pérez Arias | <a href="https://github.com/Sero73"><img src="https://img.shields.io/badge/UO294130-Sergio Pérez Arias-red"></a> |
-| Javier Gutiérrez Esquinas | <a href="https://github.com/JavierGutierrezEsquinas"><img src="https://img.shields.io/badge/UO289715-Javier Gutiérrez Esquinas-blue"></a> |
+| Javier Gutiérrez Esquinas | <a href="https://github.com/JavierGE03"><img src="https://img.shields.io/badge/UO289715-Javier Gutiérrez Esquinas-blue"></a> |
 | Adrián Martís Blanco | <a href="https://github.com/adriMB200"><img src="https://img.shields.io/badge/UO289369-Adrián Martís Blanco-green"></a> |
 
 </div>
