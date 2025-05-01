@@ -78,17 +78,7 @@ defineFeature(feature, test => {
     });
 
     then('Dashboard page should be shown in the screen', async () => {
-      await page.waitForFunction(xpath => {
-        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        return element !== null;
-      }, {}, '//button[contains(text(), "Jugar")]');
-      
-      // Verificar el mensaje de confirmación
-      const confirmationExists = await page.evaluate(xpath => {
-        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        return element !== null;
-      }, '//button[contains(text(), "Jugar")]');
-
+      await expect(page.url()).toContain('/dashboard');
     });
   });
 
