@@ -488,7 +488,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_user_login">6.2. User Login</a></li>
 <li><a href="#_question_generation">6.3. Question Generation</a></li>
 <li><a href="#_answering_a_question">6.4. Answering a Question</a></li>
-<li><a href="#_ranking_query">6.5. Ranking Query</a></li>
+<li><a href="#_user_profile_view">6.5. User Profile View</a></li>
+<li><a href="#_ranking_query">6.6. Ranking Query</a></li>
 </ul>
 </li>
 <li><a href="#section-deployment-view">7. Deployment View</a>
@@ -902,11 +903,11 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">React</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The use of React.js framefork for the frontend.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The use of React.js library for the frontend.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Node</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The use of Node.js framework for the backend.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The use of Node.js platform for the backend.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Express</p></td>
@@ -927,6 +928,10 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">LLM integration</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">As the system gives hints to the players, a way of comunicating with a LLM (Long Language Model) sush as Gemini or Mistral is needed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gemini</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gemini is the LLM chosen to use</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Docker</p></td>
@@ -1649,15 +1654,23 @@ You will mainly capture scenarios in your documentation to communicate your arch
 <h3 id="_answering_a_question">6.4. Answering a Question</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/question_response.png" alt="question response" width="1685" height="1148">
+<img src="./images/question_response.png" alt="question response" width="1750" height="1317">
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ranking_query">6.5. Ranking Query</h3>
+<h3 id="_user_profile_view">6.5. User Profile View</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/ranking.png" alt="ranking" width="636" height="426">
+<img src="./images/profile.png" alt="profile" width="784" height="426">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ranking_query">6.6. Ranking Query</h3>
+<div class="imageblock">
+<div class="content">
+<img src="./images/ranking.png" alt="ranking" width="785" height="426">
 </div>
 </div>
 <div style="page-break-after: always;"></div>
@@ -1751,7 +1764,7 @@ when your infrastructure is more complex.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/07-deploymentDiagramv2.png" alt="Vista de despliegue">
+<img src="./images/07-deploymentDiagramv3.png" alt="Vista de despliegue">
 </div>
 </div>
 <div class="dlist">
@@ -1787,7 +1800,7 @@ when your infrastructure is more complex.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Gateway</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The gateway service contain all the information required to users: their account, the scores they had and so on. These modules connect to the same database, a mongoDB located at the same machine as the application, but not being part of it.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The gateway service recieves all the request from any service and handle where to give the request.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Questions</p></td>
@@ -1847,6 +1860,14 @@ when your infrastructure is more complex.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">WebApp</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Grafana</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9091</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prometheus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9090</p></td>
 </tr>
 </tbody>
 </table>
