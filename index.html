@@ -1860,16 +1860,26 @@ when your infrastructure is more complex.</p>
 <div class="sect2">
 <h3 id="_architectural_patterns_and_principles">8.1. Architectural Patterns and Principles</h3>
 <div class="paragraph">
-<p>The system follows a microservices architecture, ensuring modularity and scalability:</p>
+<p>The system follows a modular layered architecture, promoting separation of concerns and scalability:</p>
 </div>
 <div class="paragraph">
 <p>Service Layering:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Modular Components: Each functional area of the system is handled by a separate module responsible for its own domain logic.</p>
+</li>
+<li>
+<p>API Gateway: All client requests pass through a centralized API Gateway, which acts as the single entry point to the backend. It handles routing, request validation, and response formatting, ensuring secure and consistent communication between the frontend and backend modules.</p>
+</li>
+<li>
+<p>Frontend Integration: The user interface communicates exclusively with the API Gateway, which abstracts the internal structure of the backend and simplifies frontend development.</p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
-<p>Independent Services: Each microservice is responsible for a specific domain, handling its own data and business logic.
-API Gateway: Manages communication between services and external clients, ensuring secure and efficient data flow.
-Frontend Integration: The user interface consumes APIs from multiple microservices, allowing for a flexible and decoupled design.
-This approach enhances scalability, maintainability, and component reusability, facilitating independent development and deployment of services.</p>
+<p>This approach improves maintainability and supports parallel development,  while ensuring consistency through a shared database and centralized logic.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1883,7 +1893,12 @@ The decision was made to develop the system from scratch, leveraging the knowled
 Technologies such as React for the interface, Node.js for the backend, and MongoDB as the database have been chosen, ensuring an agile development process adaptable to the project&#8217;s needs.</p>
 </div>
 <div class="paragraph">
-<p>As development progresses, more key decisions and their justifications will be documented.</p>
+<p>Deployment in the Cloud:
+The application is deployed using Microsoft Azure, taking advantage of its scalability, reliability, and integrated services for monitoring and continuous deployment.</p>
+</div>
+<div class="paragraph">
+<p>Integration of LLM (Large Language Model):
+Gemini, a powerful language model, is integrated into the system to provide advanced language processing capabilities, enhancing features such as intelligent search, summarization, or natural language interaction depending on the project requirements.</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
