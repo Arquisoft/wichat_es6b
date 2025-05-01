@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import App from './App';
 import { SessionContext } from './context/SessionContext';
 import userEvent from '@testing-library/user-event';
@@ -53,7 +53,6 @@ test('renders login form by default', async () => {
       </MemoryRouter>
     </SessionContext.Provider>
   );
-  
 
   // Click en el botón de inicio
   const startButton = screen.getByTestId('start-button');

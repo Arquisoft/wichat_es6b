@@ -1,6 +1,7 @@
 import React from "react";
 import { CircularProgress, Box, Typography } from "@mui/material";
 import './HourglassTimer.css';  
+import PropTypes from "prop-types"
 
 
 const CircularTimer = ({ timeLeft, totalTime }) => {
@@ -36,6 +37,12 @@ const CircularTimer = ({ timeLeft, totalTime }) => {
       </Box>
     </Box>
   );
+};
+
+// timeLeft y totalTime deben ser un número y son obligatorios
+CircularTimer.propTypes = {
+  timeLeft: PropTypes.number.isRequired,  
+  totalTime: PropTypes.number.isRequired, 
 };
 
 export default CircularTimer;

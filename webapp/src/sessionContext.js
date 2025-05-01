@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 const SessionContext = createContext();
@@ -53,23 +53,23 @@ const SessionProvider = ({ children }) => {
       setAvatar(newAvatar);
       localStorage.setItem('avatar', newAvatar);
     };
-  
+
+    // useMemo to memoize the context value and avoid unnecessary re-renders
+    const contextValue = useMemo(() => ({
+      sessionId: sessionId || '',
+      username: username || '',
+      isLoggedIn: isLoggedIn || false,
+      avatar: avatar || '/default_user.jpg',
+      createSession,
+      destroySession,
+      updateAvatar,
+    }), [sessionId, username, isLoggedIn, avatar]);
+
     return (
-        // This values are the props we can access from the child objects
-        <SessionContext.Provider
-        value={{
-          sessionId: sessionId || '',
-          username: username || '',
-          isLoggedIn: isLoggedIn || false,
-          avatar: avatar || '/default_user.jpg',
-          createSession,
-          destroySession,
-          updateAvatar,
-        }}
-      >
-        {children}
-      </SessionContext.Provider>
+        <SessionContext.Provider value={contextValue}>
+          {children}
+        </SessionContext.Provider>
     );
-  };
+};
 
 export { SessionContext, SessionProvider };

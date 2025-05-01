@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import PropTypes from 'prop-types';
 
 const SessionContext = createContext();
 
@@ -75,6 +76,11 @@ const SessionProvider = ({ children }) => {
         {children}
       </SessionContext.Provider>
     );
+};
+
+// Validamos que 'children' es un nodo React (obligatorio)
+SessionProvider.propTypes = {
+  children: PropTypes.node.isRequired, 
 };
 
 export { SessionContext, SessionProvider };

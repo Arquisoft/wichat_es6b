@@ -23,18 +23,25 @@ const AvatarSelection = () => {
                 await updateAvatar(selectedAvatar);
                 setSnackbarMessage('Avatar cambiado con éxito');
                 setOpenSnackbar(true);
+                setError('');
             } catch (err) {
-                setError(err.message || 'Error al actualizar el avatar');
+                const errorMessage = err.message || 'Error al actualizar el avatar';
+                setError(errorMessage);
+                setSnackbarMessage(`Error: ${errorMessage}`);
+                setOpenSnackbar(true);
             }
         }
     };
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
+        setError('');
     };
 
-    const handleCloseError = () => {
-        setError('');
+    const handleReturnToProfile = () => {
+        if (username) {
+            navigate(`/profile/${username}`);
+        }
     };
 
     return (
@@ -62,7 +69,7 @@ const AvatarSelection = () => {
                     alignItems: 'center'
                 }}>
                     <img 
-                        src={avatar || '/white.png'} 
+                        src={selectedAvatar || avatar || '/default_user.jpg'} 
                         alt="Profile pic" 
                         style={{ 
                             width: '100%',
@@ -165,7 +172,7 @@ const AvatarSelection = () => {
                 </Button>
                 <Button 
                     variant="outlined"
-                    onClick={() => navigate(`/profile/${username}`)}
+                    onClick={handleReturnToProfile}
                     sx={{
                         borderColor: 'white',
                         color: 'white',
@@ -180,29 +187,24 @@ const AvatarSelection = () => {
             </Box>
 
             <Snackbar 
+                data-testid="error-snackbar"
                 open={openSnackbar} 
                 autoHideDuration={4500} 
-                onClose={handleCloseSnackbar} 
+                onClose={handleCloseSnackbar}
                 message={snackbarMessage}
-            />
-            {error && (
-                <Snackbar 
-                    open={!!error} 
-                    autoHideDuration={4500} 
-                    onClose={handleCloseError}
-                    message={`Error: ${error}`}
-                    action={
+                action={
+                    error && (
                         <IconButton
                             size="small"
                             aria-label="close"
                             color="inherit"
-                            onClick={handleCloseError}
+                            onClick={handleCloseSnackbar}
                         >
                             <CloseIcon fontSize="small" />
                         </IconButton>
-                    }
-                />
-            )}
+                    )
+                }
+            />
         </Container>
     );
 }
