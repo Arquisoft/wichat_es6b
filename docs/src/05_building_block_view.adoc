@@ -127,14 +127,16 @@ This level provides a more detailed view of the internal architecture and the fl
   * Requesting contextual hints from the LLM.
   * Communicating exclusively with the Gateway.
 
-- The **Backend** is structured into several core modules:
+- The **Backend** is composed of several core modules, grouped under the **User Module**, which is responsible for managing all user-related operations:
 
-  * **User Module** – Handles user-related logic and data.
-    - **Authentication Service**: Verifies user identities.
-    - **Authorization Service**: Manages access rights.
-    - **History Service**: Records gameplay data, such as correct/incorrect answers and timing.
+  * **Authentication Service**  
+    Verifies user credentials and ensures secure login.
 
-  All backend modules are accessed through the Gateway, maintaining a clean and centralized communication flow.
+  * **Authorization Service**  
+    Controls user permissions and enforces role-based access.
+
+  * **History Service**  
+    Records gameplay activity, including results, answer accuracy, and response times.
 
 - **External Services** integrated into the system:
   * **LLM API** – The Game module (via the Gateway) interacts with the LLM to retrieve intelligent hints.
