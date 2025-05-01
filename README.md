@@ -18,7 +18,7 @@
 | Daniel Flores López | <a href="https://github.com/DanielFloresLopez"><img src="https://img.shields.io/badge/UO282894-Daniel Flores López-yellow"></a> |
 | David Rodríguez Chanca | <a href="https://github.com/DRChanca"><img src="https://img.shields.io/badge/UO289521-David Rodríguez Chanca-purple"></a> |
 | Sergio Pérez Arias | <a href="https://github.com/Sero73"><img src="https://img.shields.io/badge/UO294130-Sergio Pérez Arias-red"></a> |
-| Javier Gutiérrez Esquinas | <a href="https://github.com/JavierGutierrezEsquinas"><img src="https://img.shields.io/badge/UO289715-Javier Gutiérrez Esquinas-blue"></a> |
+| Javier Gutiérrez Esquinas | <a href="https://github.com/JavierGE03"><img src="https://img.shields.io/badge/UO289715-Javier Gutiérrez Esquinas-blue"></a> |
 | Adrián Martís Blanco | <a href="https://github.com/adriMB200"><img src="https://img.shields.io/badge/UO289369-Adrián Martís Blanco-green"></a> |
 
 </div>
@@ -79,7 +79,8 @@ Now launch the auth, user and gateway services. Just go to each directory and ru
 Lastly, go to the webapp directory and launch this component with `npm install` followed by `npm start`.
 
 After all the components are launched, the app should be available in localhost in port 3000.
-
+## Video demo
+https://www.youtube.com/watch?v=dHg--Fh-a2w
 ## Deployment
 For the deployment, we have several options. The first and more flexible is to deploy to a virtual machine using SSH. This will work with any cloud service (or with our own server). Other options include using the container services that all the cloud services provide. This means, deploying our Docker containers directly. Here I am going to use the first approach. I am going to create a virtual machine in a cloud service and after installing docker and docker-compose, deploy our containers there using GitHub Actions and SSH.
 
