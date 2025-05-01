@@ -78,7 +78,7 @@ defineFeature(feature, test => {
     });
 
     then('Dashboard page should be shown in the screen', async () => {
-     await expect(page).toMatchElement("button", { text: /jugar/i });
+      await expect(page).toMatchElement("button", { text: /jugar/i });
       await expect(page).toMatchElement("button", { text: /VER RANKINGS/i });
       await expect(page).toMatchElement("button", { text: /VER MI PERFIL/i });
     });
