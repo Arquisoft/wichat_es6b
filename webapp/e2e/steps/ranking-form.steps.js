@@ -42,9 +42,18 @@ defineFeature(feature, test => {
     });
 
     then('The ranking appears', async () => {
-        const pageContent = await page.content();
-  
-        await expect(pageContent).toMatch(/Ranking de Jugadores/i);
+      await page.waitForFunction(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, {}, '//h3[contains(text(), "Ranking de Jugadores")]');
+      
+      // Verificar el mensaje de confirmación
+      const confirmationExists = await page.evaluate(xpath => {
+        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        return element !== null;
+      }, '//h3[contains(text(), "Ranking de Jugadores")]');
+      
+      expect(confirmationExists).toBe(true);
     });
   });
 
