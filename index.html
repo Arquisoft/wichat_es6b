@@ -1178,13 +1178,16 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <li>
 <p>MongoDB was selected as our database due to it&#8217;s scalability and flexibility in handling data. As a non-relational database, it allows for more dynamic and adaptable data storage and retrieval compared to traditional relational databases like MySQL. While MySQL provides structured query language and consistency, MongoDB offers greater flexibility, making it more suitable for our application’s needs, especially when dealing with large volumes of unstructured or semi-structured data, such as the data from WikiData used for questions and answers.</p>
 </li>
+<li>
+<p>Gemini was selected as our LLM model due to its advanced capabilities in natural language processing and alos because we have problems with Empathy.</p>
+</li>
 </ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_top_level_descomposition">4.2. Top-Level Descomposition</h3>
 <div class="paragraph">
-<p>We have chosen to adopt a microservices architecture because we believe it is the best approach for our project. In this design paradigm, the application is segmented into small, autonomous services that typically interact via APIs.Currently, we have the following microservices:</p>
+<p>We have chosen to adopt a Services architecture because we believe it is the best approach for our project. In this design paradigm, the application is segmented into small, autonomous services that typically interact via APIs.Currently, we have the following microservices:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1193,6 +1196,18 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 </li>
 <li>
 <p>Question service: It is used to generate questions from the Wikidata API.</p>
+</li>
+<li>
+<p>User service: It is used to add users in tha database.</p>
+</li>
+<li>
+<p>LLM Service: The LLM Service is responsible for handling the Large Language Model (LLM) operations.</p>
+</li>
+<li>
+<p>Gateway Service: Acts as an intermediary between the webapp and the services, preventing the web application from making requests directly.</p>
+</li>
+<li>
+<p>History Service: It is used for the ranking and the user stats.</p>
 </li>
 </ul>
 </div>
@@ -2006,6 +2021,9 @@ There you will find links and examples about ADR.</p>
 <li>
 <p><a href="https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-06---backend">Backend</a></p>
 </li>
+<li>
+<p><a href="https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-07---llm-model">LLM</a></p>
+</li>
 </ul>
 </div>
 </div>
@@ -2405,8 +2423,23 @@ Additionally, when a release is made, the acceptance tests are also executed, en
 </div>
 <div class="sect2">
 <h3 id="_acceptance_tests">14.2. Acceptance Tests</h3>
+<div class="sect3">
+<h4 id="_register_user">14.2.1. Register user</h4>
 <div class="paragraph">
-<p>Para los test de aceptacion, se ha realizado x test de aceptacion.</p>
+<p>Recreate the registration of an unregistered user</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_loging_user">14.2.2. Loging user</h4>
+<div class="paragraph">
+<p>Simulate the login process for both a registered and an unregistered user</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_update_avatar">14.2.3. Update avatar</h4>
+<div class="paragraph">
+<p>Recreate the avatar change of a user</p>
+</div>
 </div>
 </div>
 <div class="sect2">
