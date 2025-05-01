@@ -5,14 +5,15 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Architectural Patterns and Principles
 
-The system follows a microservices architecture, ensuring modularity and scalability:
+The system follows a modular layered architecture, promoting separation of concerns and scalability:
 
 Service Layering:
 
-Independent Services: Each microservice is responsible for a specific domain, handling its own data and business logic.
-API Gateway: Manages communication between services and external clients, ensuring secure and efficient data flow.
-Frontend Integration: The user interface consumes APIs from multiple microservices, allowing for a flexible and decoupled design.
-This approach enhances scalability, maintainability, and component reusability, facilitating independent development and deployment of services.
+- Modular Components: Each functional area of the system is handled by a separate module responsible for its own domain logic.
+- API Gateway: All client requests pass through a centralized API Gateway, which acts as the single entry point to the backend. It handles routing, request validation, and response formatting, ensuring secure and consistent communication between the frontend and backend modules.
+- Frontend Integration: The user interface communicates exclusively with the API Gateway, which abstracts the internal structure of the backend and simplifies frontend development.
+
+This approach improves maintainability and supports parallel development,  while ensuring consistency through a shared database and centralized logic.
 
 === Key Architectural Decisions
 
@@ -22,4 +23,8 @@ The decision was made to develop the system from scratch, leveraging the knowled
 Use of Modern Technologies:
 Technologies such as React for the interface, Node.js for the backend, and MongoDB as the database have been chosen, ensuring an agile development process adaptable to the project's needs.
 
-As development progresses, more key decisions and their justifications will be documented.
+Deployment in the Cloud:
+The application is deployed using Microsoft Azure, taking advantage of its scalability, reliability, and integrated services for monitoring and continuous deployment.
+
+Integration of LLM (Large Language Model):
+Gemini, a powerful language model, is integrated into the system to provide advanced language processing capabilities, enhancing features such as intelligent search, summarization, or natural language interaction depending on the project requirements.
