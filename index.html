@@ -512,6 +512,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_about_the_game">13.1. About the game</a></li>
 </ul>
 </li>
+<li><a href="#section-test-report">14. Test Report</a>
+<ul class="sectlevel2">
+<li><a href="#_unit_tests">14.1. Unit Tests</a></li>
+<li><a href="#_acceptance_tests">14.2. Acceptance Tests</a></li>
+<li><a href="#_code_coverage">14.3. Code Coverage</a></li>
+<li><a href="#_load_tests">14.4. Load Tests</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -2175,6 +2183,125 @@ concrete and measurable.</p>
 </tr>
 </tbody>
 </table>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-test-report">14. Test Report</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this project, tests have been carried out for each created service and for every React component.
+Since Continuous Integration and Development was chosen, these tests are executed every time something is added to the <code>master</code> branch, whether through commits or pull requests.
+Additionally, when a release is made, the acceptance tests are also executed, ensuring compliance with Continuous Integration and Development.</p>
+</div>
+<div class="sect2">
+<h3 id="_unit_tests">14.1. Unit Tests</h3>
+<div class="paragraph">
+<p>This project consists of 7 services: Gateway, llmService, questionsService, authservice, historyservice, usersService, webapp</p>
+</div>
+<div class="sect3">
+<h4 id="_gateway_test">14.1.1. Gateway Test</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_llmservice_test">14.1.2. llmService Test</h4>
+<div class="paragraph">
+<p>These tests verify that the service responds as expected when the parameters are correct, as well as when there is an error in the parameters — for example, if a parameter is missing, if a non-existent LLM model is selected, or if the POST request fails.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_questionsservice_test">14.1.3. questionsService Test</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_authservice_test">14.1.4. authservice Test</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_historyservice_test">14.1.5. historyservice Test</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_usersservice_test">14.1.6. usersService Test</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_webapp_test">14.1.7. webapp Test</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_service_tests">14.1.8. Service Tests</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_webapp_tests">14.1.9. Webapp Tests</h4>
+
+</div>
+</div>
+<div class="sect2">
+<h3 id="_acceptance_tests">14.2. Acceptance Tests</h3>
+<div class="paragraph">
+<p>Para los test de aceptacion, se ha realizado x test de aceptacion.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_code_coverage">14.3. Code Coverage</h3>
+<div class="paragraph">
+<p>From the unit tests, we can analyze the project&#8217;s code coverage.
+For this purpose, SonarQube&#8217;s test coverage feature was used, achieving <strong>85.4% test coverage</strong>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/testCoverage.png" alt="Test coverage">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_load_tests">14.4. Load Tests</h3>
+<div class="paragraph">
+<p>Artillery was used for load testing. The following endpoints were tested: <code>/login</code>, <code>/adduser</code>, <code>/generateQuestions</code> (start game), <code>/history/{{username}}</code>, <code>/savegame</code>, and <code>/stats/{{username}}</code>.</p>
+</div>
+<div class="paragraph">
+<p>A total of 2280 users were created, and 15,960 HTTP requests were made, with an average rate of 74 responses per second.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/testCarga.png" alt="Load test">
+</div>
+</div>
+<div class="paragraph">
+<p>The load tests lasted 4 minutes and were divided into 3 phases: an initial ramp-up (7 U/s to 60 U/s), a medium load phase (100 U/s), and a peak load phase (100 U/s to 185 U/s).
+The highest response time recorded was 2.7 seconds, with an average response time of 65 ms.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/httpPerfor.png" alt="HTTP performance">
+</div>
+</div>
+<div class="paragraph">
+<p>For the <code>/adduser</code> request, a 200 status code is returned when a user is created for the first time; subsequent attempts return a 400 code.</p>
+</div>
+<div class="paragraph">
+<p>The <code>/generateQuestions</code>, <code>/history/{{username}}</code>, <code>/savegame</code>, and <code>/stats/{{username}}</code> requests all return 200 status codes, as they are called with valid data.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/requestURL.png" alt="URL requests">
+</div>
+</div>
+<div class="paragraph">
+<p>For the <code>/login</code> request, about half return 401 status codes due to unregistered users, while the other half return 200 codes with correct credentials.
+This endpoint also showed the highest response time when the number of concurrent users was at its peak.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/testCargaLogin.png" alt="/login performance">
+</div>
+</div>
+<div class="paragraph">
+<p>All the tests, as well as instructions on how to execute them and how to visualize the graphs in a more dynamic way, can be found in the <code>testCarga</code> directory.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2182,7 +2309,7 @@ concrete and measurable.</p>
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-05-01 13:04:05 +0200
+Last updated 2025-05-01 13:19:35 +0200
 </div>
 </div>
 </body>
