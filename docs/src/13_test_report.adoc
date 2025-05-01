@@ -40,12 +40,15 @@ Validates frontend UI components using React Testing Library. Tests component re
 
 === Acceptance Tests
 
-====Register user
-Recreate the registration of an unregistered user.
-====Loging user
-Simulate the login process for both a registered and an unregistered user.
-====Update avatar
-Recreate the avatar change of a user.
+==== Register user
+Recreate the registration of an unregistered user
+
+==== Loging user
+Simulate the login process for both a registered and an unregistered user
+
+==== Update avatar
+Recreate the avatar change of a user
+
 === Code Coverage
 
 From the unit tests, we can analyze the project's code coverage.  
