@@ -45,7 +45,7 @@ endif::arc42help[]
 |SSH|The Secure Shell Protocol (SSH Protocol) is a cryptographic network protocol for operating network services securely over an unsecured network. Its most notable applications are remote login and command-line execution.
 |===
 
-== About the game
+=== About the game
 
 [cols="e,2e" options="header"]
 |===

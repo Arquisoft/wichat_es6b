@@ -203,3 +203,44 @@ paths:
                     type: string
                     description: Mensaje de error.
                     example: Error al calcular estadísticas.
+  /rankings:
+    get:
+      summary: Obtener el ranking top 10 de jugadores.
+      operationId: getTopRankings
+      responses:
+        '200':
+          description: Top 10 jugadores por puntos totales.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                      description: Nombre del usuario.
+                      example: "john_doe"
+                    totalPoints:
+                      type: integer
+                      description: Puntos totales acumulados.
+                      example: 1500
+                    totalGames:
+                      type: integer
+                      description: Total de juegos jugados.
+                      example: 10
+                    efficiency:
+                      type: number
+                      description: Porcentaje de eficiencia (puntos/juegos).
+                      example: 75.5
+        '500':
+          description: Error al obtener el ranking.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Mensaje de error.
+                    example: "Error al obtener el ranking"
