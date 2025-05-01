@@ -1,11 +1,12 @@
 const puppeteer = require('puppeteer');
 const { defineFeature, loadFeature } = require('jest-cucumber');
 const setDefaultOptions = require('expect-puppeteer').setDefaultOptions;
-const feature = loadFeature('./features/login-form.feature');
+const feature = loadFeature('./features/editAvatar-form.feature');
+const { loginUser } = require('../testUtils');
 
 let page;
 let browser;
-const APP_URL = process.env.APP_URL || 'http://localhost:3000/login';
+const APP_URL = process.env.APP_URL || 'http://localhost:3000/profile/edit';
 
 defineFeature(feature, test => {
   
@@ -20,6 +21,7 @@ defineFeature(feature, test => {
     page = await browser.newPage();
     setDefaultOptions({ timeout: 100000 });
 
+    await loginUser("testuserreg","testpassword123",page);
     await page
       .goto(`${APP_URL}`, {
         waitUntil: "networkidle0",
@@ -32,47 +34,19 @@ defineFeature(feature, test => {
   beforeEach(async () => {
   await page.goto(`${APP_URL}`, { waitUntil: 'networkidle0' });
   });
-
-  test('The user is already registered in the site', ({ given, when, then }) => {
-    let username;
-    let password;
+  test('Change the avatar', ({ given, when, then }) => {
 
     given('A registered user', async () => {
-      username = "testuserreg";
-      password = "testpassword123";
+    
     });
 
-    when('I fill the data in the form and press login', async () => {
-      await expect(page).toFill('input[id="usernameLoginw"]', username);
-      await expect(page).toFill('input[id="passwordLoginw"]', password);
-      await expect(page).toClick('button[id="botonLoginw"]')
+    when('I change the avatar', async () => {
+        await page.click('[data-testid="pulpo-button"]');
+        await page.click('[data-testid="confirm-button"]');
     });
 
-    then('Dashboard page should be shown in the screen', async () => {
-     await expect(page).toMatchElement("button", { text: /jugar/i });
-      await expect(page).toMatchElement("button", { text: /VER RANKINGS/i });
-      await expect(page).toMatchElement("button", { text: /VER MI PERFIL/i });
-    });
-  });
-
-
-    test('The user is not registered in the site', ({ given, when, then }) => {
-    let username;
-    let password;
-
-    given('A unregistered user', async () => {
-      username = "testuserunregistered";
-      password = "testpassword123";
-    });
-
-    when('I fill the data in the form and press login', async () => {
-      await expect(page).toFill('input[id="usernameLoginw"]', username);
-      await expect(page).toFill('input[id="passwordLoginw"]', password);
-      await expect(page).toClick('button[id="botonLoginw"]')
-    });
-
-    then('An error message is shown', async () => {
-      await page.waitForSelector('.MuiSnackbar-root', { 
+    then('Shows a confirm message', async () => {
+        await page.waitForSelector('.MuiSnackbar-root', { 
         visible: true,
         timeout: 5000 
       });
@@ -89,7 +63,10 @@ defineFeature(feature, test => {
       });
 
       // Verificar que el mensaje contiene el texto esperado
-      expect(errorMessage).toContain('Invalid credentials');
+      expect(errorMessage).toContain('Avatar cambiado con éxito');
+
+      const imgSrc = await page.$eval('[data-testid="avatar-img"]', img => img.src);
+        expect(imgSrc).toBe('http://localhost:3000/icono_cactus.png');
     });
   });
 

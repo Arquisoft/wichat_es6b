@@ -1,12 +1,3 @@
-async function clickLink(linkXPath, page) {
-    const [link] = await page.$x(linkXPath);
-    if (link) {
-        await link.click();
-    } else {
-        throw new Error(`Cannot find link "${link}"`);
-    }
-}
-
 async function loginUser(username, password, page) {
     await page
     .goto("http://localhost:3000/login", {
@@ -16,8 +7,9 @@ async function loginUser(username, password, page) {
 
     await expect(page).toFill('input[id="usernameLoginw"]', username);
     await expect(page).toFill('input[id="passwordLoginw"]', password);
+    await expect(page).toClick('button[id="botonLoginw"]')
 
-    await clickLink('//*[@id="root"]/div/div[1]');
+     await expect(page).toMatchElement("button", { text: /jugar/i });
 }
 
-module.exports = { clickLink, loginUser }; 
+module.exports = {loginUser }; 
