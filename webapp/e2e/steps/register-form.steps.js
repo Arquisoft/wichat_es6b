@@ -37,7 +37,6 @@ defineFeature(feature, test => {
 
     given('An unregistered user', async () => {
       
-      
       // Click en la pestaña de Signup usando evaluate con XPath
       await page.waitForFunction(xpath => {
         const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;

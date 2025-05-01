@@ -44,33 +44,6 @@ defineFeature(feature, test => {
     });
 
     when('I fill the data in the form and press login', async () => {
-      // Click on Signup tab
-      await page.waitForFunction(xpath => {
-        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        return element !== null;
-      }, {}, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[2]');
-      
-      await page.evaluate(xpath => {
-          const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-          if (element) element.click();
-      }, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[2]');
-
-      // Fill registration form
-      await page.type('input[id="usernameAWA"]', username);
-      await page.type('input[id="passwordAWA"]', password);
-      await page.type('input[id="passwordConfirmAWA"]', password);
-      await page.click('button[id="botonAWA"]');
-
-      // Click on Signup tab
-      await page.waitForFunction(xpath => {
-        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        return element !== null;
-    }, {}, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
-    
-    await page.evaluate(xpath => {
-        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        if (element) element.click();
-    }, '//*[@id="root"]/div/div[2]/div/div/div[1]/div/div/button[1]');
 
       await expect(page).toFill('input[id="usernameLoginw"]', username);
       await expect(page).toFill('input[id="passwordLoginw"]', password);
@@ -78,17 +51,8 @@ defineFeature(feature, test => {
     });
 
     then('Dashboard page should be shown in the screen', async () => {
-      await page.waitForFunction(xpath => {
-        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        return element !== null;
-      }, {}, '//button[contains(text(), "Jugar")]');
-      
-      // Verificar el mensaje de confirmación
-      const confirmationExists = await page.evaluate(xpath => {
-        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        return element !== null;
-      }, '//button[contains(text(), "Jugar")]');
-
+      console.log("Current URL:", await page.url());
+      await expect(page.url()).toContain('/dashboard');
     });
   });
 
