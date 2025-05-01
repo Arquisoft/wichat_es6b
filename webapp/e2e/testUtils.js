@@ -4,9 +4,6 @@ async function loginUser(username, password, page) {
         await page.setDefaultNavigationTimeout(60000);
         await page.setDefaultTimeout(60000);
 
-        // Esperar a que la página esté lista antes de navegar
-        await page.waitForFunction(() => document.readyState === 'complete');
-
         // Intentar navegar a la página de login
         const response = await page.goto("http://localhost:3000/login", {
             waitUntil: "networkidle0",

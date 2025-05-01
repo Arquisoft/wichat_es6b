@@ -21,7 +21,6 @@ defineFeature(feature, test => {
     page = await browser.newPage();
     setDefaultOptions({ timeout: 100000 });
 
-    await loginUser("testuserreg1","testpassword123",page);
     await page
       .goto(`${APP_URL}`, {
         waitUntil: "networkidle0",
