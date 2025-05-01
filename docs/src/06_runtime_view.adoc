@@ -126,6 +126,7 @@ actor User
 participant App
 participant Gateway
 participant GeneratedQuestionService
+participant LLMService
 database DBquestions
 participant QuestionGeneratorService
 database DBquestiongenerator
@@ -144,25 +145,32 @@ Gateway -> GeneratedQuestionService: Sends the generated question
 GeneratedQuestionService -> DBquestions: Saves the generated question
 
 alt time not expired
-    User -> App: Selects an answer option
-    App -> App: Verifies selected answer
-    alt correct answer
-        alt last question
-            User <-- App: Displays correct answer message and ends the game
-            App -> RecordService: Sends game data
-            RecordService -> DBrecords: Saves game data
-            User <-- App: Displays game data
-        else not the last question
-            User <-- App: Displays correct answer message and continues the game
-        end
-    else incorrect answer
-        alt last question
-            User <-- App: Displays incorrect answer message and ends the game
-            App -> RecordService: Sends game data
-            RecordService -> DBrecords: Saves game data
-            User <-- App: Displays game data
-        else not the last question
-            User <-- App: Displays incorrect answer message and continues the game
+    User -> App: Selects an answer option or requests hint
+    alt requests hint
+        App -> Gateway: Requests hint
+        Gateway -> LLMService: Generates hint from question
+        LLMService -> App: Returns generated hint
+        User <-- App: Displays hint
+    else selects answer
+        App -> App: Verifies selected answer
+        alt correct answer
+            alt last question
+                User <-- App: Displays correct answer message and ends the game
+                App -> RecordService: Sends game data
+                RecordService -> DBrecords: Saves game data
+                User <-- App: Displays game data
+            else not the last question
+                User <-- App: Displays correct answer message and continues the game
+            end
+        else incorrect answer
+            alt last question
+                User <-- App: Displays incorrect answer message and ends the game
+                App -> RecordService: Sends game data
+                RecordService -> DBrecords: Saves game data
+                User <-- App: Displays game data
+            else not the last question
+                User <-- App: Displays incorrect answer message and continues the game
+            end
         end
     end
 else time expired
@@ -172,21 +180,41 @@ else time expired
 end
 ----
 
+=== User Profile View
+[plantuml, profile, png]
+----
+actor User
+participant App
+participant Gateway
+participant HistoryService
+database MongoDB
+
+User -> App: Requests profile view
+App -> Gateway: Requests user stats
+Gateway -> HistoryService: Requests user stats
+HistoryService -> MongoDB: Queries user games
+HistoryService <-- MongoDB: Returns game history
+Gateway <-- HistoryService: Returns stats and history
+App <-- Gateway: Returns user data
+User <-- App: Displays profile with stats and game history
+----
+
+
 === Ranking Query
 [plantuml, ranking, png]
 ----
 actor User
 participant App
 participant Gateway
-participant RankingService
-database DBranking
+participant HistoryService
+database MongoDB
 
 User -> App: Selects ranking option
-App -> Gateway: Requests ranking
-Gateway -> RankingService: Requests ranking
-RankingService -> DBranking: Requests all rankings
-RankingService <-- DBranking: Returns all rankings
-Gateway <-- RankingService: Returns all rankings
-App <-- Gateway: Returns all rankings
-User <-- App: Displays ranking
+App -> Gateway: Requests top 5 ranking
+Gateway -> HistoryService: Requests top 5 ranking
+HistoryService -> MongoDB: Aggregates top 5 players
+HistoryService <-- MongoDB: Returns top 5 rankings
+Gateway <-- HistoryService: Returns top 5 rankings
+App <-- Gateway: Returns top 5 rankings
+User <-- App: Displays ranking with efficiency circles
 ----
