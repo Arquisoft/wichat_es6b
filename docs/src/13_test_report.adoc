@@ -1,0 +1,69 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-test-report]]
+== Test Report
+
+In this project, tests have been carried out for each created service and for every React component.  
+Since Continuous Integration and Development was chosen, these tests are executed every time something is added to the `master` branch, whether through commits or pull requests.  
+Additionally, when a release is made, the acceptance tests are also executed, ensuring compliance with Continuous Integration and Development.
+
+=== Unit Tests
+
+This project consists of 7 services: Gateway, llmService, questionsService, authservice, historyservice, usersService, webapp
+
+==== Gateway Test
+
+==== llmService Test
+
+These tests verify that the service responds as expected when the parameters are correct, as well as when there is an error in the parameters — for example, if a parameter is missing, if a non-existent LLM model is selected, or if the POST request fails.
+
+==== questionsService Test
+
+==== authservice Test
+
+==== historyservice Test
+
+==== usersService Test
+
+==== webapp Test
+
+==== Service Tests
+
+==== Webapp Tests
+
+=== Acceptance Tests
+
+Para los test de aceptacion, se ha realizado x test de aceptacion.
+
+=== Code Coverage
+
+From the unit tests, we can analyze the project's code coverage.  
+For this purpose, SonarQube's test coverage feature was used, achieving **85.4% test coverage**.
+
+image::testCoverage.png["Test coverage"]
+
+=== Load Tests
+
+Artillery was used for load testing. The following endpoints were tested: `/login`, `/adduser`, `/generateQuestions` (start game), `/history/{{username}}`, `/savegame`, and `/stats/{{username}}`.
+
+A total of 2280 users were created, and 15,960 HTTP requests were made, with an average rate of 74 responses per second.
+
+image::testCarga.png["Load test"]
+
+The load tests lasted 4 minutes and were divided into 3 phases: an initial ramp-up (7 U/s to 60 U/s), a medium load phase (100 U/s), and a peak load phase (100 U/s to 185 U/s).  
+The highest response time recorded was 2.7 seconds, with an average response time of 65 ms.
+
+image::httpPerfor.png["HTTP performance"]
+
+For the `/adduser` request, a 200 status code is returned when a user is created for the first time; subsequent attempts return a 400 code.
+
+The `/generateQuestions`, `/history/{{username}}`, `/savegame`, and `/stats/{{username}}` requests all return 200 status codes, as they are called with valid data.
+
+image::requestURL.png["URL requests"]
+
+For the `/login` request, about half return 401 status codes due to unregistered users, while the other half return 200 codes with correct credentials.  
+This endpoint also showed the highest response time when the number of concurrent users was at its peak.
+
+image::testCargaLogin.png["/login performance"]
+
+All the tests, as well as instructions on how to execute them and how to visualize the graphs in a more dynamic way, can be found in the `testCarga` directory.
