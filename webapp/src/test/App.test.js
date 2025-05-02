@@ -1,11 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import App from './App';
-import { SessionContext } from './context/SessionContext';
+import App from '../App';
+import { SessionContext } from '../context/SessionContext';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { Home } from './App';
-import Login from './components/Login';
+import { Home } from '../App';
+import Login from '../components/Login';
+import { SessionProvider } from '../context/SessionContext';
 
 // Silenciar los warnings específicos de MUI Grid y React Router
 const originalWarn = console.warn;
@@ -42,7 +43,15 @@ afterAll(() => {
   console.error = originalError;
 });
 
-test('renders login form by default', async () => {
+const renderWithProviders = (ui, { isLoggedIn = false } = {}) => {
+  return render(
+    <SessionProvider value={{ isLoggedIn }}>
+      {ui}
+    </SessionProvider>
+  );
+};
+
+it('renders login form by default', async () => {
   render(
     <SessionContext.Provider value={{ isLoggedIn: false }}>
       <MemoryRouter initialEntries={['/']}>
@@ -82,7 +91,7 @@ test('renders login form by default', async () => {
   });
 });
 
-test('allows play the game from home if registered', async () => {
+it('allows play the game from home if registered', async () => {
   render(
     <SessionContext.Provider value={{ isLoggedIn: true }}>
       <MemoryRouter initialEntries={['/']}>
@@ -102,3 +111,30 @@ test('allows play the game from home if registered', async () => {
     expect(screen.getByText(/Pregunta/i)).toBeInTheDocument();
   });
 });
+
+it('should navigate to login when clicking start button while not logged in', async () => {
+  render(
+    <SessionProvider value={{ isLoggedIn: false }}>
+      <App />
+    </SessionProvider>
+  );
+
+  const startButton = screen.getByTestId('start-button');
+  await userEvent.click(startButton);
+
+  // Verificar que estamos en la página de login
+  expect(screen.getByTestId('login-title')).toBeInTheDocument();
+});
+
+// it('should navigate to game when clicking start button while logged in', async () => {
+//    render(
+//     <SessionProvider value={{ isLoggedIn: true }}>
+//       <App />
+//     </SessionProvider>);
+
+//   const startButton = screen.getByTestId('start-button');
+//   await userEvent.click(startButton);
+
+//   // Verificar que estamos en la página del juego
+//    expect(screen.getByText(/Pregunta/i)).toBeInTheDocument();
+// });
