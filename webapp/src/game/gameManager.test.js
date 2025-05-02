@@ -29,12 +29,148 @@ describe('GameManager Component', () => {
     // Configurar localStorage
     localStorage.setItem('username', 'testUser');
     localStorage.setItem('selectedCategories', 'Geografia,Cultura');
-    localStorage.setItem('gameDifficulty', 'Fácil');
   });
 
   afterEach(() => {
     localStorage.clear();
   });
+
+  const findTimeElement = (expectedTime) => {
+    const timeElements = screen.getAllByText((content, element) => {
+      return element.tagName.toLowerCase() === 'h6' && 
+             element.textContent.includes(expectedTime);
+    });
+    return timeElements[0];
+  };
+
+  it('should set correct time for easy difficulty', async () => {
+    localStorage.setItem('gameDifficulty', 'Fácil');
+    
+    const mockQuestions = [{
+      pregunta: '¿Capital de Francia?',
+      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
+      respuesta_correcta: 0
+    }];
+
+    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
+      callback(mockQuestions);
+      return Promise.resolve();
+    });
+
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
+
+    // Esperar a que se carguen las preguntas
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
+
+    // Verificar el tiempo
+    const timeElement = findTimeElement('40');
+    expect(timeElement).toBeInTheDocument();
+  });
+
+  it('should set correct time for medium difficulty', async () => {
+    localStorage.setItem('gameDifficulty', 'Medio');
+    
+    const mockQuestions = [{
+      pregunta: '¿Capital de Francia?',
+      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
+      respuesta_correcta: 0
+    }];
+
+    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
+      callback(mockQuestions);
+      return Promise.resolve();
+    });
+
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
+
+    // Esperar a que se carguen las preguntas
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
+
+    // Verificar el tiempo
+    const timeElement = findTimeElement('30');
+    expect(timeElement).toBeInTheDocument();
+  });
+
+  it('should set correct time for hard difficulty', async () => {
+    localStorage.setItem('gameDifficulty', 'Difícil');
+    
+    const mockQuestions = [{
+      pregunta: '¿Capital de Francia?',
+      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
+      respuesta_correcta: 0
+    }];
+
+    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
+      callback(mockQuestions);
+      return Promise.resolve();
+    });
+
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
+
+    // Esperar a que se carguen las preguntas
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
+
+    // Verificar el tiempo
+    const timeElement = findTimeElement('20');
+    expect(timeElement).toBeInTheDocument();
+  });
+
+  it('should use default time when difficulty is not set', async () => {
+    localStorage.removeItem('gameDifficulty');
+    
+    const mockQuestions = [{
+      pregunta: '¿Capital de Francia?',
+      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
+      respuesta_correcta: 0
+    }];
+
+    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
+      callback(mockQuestions);
+      return Promise.resolve();
+    });
+
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
+
+    // Esperar a que se carguen las preguntas
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
+
+    // Verificar el tiempo
+    const timeElement = findTimeElement('40');
+    expect(timeElement).toBeInTheDocument();
+  });
+
 
   it('should redirect to home if no username is found', () => {
     localStorage.removeItem('username');
