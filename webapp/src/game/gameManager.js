@@ -313,7 +313,6 @@ const Jugar = () => {
             timeSpent: 0,
             answered: false
         } : null));
-    }).then(() => {
         setLoading(false);
     });
 

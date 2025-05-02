@@ -50,17 +50,17 @@ afterEach(() => {
 });
 
 
-  // it('renders loading text', () => {
-  //   render(
-  //     <MemoryRouter>
-  //       <SessionProvider value={{ isLoggedIn: true }}>
-  //         <Jugar />
-  //       </SessionProvider>
-  //     </MemoryRouter>
-  //   );
+  it('renders loading text', () => {
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
 
-  //   expect(screen.getByText('Cargando preguntas...')).toBeInTheDocument();
-  // });
+    expect(screen.getByText('Cargando preguntas...')).toBeInTheDocument();
+  });
 
 
 it('redirects to / if username is not in localStorage', () => {
@@ -81,16 +81,23 @@ it('redirects to / if username is not in localStorage', () => {
   expect(mockNavigate).toHaveBeenCalledWith('/');
 });
 
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn().mockImplementation((initialState) => [initialState, jest.fn()])
+}));
+
 // it('initializes Game instance and fetches questions', async () => {
-//   const fetchQuestionsMock = jest.fn((cb) => cb([{
-//     id: '1',
-//     pregunta: '¿Capital de Francia?',
-//     opciones: ['París', 'Madrid'],
-//     respuesta_correcta: 0
-//   }]));
-  
+//   const fetchQuestionsMock = jest.fn();
+
 //   Game.mockImplementation(() => ({
-//     fetchQuestions: fetchQuestionsMock,
+//     fetchQuestions: (cb) => {
+//       fetchQuestionsMock();
+//       cb([{
+//         pregunta: '¿Capital de Francia?',
+//         opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
+//         respuesta_correcta: 0
+//       }]);
+//     },
 //     cancelRequests: jest.fn()
 //   }));
 
@@ -105,11 +112,14 @@ it('redirects to / if username is not in localStorage', () => {
 //     </MemoryRouter>
 //   );
 
-  
-//     await expect(fetchQuestionsMock).toHaveBeenCalled();
-//     await expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+//   expect(fetchQuestionsMock).toHaveBeenCalled();
+
+//   // Esta línea espera hasta que se renderice el texto
+//   await screen.findByText('¿Capital de Francia?');
 // });
 
+
+  
 
 // it('selecting the correct answer increases score and advances', async () => {
 //   const fetchQuestionsMock = jest.fn((cb) => cb([
@@ -158,41 +168,39 @@ it('redirects to / if username is not in localStorage', () => {
 // });
 
 // it('handles timeout and shows message', async () => {
-//   jest.useFakeTimers();
-
-//   Game.mockImplementation(() => ({
-//     fetchQuestions: (cb) => cb([{
-//       id: '1',
-//       pregunta: '¿Capital de Francia?',
-//       opciones: ['París', 'Madrid'],
-//       respuesta_correcta: 0
-//     }]),
-//     cancelRequests: jest.fn()
-//   }));
-
-//   localStorage.setItem('username', 'testuser');
-
-//   render(
-//     <MemoryRouter>
-//       <SessionProvider value={{ isLoggedIn: true }}>
-//         <Jugar />
-//       </SessionProvider>
-//     </MemoryRouter>
-//   );
-
-//   await waitFor(() => {
-//     expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-//   });
-
-//   // forzamos el timeout
-//   jest.advanceTimersByTime(41000); // mayor a maxTime = 40s
-
-//   await waitFor(() => {
-//     expect(screen.getByText(/se acabó el tiempo/i)).toBeInTheDocument();
-//   });
-
-//   jest.useRealTimers();
+//     jest.useFakeTimers();
+  
+//     Game.mockImplementation(() => ({
+//       fetchQuestions: (cb) => cb([{
+//         id: '1',
+//         pregunta: '¿Capital de Francia?',
+//         opciones: ['París', 'Madrid'],
+//         respuesta_correcta: 0
+//       }]),
+//       cancelRequests: jest.fn()
+//     }));
+  
+//     localStorage.setItem('username', 'testuser');
+  
+//     render(
+//       <MemoryRouter>
+//         <SessionProvider value={{ isLoggedIn: true }}>
+//           <Jugar />
+//         </SessionProvider>
+//       </MemoryRouter>
+//     );
+  
+//     await waitFor(() => {
+//       expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+//     });
+  
+//     // Avanzamos el tiempo del juego
+//     jest.advanceTimersByTime(41000);
+  
+//     await waitFor(() => {
+//       expect(screen.getByText(/se acabó el tiempo/i)).toBeInTheDocument();
+//     });
+  
+//     jest.useRealTimers();
+//     });
 });
-
-
-
