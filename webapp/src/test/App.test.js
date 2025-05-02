@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Home } from '../App';
 import Login from '../components/Login';
-import { SessionProvider } from '../contexts/SessionContext';
+import { SessionProvider } from '../context/SessionContext';
 
 // Silenciar los warnings específicos de MUI Grid y React Router
 const originalWarn = console.warn;
@@ -43,7 +43,7 @@ afterAll(() => {
   console.error = originalError;
 });
 
-const renderWithProviders = (ui, { route = '/', isLoggedIn = false } = {}) => {
+const renderWithProviders = (ui, { isLoggedIn = false } = {}) => {
   return render(
     <SessionProvider value={{ isLoggedIn }}>
       {ui}
@@ -110,4 +110,24 @@ test('allows play the game from home if registered', async () => {
   await waitFor(() => {
     expect(screen.getByText(/Pregunta/i)).toBeInTheDocument();
   });
+});
+
+it('should navigate to login when clicking start button while not logged in', async () => {
+  renderWithProviders(<App />, { isLoggedIn: false });
+
+  const startButton = screen.getByTestId('start-button');
+  await userEvent.click(startButton);
+
+  // Verificar que estamos en la página de login
+  expect(screen.getByTestId('login-title')).toBeInTheDocument();
+});
+
+it('should navigate to game when clicking start button while logged in', async () => {
+  renderWithProviders(<App />, { isLoggedIn: true });
+
+  const startButton = screen.getByTestId('start-button');
+  await userEvent.click(startButton);
+
+  // Verificar que estamos en la página del juego
+  expect(screen.getByText(/Pregunta/i)).toBeInTheDocument();
 });
