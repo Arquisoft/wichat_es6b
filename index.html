@@ -1020,27 +1020,37 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <h3 id="_business_context">3.1. Business Context</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Communication Partner</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Inputs</th>
+<th class="tableblock halign-left valign-top">Outputs</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Client</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A normal user, that interacts with the app, playing the game, setting the profile picture&#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Username, password</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game score, questions retrieved from Wikidata</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Database</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Username, password, score of each game</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Credential validation, score storage</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Wikidata</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Provide a list of questions with an array of answers(one of them the right one), and provides a link related to the question.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Request for information about the game question</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generated question with relevant information</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Gemini</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An llm, to give hints to help the user answer better the questions, in the game.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Empathy/Gemini</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game question and correct answer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hints to help the user answer better</p></td>
 </tr>
 </tbody>
 </table>
@@ -1661,7 +1671,7 @@ You will mainly capture scenarios in your documentation to communicate your arch
 <h3 id="_question_generation">6.3. Question Generation</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/question_generation.png" alt="question generation" width="983" height="529">
+<img src="./images/question_generation.png" alt="question generation" width="995" height="590">
 </div>
 </div>
 </div>
@@ -1669,7 +1679,7 @@ You will mainly capture scenarios in your documentation to communicate your arch
 <h3 id="_answering_a_question">6.4. Answering a Question</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/question_response.png" alt="question response" width="1750" height="1317">
+<img src="./images/question_response.png" alt="question response" width="1799" height="1441">
 </div>
 </div>
 </div>
@@ -2207,37 +2217,27 @@ concrete and measurable.</p>
 </table>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top"><strong>Technical Debt</strong></th>
-<th class="tableblock halign-left valign-top"><strong>Explanation</strong></th>
-<th class="tableblock halign-left valign-top"><strong>Solution</strong></th>
+<th class="tableblock halign-left valign-top"><strong>Description</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Insufficient documentation</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Lack of proper documentation can make future system understanding and maintenance challenging.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Ensure thorough and clear documentation is created.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usability errors</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application has usability issues, such as the ranking table not adapting well to smaller screen sizes or limited space. This can lead to a poor user experience, especially on mobile devices.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suboptimal database design</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A poorly designed database can create scalability issues as the system grows.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Plan and design the database carefully before implementation or modification.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button disabling issues</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">There is a risk of all buttons being disabled simultaneously, which can block user interaction and disrupt the flow of the application.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dependence on AI-generated code</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">AI-generated code may have inaccuracies, potentially leading to difficulties when revisiting or updating it.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Review, adjust, and validate AI-generated code before integration.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">LLM performance issues</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The language model may cause slow response times and irrelevant answers, impacting user experience.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optimize prompts and continuously monitor the model&#8217;s performance for improvements.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Misplaced settings tab</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The settings tab was added to the navigation bar, but it should also have been included when starting a game. This inconsistency can confuse users and reduce accessibility to important settings.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2506,7 +2506,7 @@ This endpoint also showed the highest response time when the number of concurren
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-05-01 13:19:35 +0200
+Last updated 2025-05-01 16:59:42 +0200
 </div>
 </div>
 </body>
