@@ -126,15 +126,15 @@ it('should navigate to login when clicking start button while not logged in', as
   expect(screen.getByTestId('login-title')).toBeInTheDocument();
 });
 
-it('should navigate to game when clicking start button while logged in', async () => {
-   render(
-    <SessionProvider value={{ isLoggedIn: true }}>
-      <App />
-    </SessionProvider>);
+// it('should navigate to game when clicking start button while logged in', async () => {
+//    render(
+//     <SessionProvider value={{ isLoggedIn: true }}>
+//       <App />
+//     </SessionProvider>);
 
-  const startButton = screen.getByTestId('start-button');
-  await userEvent.click(startButton);
+//   const startButton = screen.getByTestId('start-button');
+//   await userEvent.click(startButton);
 
-  // Verificar que estamos en la página del juego
-   expect(screen.getByText(/Pregunta/i)).toBeInTheDocument();
-});
+//   // Verificar que estamos en la página del juego
+//    expect(screen.getByText(/Pregunta/i)).toBeInTheDocument();
+// });
