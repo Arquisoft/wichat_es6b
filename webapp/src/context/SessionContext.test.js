@@ -5,9 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BrowserRouter } from 'react-router-dom';
 
 // Mock de uuid
-jest.mock('uuid', () => ({
-    v4: jest.fn()
-}));
+jest.mock('uuid', () => ({ v4: jest.fn() }));
 
 // Configuración de las flags futuras de React Router
 const routerConfig = {
@@ -53,7 +51,6 @@ describe('SessionContext', () => {
 
     it('should initialize with default values when no session exists', () => {
         renderWithContext();
-
         expect(screen.getByTestId('session-id')).toHaveTextContent('');
         expect(screen.getByTestId('username')).toHaveTextContent('');
         expect(screen.getByTestId('is-logged-in')).toHaveTextContent('false');
@@ -62,18 +59,14 @@ describe('SessionContext', () => {
 
     it('should create a new session and store it in localStorage', async () => {
         const { rerender } = renderWithContext();
-
         fireEvent.click(screen.getByText('Crear Sesión'));
-
-        // Verificamos que se haya llamado a uuidv4
+        
         expect(uuidv4).toHaveBeenCalled();
 
-        // Esperamos a que se actualice el estado
         await waitFor(() => {
             expect(localStorage.getItem('sessionId')).toBe('mocked-uuid');
         });
 
-        // Rerenderizamos para asegurar que el estado se ha actualizado
         rerender(
             <SessionProvider>
                 <BrowserRouter {...routerConfig}>
@@ -82,7 +75,6 @@ describe('SessionContext', () => {
             </SessionProvider>
         );
 
-        // Verificamos que el sessionId se haya actualizado en el componente
         expect(screen.getByTestId('session-id')).toHaveTextContent('mocked-uuid');
         expect(screen.getByTestId('username')).toHaveTextContent('testuser');
         expect(screen.getByTestId('is-logged-in')).toHaveTextContent('true');
@@ -95,7 +87,6 @@ describe('SessionContext', () => {
         localStorage.setItem('avatar', '/test-avatar.jpg');
 
         const { rerender } = renderWithContext();
-
         fireEvent.click(screen.getByText('Destruir Sesión'));
 
         await waitFor(() => {
@@ -118,7 +109,6 @@ describe('SessionContext', () => {
 
     it('should update avatar and store it in localStorage', async () => {
         const { rerender } = renderWithContext();
-
         fireEvent.click(screen.getByText('Actualizar Avatar'));
 
         await waitFor(() => {
@@ -148,4 +138,4 @@ describe('SessionContext', () => {
         expect(screen.getByTestId('is-logged-in')).toHaveTextContent('true');
         expect(screen.getByTestId('avatar')).toHaveTextContent('/test-avatar.jpg');
     });
-}); 
+});

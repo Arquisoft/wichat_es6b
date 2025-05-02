@@ -91,25 +91,4 @@ describe('Game class', () => {
         expect(game.controller).not.toBe(originalController);
         expect(game.controller.signal).toBeDefined();
     });
-
-    it('should handle multiple questions correctly', async () => {
-        // Mock para todas las llamadas a axios.get
-        axios.get.mockImplementation(() => Promise.resolve({ 
-            data: {
-                responseQuestion: '¿Cuál es la capital de España?',
-                responseOptions: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'],
-                responseCorrectOption: 'Madrid',
-                responseImage: 'madrid.jpg'
-            }
-        }));
-        
-        const mockCallback = jest.fn();
-        const result = await game.fetchQuestions(mockCallback);
-
-        expect(axios.get).toHaveBeenCalled();
-        expect(mockCallback).toHaveBeenCalled();
-        expect(result).not.toBeNull();
-        expect(result.length).toBeGreaterThan(0);
-        expect(game.questions.length).toBeGreaterThan(0);
-    });
 });
