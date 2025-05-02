@@ -508,20 +508,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_architectural_decisions">9.1. Architectural Decisions</a></li>
 </ul>
 </li>
-<li><a href="#section-quality-scenarios">10. Quality Requirements</a></li>
-<li><a href="#section-specific-requirements">11. Specific Requirements</a></li>
-<li><a href="#section-technical-risks">12. Risks and Technical Debts</a></li>
-<li><a href="#section-glossary">13. Glossary</a>
+<li><a href="#section-quality-scenarios">10. Quality Requirements</a>
 <ul class="sectlevel2">
-<li><a href="#_about_the_game">13.1. About the game</a></li>
+<li><a href="#section-specific-requirements">10.1. Specific Requirements</a></li>
 </ul>
 </li>
-<li><a href="#section-test-report">14. Test Report</a>
+<li><a href="#section-technical-risks">11. Risks and Technical Debts</a></li>
+<li><a href="#section-glossary">12. Glossary</a>
 <ul class="sectlevel2">
-<li><a href="#_unit_tests">14.1. Unit Tests</a></li>
-<li><a href="#_acceptance_tests">14.2. Acceptance Tests</a></li>
-<li><a href="#_code_coverage">14.3. Code Coverage</a></li>
-<li><a href="#_load_tests">14.4. Load Tests</a></li>
+<li><a href="#_about_the_game">12.1. About the game</a></li>
+</ul>
+</li>
+<li><a href="#section-test-report">13. Test Report</a>
+<ul class="sectlevel2">
+<li><a href="#_unit_tests">13.1. Unit Tests</a></li>
+<li><a href="#_acceptance_tests">13.2. Acceptance Tests</a></li>
+<li><a href="#_code_coverage">13.3. Code Coverage</a></li>
+<li><a href="#_load_tests">13.4. Load Tests</a></li>
 </ul>
 </li>
 </ul>
@@ -1020,37 +1023,27 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <h3 id="_business_context">3.1. Business Context</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
+<col style="width: 50%;">
+<col style="width: 50%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Communication Partner</th>
-<th class="tableblock halign-left valign-top">Inputs</th>
-<th class="tableblock halign-left valign-top">Outputs</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Client</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Username, password</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Game score, questions retrieved from Wikidata</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Database</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Username, password, score of each game</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Credential validation, score storage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A normal user, that interacts with the app, playing the game, setting the profile picture&#8230;&#8203;</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Wikidata</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Request for information about the game question</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Generated question with relevant information</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provide a list of questions with an array of answers(one of them the right one), and provides a link related to the question.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Empathy/Gemini</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Game question and correct answer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Hints to help the user answer better</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Gemini</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An llm, to give hints to help the user answer better the questions, in the game.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2109,11 +2102,8 @@ concrete and measurable.</p>
 </dd>
 </dl>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="section-specific-requirements">11. Specific Requirements</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="section-specific-requirements">10.1. Specific Requirements</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Specific Requirements</dt>
@@ -2143,8 +2133,9 @@ concrete and measurable.</p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="section-technical-risks">12. Risks and Technical Debts</h2>
+<h2 id="section-technical-risks">11. Risks and Technical Debts</h2>
 <div class="sectionbody">
 <div class="sidebarblock arc42help">
 <div class="content">
@@ -2245,7 +2236,7 @@ concrete and measurable.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-glossary">13. Glossary</h2>
+<h2 id="section-glossary">12. Glossary</h2>
 <div class="sectionbody">
 <div class="sidebarblock arc42help">
 <div class="content">
@@ -2326,7 +2317,7 @@ concrete and measurable.</p>
 </tbody>
 </table>
 <div class="sect2">
-<h3 id="_about_the_game">13.1. About the game</h3>
+<h3 id="_about_the_game">12.1. About the game</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2366,7 +2357,7 @@ concrete and measurable.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-test-report">14. Test Report</h2>
+<h2 id="section-test-report">13. Test Report</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this project, tests have been carried out for each created service and for every React component.
@@ -2374,76 +2365,76 @@ Since Continuous Integration and Development was chosen, these tests are execute
 Additionally, when a release is made, the acceptance tests are also executed, ensuring compliance with Continuous Integration and Development.</p>
 </div>
 <div class="sect2">
-<h3 id="_unit_tests">14.1. Unit Tests</h3>
+<h3 id="_unit_tests">13.1. Unit Tests</h3>
 <div class="paragraph">
 <p>This project consists of 7 services: Gateway, llmService, questionsService, authservice, historyservice, usersService, webapp</p>
 </div>
 <div class="sect3">
-<h4 id="_gateway_test">14.1.1. Gateway Test</h4>
+<h4 id="_gateway_test">13.1.1. Gateway Test</h4>
 <div class="paragraph">
 <p>Tests API Gateway functionality by verifying request routing between services, authentication middleware, and error handling. Includes endpoint validation for /login, /adduser, /stats, /rankings, and /history, plus health checks.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_llmservice_test">14.1.2. LlmService Test</h4>
+<h4 id="_llmservice_test">13.1.2. LlmService Test</h4>
 <div class="paragraph">
 <p>These tests verify that the service responds as expected when the parameters are correct, as well as when there is an error in the parameters — for example, if a parameter is missing, if a non-existent LLM model is selected, or if the POST request fails.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_questionsservice_test">14.1.3. QuestionsService Test</h4>
+<h4 id="_questionsservice_test">13.1.3. QuestionsService Test</h4>
 <div class="paragraph">
 <p>Validates WikiData integration for trivia question generation, testing category filtering, multilingual support, and question format. Ensures proper handling of API responses and errors.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_authservice_test">14.1.4. Authservice Test</h4>
+<h4 id="_authservice_test">13.1.4. Authservice Test</h4>
 <div class="paragraph">
 <p>Verifies user authentication including JWT tokens, login process, and password encryption. Tests token validation, session management, and security features.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_historyservice_test">14.1.5. Historyservice Test</h4>
+<h4 id="_historyservice_test">13.1.5. Historyservice Test</h4>
 <div class="paragraph">
 <p>Checks game record management by testing storage of results, statistics retrieval, and ranking calculations. Validates data consistency and error handling.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_usersservice_test">14.1.6. UsersService Test</h4>
+<h4 id="_usersservice_test">13.1.6. UsersService Test</h4>
 <div class="paragraph">
 <p>Tests user management features including registration, username validation, and MongoDB interactions. Verifies user data handling and profile operations.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_webapp_test">14.1.7. Webapp Test</h4>
+<h4 id="_webapp_test">13.1.7. Webapp Test</h4>
 <div class="paragraph">
 <p>Validates frontend UI components using React Testing Library. Tests component rendering, user interactions, and state management for login, game interface, and profile views.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_acceptance_tests">14.2. Acceptance Tests</h3>
+<h3 id="_acceptance_tests">13.2. Acceptance Tests</h3>
 <div class="sect3">
-<h4 id="_register_user">14.2.1. Register user</h4>
+<h4 id="_register_user">13.2.1. Register user</h4>
 <div class="paragraph">
 <p>Recreate the registration of an unregistered user</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_loging_user">14.2.2. Loging user</h4>
+<h4 id="_loging_user">13.2.2. Loging user</h4>
 <div class="paragraph">
 <p>Simulate the login process for both a registered and an unregistered user</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_update_avatar">14.2.3. Update avatar</h4>
+<h4 id="_update_avatar">13.2.3. Update avatar</h4>
 <div class="paragraph">
 <p>Recreate the avatar change of a user</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_code_coverage">14.3. Code Coverage</h3>
+<h3 id="_code_coverage">13.3. Code Coverage</h3>
 <div class="paragraph">
 <p>From the unit tests, we can analyze the project&#8217;s code coverage.
 For this purpose, SonarQube&#8217;s test coverage feature was used, achieving <strong>85.4% test coverage</strong>.</p>
@@ -2455,7 +2446,7 @@ For this purpose, SonarQube&#8217;s test coverage feature was used, achieving <s
 </div>
 </div>
 <div class="sect2">
-<h3 id="_load_tests">14.4. Load Tests</h3>
+<h3 id="_load_tests">13.4. Load Tests</h3>
 <div class="paragraph">
 <p>Artillery was used for load testing. The following endpoints were tested: <code>/login</code>, <code>/adduser</code>, <code>/generateQuestions</code> (start game), <code>/history/{{username}}</code>, <code>/savegame</code>, and <code>/stats/{{username}}</code>.</p>
 </div>
@@ -2506,7 +2497,7 @@ This endpoint also showed the highest response time when the number of concurren
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-05-01 16:59:42 +0200
+Last updated 2025-05-01 13:19:35 +0200
 </div>
 </div>
 </body>
