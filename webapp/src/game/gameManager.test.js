@@ -1,59 +1,75 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { SessionProvider } from '../context/SessionContext';
 import Jugar from './gameManager';
-import userEvent from '@testing-library/user-event';
 import Game from './game';
 import { useNavigate } from 'react-router-dom';
 
-// Mock de useState (Solo una vez en el archivo)
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useState: jest.fn().mockImplementation((initialState) => [initialState, jest.fn()])
-}));
-
+// Mocks
 jest.mock('./game');
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
 }));
 
-it('redirects to / if username is not in localStorage', () => {
-  const mockNavigate = jest.fn();
-  useNavigate.mockReturnValue(mockNavigate);
-  
-  // limpiar el username
-  localStorage.removeItem('username');
-
-  render(
-    <MemoryRouter>
-      <SessionProvider value={{ isLoggedIn: true }}>
-        <Jugar />
-      </SessionProvider>
-    </MemoryRouter>
-  );
-
-  expect(mockNavigate).toHaveBeenCalledWith('/');
-});
+// Mock de useState
+const mockSetLoading = jest.fn();
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn().mockImplementation((initial) => [initial, mockSetLoading])
+}));
 
 describe('GameManager Component', () => {
-  beforeEach(() => {
-    localStorage.setItem('username', 'testUser');
+  const mockNavigate = jest.fn();
+  const mockGameInstance = {
+    fetchQuestions: jest.fn(),
+    cancelRequests: jest.fn()
+  };
 
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve([]), // o puedes devolver preguntas de ejemplo aquí
-      })
-    );
+  beforeEach(() => {
+    // Reset mocks
+    jest.clearAllMocks();
+    useNavigate.mockReturnValue(mockNavigate);
+    Game.mockImplementation(() => mockGameInstance);
+    mockSetLoading.mockClear();
+
+    // Configurar localStorage
+    localStorage.setItem('username', 'testUser');
+    localStorage.setItem('selectedCategories', 'Geografia,Cultura');
+    localStorage.setItem('gameDifficulty', 'Fácil');
+
+    // Configurar mock de fetchQuestions para devolver una promesa
+    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
+      callback([{
+        pregunta: '¿Capital de Francia?',
+        opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
+        respuesta_correcta: 0
+      }]);
+      return Promise.resolve();
+    });
   });
 
   afterEach(() => {
     localStorage.clear();
-    jest.resetAllMocks(); // limpia mocks como fetch
+    jest.useRealTimers();
   });
 
-  it('renders loading text', () => {
+  it('should redirect to home if no username is found', () => {
+    localStorage.removeItem('username');
+    
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
+
+  it('should show loading state initially', () => {
     render(
       <MemoryRouter>
         <SessionProvider value={{ isLoggedIn: true }}>
@@ -65,25 +81,7 @@ describe('GameManager Component', () => {
     expect(screen.getByText('Cargando preguntas...')).toBeInTheDocument();
   });
 
-  it('initializes Game instance and fetches questions with images', async () => {
-    const fetchQuestionsMock = jest.fn();
-
-    Game.mockImplementation(() => ({
-      fetchQuestions: (cb) => {
-        fetchQuestionsMock();
-        cb([{
-          pregunta: '¿Capital de Francia?',
-          opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-          respuesta_correcta: 0,
-          imagen: 'https://example.com/paris.jpg' // Aquí la URL de la imagen
-        }]);
-      },
-      cancelRequests: jest.fn()
-    }));
-
-    localStorage.setItem('username', 'testuser');
-    localStorage.setItem('selectedCategories', 'Geografia');
-
+  it('should initialize game with questions', async () => {
     render(
       <MemoryRouter>
         <SessionProvider value={{ isLoggedIn: true }}>
@@ -92,96 +90,78 @@ describe('GameManager Component', () => {
       </MemoryRouter>
     );
 
-    // Espera a que la pregunta se cargue
-    await screen.findByText('¿Capital de Francia?');
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
 
-    // Verifica si la imagen se renderiza correctamente
-    expect(screen.getByAltText('Pregunta')).toHaveAttribute('src', 'https://example.com/paris.jpg');
+    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 
+  it('should handle answer selection correctly', async () => {
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
 
-  
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
 
-// it('selecting the correct answer increases score and advances', async () => {
-//   const fetchQuestionsMock = jest.fn((cb) => cb([
-//     {
-//       id: '1',
-//       pregunta: '¿Capital de Francia?',
-//       opciones: ['París', 'Madrid'],
-//       respuesta_correcta: 0
-//     },
-//     {
-//       id: '2',
-//       pregunta: '¿Moneda de Japón?',
-//       opciones: ['Yen', 'Euro'],
-//       respuesta_correcta: 0
-//     }
-//   ]));
+    const correctAnswer = screen.getByText('París');
+    fireEvent.click(correctAnswer);
 
-//   Game.mockImplementation(() => ({
-//     fetchQuestions: fetchQuestionsMock,
-//     cancelRequests: jest.fn()
-//   }));
+    await waitFor(() => {
+      expect(screen.getByText('+10')).toBeInTheDocument();
+    });
+  });
 
-//   localStorage.setItem('username', 'testuser');
-//   localStorage.setItem('selectedCategories', 'Geografia');
-//   localStorage.setItem('gameDifficulty', 'Fácil');
+  it('should handle chat interaction for hints', async () => {
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
 
-//   render(
-//     <MemoryRouter>
-//       <SessionProvider value={{ isLoggedIn: true }}>
-//         <Jugar />
-//       </SessionProvider>
-//     </MemoryRouter>
-//   );
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
 
-//   await waitFor(() => {
-//     expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-//   });
+    const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
+    fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
+    
+    const sendButton = screen.getByText('Enviar');
+    fireEvent.click(sendButton);
 
-//   const option = screen.getByText('París');
-//   userEvent.click(option);
+    await waitFor(() => {
+      expect(screen.getByText('Pensando...')).toBeInTheDocument();
+    });
+  });
 
-//   // esperar avance a siguiente pregunta
-//   await waitFor(() => {
-//     expect(screen.getByText('¿Moneda de Japón?')).toBeInTheDocument();
-//   });
-// });
+  it('should handle timeout correctly', async () => {
+    jest.useFakeTimers();
+    
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
 
-// it('handles timeout and shows message', async () => {
-//     jest.useFakeTimers();
-  
-//     Game.mockImplementation(() => ({
-//       fetchQuestions: (cb) => cb([{
-//         id: '1',
-//         pregunta: '¿Capital de Francia?',
-//         opciones: ['París', 'Madrid'],
-//         respuesta_correcta: 0
-//       }]),
-//       cancelRequests: jest.fn()
-//     }));
-  
-//     localStorage.setItem('username', 'testuser');
-  
-//     render(
-//       <MemoryRouter>
-//         <SessionProvider value={{ isLoggedIn: true }}>
-//           <Jugar />
-//         </SessionProvider>
-//       </MemoryRouter>
-//     );
-  
-//     await waitFor(() => {
-//       expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-//     });
-  
-//     // Avanzamos el tiempo del juego
-//     jest.advanceTimersByTime(41000);
-  
-//     await waitFor(() => {
-//       expect(screen.getByText(/se acabó el tiempo/i)).toBeInTheDocument();
-//     });
-  
-//     jest.useRealTimers();
-//     });
+    await waitFor(() => {
+      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+    });
+
+    // Avanzar el tiempo
+    jest.advanceTimersByTime(41000);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Tiempo Agotado/i)).toBeInTheDocument();
+    });
+  });
 });
