@@ -76,12 +76,10 @@ describe('GameManager Component', () => {
       </MemoryRouter>
     );
 
-    // Esperar a que se carguen las preguntas
     await waitFor(() => {
       expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
     });
 
-    // Verificar el tiempo
     const timeElement = findTimeElement('40');
     expect(timeElement).toBeInTheDocument();
   });
@@ -108,12 +106,10 @@ describe('GameManager Component', () => {
       </MemoryRouter>
     );
 
-    // Esperar a que se carguen las preguntas
     await waitFor(() => {
       expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
     });
 
-    // Verificar el tiempo
     const timeElement = findTimeElement('30');
     expect(timeElement).toBeInTheDocument();
   });
@@ -140,12 +136,10 @@ describe('GameManager Component', () => {
       </MemoryRouter>
     );
 
-    // Esperar a que se carguen las preguntas
     await waitFor(() => {
       expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
     });
 
-    // Verificar el tiempo
     const timeElement = findTimeElement('20');
     expect(timeElement).toBeInTheDocument();
   });
@@ -172,16 +166,13 @@ describe('GameManager Component', () => {
       </MemoryRouter>
     );
 
-    // Esperar a que se carguen las preguntas
     await waitFor(() => {
       expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
     });
 
-    // Verificar el tiempo
     const timeElement = findTimeElement('40');
     expect(timeElement).toBeInTheDocument();
   });
-
 
   it('should redirect to home if no username is found', () => {
     localStorage.removeItem('username');
@@ -328,12 +319,10 @@ describe('GameManager Component', () => {
         expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
       });
 
-      // Avanzar el tiempo hasta el timeout
       act(() => {
         jest.advanceTimersByTime(40000);
       });
 
-      // Verificar que se muestra el mensaje de timeout
       await waitFor(() => {
         const timeoutMessage = screen.getByText((content, element) => {
           return element.classList.contains('timeout-message') && 
@@ -373,12 +362,10 @@ describe('GameManager Component', () => {
         expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
       });
 
-      // Simular solicitud de pista
       const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
       fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
       fireEvent.click(screen.getByText('Enviar'));
 
-      // Verificar que se muestra la pista
       await waitFor(() => {
         const hintMessage = screen.getByText((content, element) => {
           return element.tagName.toLowerCase() === 'p' && 
@@ -414,12 +401,10 @@ describe('GameManager Component', () => {
         expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
       });
 
-      // Simular solicitud de pista
       const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
       fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
       fireEvent.click(screen.getByText('Enviar'));
 
-      // Verificar que se muestra el mensaje de error
       await waitFor(() => {
         const errorMessage = screen.getByText((content, element) => {
           return element.tagName.toLowerCase() === 'p' && 
@@ -459,15 +444,12 @@ describe('GameManager Component', () => {
         expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
       });
 
-      // Seleccionar respuesta correcta
       fireEvent.click(screen.getByText('París'));
 
-      // Esperar a que se complete la animación y se actualice el estado
       await act(async () => {
         jest.advanceTimersByTime(3000);
       });
 
-      // Verificar que se guarda el juego
       expect(axios.post).toHaveBeenCalledWith(
         expect.stringContaining('/savegame'),
         expect.objectContaining({
