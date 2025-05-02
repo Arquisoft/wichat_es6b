@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import App from './App';
-import { SessionContext } from './context/SessionContext';
+import App from '../App';
+import { SessionContext } from '../context/SessionContext';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { Home } from './App';
-import Login from './components/Login';
+import { Home } from '../App';
+import Login from '../components/Login';
 
 // Silenciar los warnings específicos de MUI Grid y React Router
 const originalWarn = console.warn;
