@@ -19,7 +19,7 @@ describe('GameManager Component', () => {
   const mockNavigate = jest.fn();
   const mockGameInstance = {
     fetchQuestions: jest.fn(),
-    cancelRequests: jest.fn()
+    cancelRequests: jest.fn(),
   };
 
   beforeEach(() => {
@@ -41,7 +41,7 @@ describe('GameManager Component', () => {
 
   const findTimeElement = (expectedTime) => {
     const timeElements = screen.getAllByText((content, element) => {
-      return element.tagName.toLowerCase() === 'h6' && 
+      return element.tagName.toLowerCase() === 'h6' &&
              element.textContent.includes(expectedTime);
     });
     return timeElements[0];
@@ -49,19 +49,13 @@ describe('GameManager Component', () => {
 
   const findMessageInChat = (text) => {
     return screen.getByText((content, element) => {
-      return element.tagName.toLowerCase() === 'p' && 
+      return element.tagName.toLowerCase() === 'p' &&
              element.textContent.includes(text);
     });
   };
 
-  it('should set correct time for easy difficulty', async () => {
-    localStorage.setItem('gameDifficulty', 'Fácil');
-    
-    const mockQuestions = [{
-      pregunta: '¿Capital de Francia?',
-      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-      respuesta_correcta: 0
-    }];
+  const renderGameWithMockQuestions = async (difficulty, mockQuestions) => {
+    localStorage.setItem('gameDifficulty', difficulty);
 
     mockGameInstance.fetchQuestions.mockImplementation((callback) => {
       callback(mockQuestions);
@@ -77,106 +71,41 @@ describe('GameManager Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].pregunta)).toBeInTheDocument();
     });
+  };
 
+  it('should set correct time for easy difficulty', async () => {
+    const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+    await renderGameWithMockQuestions('Fácil', mockQuestions);
     const timeElement = findTimeElement('40');
     expect(timeElement).toBeInTheDocument();
   });
 
   it('should set correct time for medium difficulty', async () => {
-    localStorage.setItem('gameDifficulty', 'Medio');
-    
-    const mockQuestions = [{
-      pregunta: '¿Capital de Francia?',
-      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-      respuesta_correcta: 0
-    }];
-
-    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-      callback(mockQuestions);
-      return Promise.resolve();
-    });
-
-    render(
-      <MemoryRouter>
-        <SessionProvider value={{ isLoggedIn: true }}>
-          <Jugar />
-        </SessionProvider>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-    });
-
+    const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+    await renderGameWithMockQuestions('Medio', mockQuestions);
     const timeElement = findTimeElement('30');
     expect(timeElement).toBeInTheDocument();
   });
 
   it('should set correct time for hard difficulty', async () => {
-    localStorage.setItem('gameDifficulty', 'Difícil');
-    
-    const mockQuestions = [{
-      pregunta: '¿Capital de Francia?',
-      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-      respuesta_correcta: 0
-    }];
-
-    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-      callback(mockQuestions);
-      return Promise.resolve();
-    });
-
-    render(
-      <MemoryRouter>
-        <SessionProvider value={{ isLoggedIn: true }}>
-          <Jugar />
-        </SessionProvider>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-    });
-
+    const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+    await renderGameWithMockQuestions('Difícil', mockQuestions);
     const timeElement = findTimeElement('20');
     expect(timeElement).toBeInTheDocument();
   });
 
   it('should use default time when difficulty is not set', async () => {
     localStorage.removeItem('gameDifficulty');
-    
-    const mockQuestions = [{
-      pregunta: '¿Capital de Francia?',
-      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-      respuesta_correcta: 0
-    }];
-
-    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-      callback(mockQuestions);
-      return Promise.resolve();
-    });
-
-    render(
-      <MemoryRouter>
-        <SessionProvider value={{ isLoggedIn: true }}>
-          <Jugar />
-        </SessionProvider>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-    });
-
+    const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+    await renderGameWithMockQuestions(null, mockQuestions);
     const timeElement = findTimeElement('40');
     expect(timeElement).toBeInTheDocument();
   });
 
   it('should redirect to home if no username is found', () => {
     localStorage.removeItem('username');
-    
     render(
       <MemoryRouter>
         <SessionProvider value={{ isLoggedIn: true }}>
@@ -184,7 +113,6 @@ describe('GameManager Component', () => {
         </SessionProvider>
       </MemoryRouter>
     );
-
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 
@@ -196,58 +124,17 @@ describe('GameManager Component', () => {
         </SessionProvider>
       </MemoryRouter>
     );
-
     expect(screen.getByText('Cargando preguntas...')).toBeInTheDocument();
   });
 
   it('should initialize game with questions', async () => {
-    const mockQuestions = [{
-      pregunta: '¿Capital de Francia?',
-      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-      respuesta_correcta: 0
-    }];
-
-    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-      callback(mockQuestions);
-      return Promise.resolve();
-    });
-
-    render(
-      <MemoryRouter>
-        <SessionProvider value={{ isLoggedIn: true }}>
-          <Jugar />
-        </SessionProvider>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-    });
+    const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+    await renderGameWithMockQuestions(null, mockQuestions);
   });
 
   it('should handle answer selection correctly', async () => {
-    const mockQuestions = [{
-      pregunta: '¿Capital de Francia?',
-      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-      respuesta_correcta: 0
-    }];
-
-    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-      callback(mockQuestions);
-      return Promise.resolve();
-    });
-
-    render(
-      <MemoryRouter>
-        <SessionProvider value={{ isLoggedIn: true }}>
-          <Jugar />
-        </SessionProvider>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-    });
+    const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+    await renderGameWithMockQuestions(null, mockQuestions);
 
     const correctAnswer = screen.getByText('París');
     fireEvent.click(correctAnswer);
@@ -258,28 +145,8 @@ describe('GameManager Component', () => {
   });
 
   it('should handle chat interaction for hints', async () => {
-    const mockQuestions = [{
-      pregunta: '¿Capital de Francia?',
-      opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-      respuesta_correcta: 0
-    }];
-
-    mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-      callback(mockQuestions);
-      return Promise.resolve();
-    });
-
-    render(
-      <MemoryRouter>
-        <SessionProvider value={{ isLoggedIn: true }}>
-          <Jugar />
-        </SessionProvider>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-    });
+    const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+    await renderGameWithMockQuestions(null, mockQuestions);
 
     const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
     fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
@@ -294,30 +161,8 @@ describe('GameManager Component', () => {
 
   describe('Timer functionality', () => {
     it('should handle timeout correctly', async () => {
-      localStorage.setItem('gameDifficulty', 'Fácil');
-      
-      const mockQuestions = [{
-        pregunta: '¿Capital de Francia?',
-        opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-        respuesta_correcta: 0
-      }];
-
-      mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-        callback(mockQuestions);
-        return Promise.resolve();
-      });
-
-      render(
-        <MemoryRouter>
-          <SessionProvider value={{ isLoggedIn: true }}>
-            <Jugar />
-          </SessionProvider>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-      });
+      const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+      await renderGameWithMockQuestions('Fácil', mockQuestions);
 
       act(() => {
         jest.advanceTimersByTime(40000);
@@ -325,7 +170,7 @@ describe('GameManager Component', () => {
 
       await waitFor(() => {
         const timeoutMessage = screen.getByText((content, element) => {
-          return element.classList.contains('timeout-message') && 
+          return element.classList.contains('timeout-message') &&
                  element.textContent.includes('¡Tiempo Agotado!');
         });
         expect(timeoutMessage).toBeInTheDocument();
@@ -335,32 +180,10 @@ describe('GameManager Component', () => {
 
   describe('Hint functionality', () => {
     it('should handle hint request successfully', async () => {
-      const mockQuestions = [{
-        pregunta: '¿Capital de Francia?',
-        opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-        respuesta_correcta: 0
-      }];
+      const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
+      axios.post.mockResolvedValueOnce({ data: { answer: 'La capital de Francia es una ciudad famosa por su torre Eiffel' } });
 
-      mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-        callback(mockQuestions);
-        return Promise.resolve();
-      });
-
-      axios.post.mockResolvedValueOnce({
-        data: { answer: 'La capital de Francia es una ciudad famosa por su torre Eiffel' }
-      });
-
-      render(
-        <MemoryRouter>
-          <SessionProvider value={{ isLoggedIn: true }}>
-            <Jugar />
-          </SessionProvider>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-      });
+      await renderGameWithMockQuestions(null, mockQuestions);
 
       const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
       fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
@@ -368,7 +191,7 @@ describe('GameManager Component', () => {
 
       await waitFor(() => {
         const hintMessage = screen.getByText((content, element) => {
-          return element.tagName.toLowerCase() === 'p' && 
+          return element.tagName.toLowerCase() === 'p' &&
                  element.textContent.includes('La capital de Francia es una ciudad famosa por su torre Eiffel');
         });
         expect(hintMessage).toBeInTheDocument();
@@ -376,30 +199,10 @@ describe('GameManager Component', () => {
     });
 
     it('should handle hint request error', async () => {
-      const mockQuestions = [{
-        pregunta: '¿Capital de Francia?',
-        opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-        respuesta_correcta: 0
-      }];
-
-      mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-        callback(mockQuestions);
-        return Promise.resolve();
-      });
-
+      const mockQuestions = [{ pregunta: '¿Capital de Francia?', opciones: ['París', 'Madrid', 'Berlín', 'Roma'], respuesta_correcta: 0 }];
       axios.post.mockRejectedValueOnce(new Error('API Error'));
 
-      render(
-        <MemoryRouter>
-          <SessionProvider value={{ isLoggedIn: true }}>
-            <Jugar />
-          </SessionProvider>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-      });
+      await renderGameWithMockQuestions(null, mockQuestions);
 
       const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
       fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
@@ -407,7 +210,7 @@ describe('GameManager Component', () => {
 
       await waitFor(() => {
         const errorMessage = screen.getByText((content, element) => {
-          return element.tagName.toLowerCase() === 'p' && 
+          return element.tagName.toLowerCase() === 'p' &&
                  element.textContent.includes('Error al comunicarse con el servicio de pistas');
         });
         expect(errorMessage).toBeInTheDocument();
@@ -422,27 +225,12 @@ describe('GameManager Component', () => {
         pregunta: '¿Capital de Francia?',
         opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
         respuesta_correcta: 0,
-        imagen: 'http://example.com/image.jpg'
+        imagen: 'http://example.com/image.jpg',
       }];
-
-      mockGameInstance.fetchQuestions.mockImplementation((callback) => {
-        callback(mockQuestions);
-        return Promise.resolve();
-      });
-
+      
       axios.post.mockResolvedValueOnce({});
 
-      render(
-        <MemoryRouter>
-          <SessionProvider value={{ isLoggedIn: true }}>
-            <Jugar />
-          </SessionProvider>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText('¿Capital de Francia?')).toBeInTheDocument();
-      });
+      await renderGameWithMockQuestions(null, mockQuestions);
 
       fireEvent.click(screen.getByText('París'));
 
@@ -459,9 +247,9 @@ describe('GameManager Component', () => {
             expect.objectContaining({
               questionId: '1',
               question: '¿Capital de Francia?',
-              imageUrl: 'http://example.com/image.jpg'
-            })
-          ])
+              imageUrl: 'http://example.com/image.jpg',
+            }),
+          ]),
         })
       );
     });
