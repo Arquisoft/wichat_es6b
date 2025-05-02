@@ -51,6 +51,7 @@ The architectural decisions are fully documented in our https://github.com/Arqui
 * https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-04---database[DataBase]
 * https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-05---user-interface[User Interface]
 * https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-06---backend[Backend]
+* https://github.com/Arquisoft/wichat_es6b/wiki/Architectural-Decisions#architectural-decision-07---llm-model[LLM]
 
 ==== Top-Level Descomposition 
 

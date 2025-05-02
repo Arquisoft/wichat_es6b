@@ -51,7 +51,7 @@ The application must run on different platforms for better adaptability.
 *Priority:* Medium  
 
 [[section-specific-requirements]]
-== Specific Requirements
+=== Specific Requirements
 
 Specific Requirements::  
 - [ ] The system must store user registration data.  

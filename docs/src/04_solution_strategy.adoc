@@ -16,13 +16,18 @@ To develop the application, we have decided to use the following technologies wh
 * WikiData: will be used as a source of structured data, providing access to large volumes of open data that can be easily integrated into the application.
 * EspressJS: is a minimal and flexible framework for Node.js that simplifies the creation of web applications and APIs. Its simplicity and large ecosystem of middleware(intermediaries between the server and the application,they can perform tasks such as authentication, handling HTTP requests, data validation, logging, among others.) make it ideal for developing the backend of our application.
 * MongoDB was selected as our database due to it's scalability and flexibility in handling data. As a non-relational database, it allows for more dynamic and adaptable data storage and retrieval compared to traditional relational databases like MySQL. While MySQL provides structured query language and consistency, MongoDB offers greater flexibility, making it more suitable for our application’s needs, especially when dealing with large volumes of unstructured or semi-structured data, such as the data from WikiData used for questions and answers.
+* Gemini was selected as our LLM model due to its advanced capabilities in natural language processing and alos because we have problems with Empathy.
 
 === Top-Level Descomposition
 
-We have chosen to adopt a microservices architecture because we believe it is the best approach for our project. In this design paradigm, the application is segmented into small, autonomous services that typically interact via APIs.Currently, we have the following microservices:
+We have chosen to adopt a Services architecture because we believe it is the best approach for our project. In this design paradigm, the application is segmented into small, autonomous services that typically interact via APIs.Currently, we have the following microservices:
 
 * Authentication service: It is used for user authentication.
 * Question service: It is used to generate questions from the Wikidata API.
+* User service: It is used to add users in tha database.
+* LLM Service: The LLM Service is responsible for handling the Large Language Model (LLM) operations.
+* Gateway Service: Acts as an intermediary between the webapp and the services, preventing the web application from making requests directly.
+* History Service: It is used for the ranking and the user stats.
 
 === Approaches to Achieve Top Quality Goals
 

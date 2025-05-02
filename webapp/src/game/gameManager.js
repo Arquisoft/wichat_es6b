@@ -24,7 +24,7 @@ const Jugar = () => {
   const [timeLeft, setTimeLeft] = useState(40);
   const [gameFinished, setGameFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
-  const [setLoading] = useState(true);
+  const [loading,setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [hint, setHint] = useState({});
@@ -73,7 +73,6 @@ const Jugar = () => {
   
     try {
       const username = localStorage.getItem('username');
-      console.log("Score:", finalScore); // Usar el puntaje actualizado
       setScore(finalScore); // Actualizar el puntaje final
   
       // Preparar datos para guardar
@@ -141,7 +140,6 @@ const Jugar = () => {
       setChatMessages(prev => [...prev, { sender: 'user', text: userInputText }]);
       setChatInput("");
 
-      console.log("Pide cargar pista");
       
       // Verificar que estemos en una pregunta válida
       if (indice >= questions.length || !questions[indice]) {
@@ -162,7 +160,6 @@ const Jugar = () => {
       try {
         // Si no está cargada, llamar a fetchHint para cargarla
         let actualHint = await fetchHint(userInputText); 
-        console.log("Pista cargada");
     
         // Reemplazar el mensaje de "pensando..." con la pista real
         setChatMessages(prev => {
@@ -201,11 +198,9 @@ const Jugar = () => {
   const clearChat = () => {
     // Reiniciar el estado del chat
     setChatMessages([]);
-    console.log("Chat limpio y listo para la siguiente pregunta");
   };
 
   const fetchHint = async (questionMade) => {
-    console.log("gallo");
     
     if (loadingHint) return "Espera un momento..."; // Mantenemos esta verificación para evitar llamadas simultáneas
     setLoadingHint(true);
@@ -215,6 +210,7 @@ const Jugar = () => {
       // Verificar que exista una pregunta actual y sus propiedades
       if (!questions[indice]) {
         console.error("No hay pregunta actual para el índice:", indice);
+        console.log(loading);
         setLoadingHint(false);
         return "No se puede obtener pista en este momento";
       }
@@ -244,9 +240,9 @@ const Jugar = () => {
       const context = "No digas la respuesta correcta de manera explicita. Tipo de pregunta: " + contextInfo +
               ". Responde también teniendo en cuenta esto: " + questionMade;
 
-      console.log("Contexto seleccionado:", context);
+  
       console.log("Consultando la pista para:", questionText);
-      console.log("Texto de la persona: ", questionMade);
+  
       
       const question = `Respuesta correcta: ${correctAnswer}.`;
       const model = "gemini";
@@ -259,7 +255,7 @@ const Jugar = () => {
           context
         });
 
-        console.log("Respuesta de la API:", response.data);
+
         fetchedHint = response.data.answer || "Pista no disponible";
       } catch (apiError) {
         console.error("Error en la llamada a la API:", apiError);
@@ -269,7 +265,7 @@ const Jugar = () => {
 
       // Actualizamos siempre la pista, sobreescribiendo la anterior si es necesario
       setHint(prev => ({ ...prev, [indice]: fetchedHint }));
-      console.log("Hint actualizado:", fetchedHint);
+
 
       // Mantenemos registro de que ya se usó la pista (puedes adaptarlo según necesidad)
       setUsedHint(prev => ({ ...prev, [indice]: true }));
@@ -298,7 +294,7 @@ const Jugar = () => {
 
     const storedCategories = localStorage.getItem('selectedCategories');
    
-    var auxCategories = selectedCategories;
+    let auxCategories = selectedCategories;
 
     if(storedCategories!==null){
       auxCategories = storedCategories.split(',').map(cat => cat.trim());
@@ -313,7 +309,6 @@ const Jugar = () => {
             timeSpent: 0,
             answered: false
         } : null));
-    }).then(() => {
         setLoading(false);
     });
 
