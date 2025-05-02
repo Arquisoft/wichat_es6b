@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Home } from '../App';
 import Login from '../components/Login';
+import { SessionProvider } from '../contexts/SessionContext';
 
 // Silenciar los warnings específicos de MUI Grid y React Router
 const originalWarn = console.warn;
@@ -41,6 +42,14 @@ afterAll(() => {
   console.warn = originalWarn;
   console.error = originalError;
 });
+
+const renderWithProviders = (ui, { route = '/', isLoggedIn = false } = {}) => {
+  return render(
+    <SessionProvider value={{ isLoggedIn }}>
+      {ui}
+    </SessionProvider>
+  );
+};
 
 test('renders login form by default', async () => {
   render(
