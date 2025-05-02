@@ -298,7 +298,7 @@ const Jugar = () => {
 
     const storedCategories = localStorage.getItem('selectedCategories');
    
-    var auxCategories = selectedCategories;
+    let auxCategories = selectedCategories;
 
     if(storedCategories!==null){
       auxCategories = storedCategories.split(',').map(cat => cat.trim());
