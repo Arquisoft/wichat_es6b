@@ -7,6 +7,11 @@ import userEvent from '@testing-library/user-event';
 import Game from './game';
 import { useNavigate } from 'react-router-dom';
 
+// Mock de useState (Solo una vez en el archivo)
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn().mockImplementation((initialState) => [initialState, jest.fn()])
+}));
 
 jest.mock('./game');
 jest.mock('react-router-dom', () => ({
@@ -32,23 +37,21 @@ it('redirects to / if username is not in localStorage', () => {
   expect(mockNavigate).toHaveBeenCalledWith('/');
 });
 
-
 describe('GameManager Component', () => {
   beforeEach(() => {
-  localStorage.setItem('username', 'testUser');
+    localStorage.setItem('username', 'testUser');
 
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      json: () => Promise.resolve([]), // o puedes devolver preguntas de ejemplo aquí
-    })
-  );
-});
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve([]), // o puedes devolver preguntas de ejemplo aquí
+      })
+    );
+  });
 
-afterEach(() => {
-  localStorage.clear();
-  jest.resetAllMocks(); // limpia mocks como fetch
-});
-
+  afterEach(() => {
+    localStorage.clear();
+    jest.resetAllMocks(); // limpia mocks como fetch
+  });
 
   it('renders loading text', () => {
     render(
@@ -62,61 +65,39 @@ afterEach(() => {
     expect(screen.getByText('Cargando preguntas...')).toBeInTheDocument();
   });
 
+  it('initializes Game instance and fetches questions with images', async () => {
+    const fetchQuestionsMock = jest.fn();
 
-it('redirects to / if username is not in localStorage', () => {
-  const mockNavigate = jest.fn();
-  useNavigate.mockReturnValue(mockNavigate);
-  
-  // limpiar el username
-  localStorage.removeItem('username');
+    Game.mockImplementation(() => ({
+      fetchQuestions: (cb) => {
+        fetchQuestionsMock();
+        cb([{
+          pregunta: '¿Capital de Francia?',
+          opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
+          respuesta_correcta: 0,
+          imagen: 'https://example.com/paris.jpg' // Aquí la URL de la imagen
+        }]);
+      },
+      cancelRequests: jest.fn()
+    }));
 
-  render(
-    <MemoryRouter>
-      <SessionProvider value={{ isLoggedIn: true }}>
-        <Jugar />
-      </SessionProvider>
-    </MemoryRouter>
-  );
+    localStorage.setItem('username', 'testuser');
+    localStorage.setItem('selectedCategories', 'Geografia');
 
-  expect(mockNavigate).toHaveBeenCalledWith('/');
-});
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useState: jest.fn().mockImplementation((initialState) => [initialState, jest.fn()])
-}));
+    // Espera a que la pregunta se cargue
+    await screen.findByText('¿Capital de Francia?');
 
-// it('initializes Game instance and fetches questions', async () => {
-//   const fetchQuestionsMock = jest.fn();
-
-//   Game.mockImplementation(() => ({
-//     fetchQuestions: (cb) => {
-//       fetchQuestionsMock();
-//       cb([{
-//         pregunta: '¿Capital de Francia?',
-//         opciones: ['París', 'Madrid', 'Berlín', 'Roma'],
-//         respuesta_correcta: 0
-//       }]);
-//     },
-//     cancelRequests: jest.fn()
-//   }));
-
-//   localStorage.setItem('username', 'testuser');
-//   localStorage.setItem('selectedCategories', 'Geografia');
-
-//   render(
-//     <MemoryRouter>
-//       <SessionProvider value={{ isLoggedIn: true }}>
-//         <Jugar />
-//       </SessionProvider>
-//     </MemoryRouter>
-//   );
-
-//   expect(fetchQuestionsMock).toHaveBeenCalled();
-
-//   // Esta línea espera hasta que se renderice el texto
-//   await screen.findByText('¿Capital de Francia?');
-// });
+    // Verifica si la imagen se renderiza correctamente
+    expect(screen.getByAltText('Pregunta')).toHaveAttribute('src', 'https://example.com/paris.jpg');
+  });
 
 
   
