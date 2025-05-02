@@ -8,15 +8,13 @@ ifndef::imagesdir[:imagesdir: ../images]
 === Business Context
 
 |===
-| Communication Partner | Inputs | Outputs
+| Communication Partner | Description
 
-| **Client** | Username, password | Game score, questions retrieved from Wikidata  
+| **Client**  | A normal user, that interacts with the app, playing the game, setting the profile picture...
 
-| **Database** | Username, password, score of each game | Credential validation, score storage  
+| **Wikidata**  | Provide a list of questions with an array of answers(one of them the right one), and provides a link related to the question.
 
-| **Wikidata** | Request for information about the game question | Generated question with relevant information  
-
-| **Empathy/Gemini** | Game question and correct answer | Hints to help the user answer better  
+| **Gemini** | An llm, to give hints to help the user answer better the questions, in the game. 
 |===
 
 
