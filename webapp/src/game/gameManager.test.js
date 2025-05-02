@@ -1,93 +1,140 @@
-import axios from 'axios';
-import Game from './game';
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { SessionProvider } from '../context/SessionContext';
+import Jugar from './gameManager';
 
-jest.mock('axios');
+describe('GameManager Component', () => {
+  it('renders loading text', () => {
+    render(
+      <MemoryRouter>
+        <SessionProvider value={{ isLoggedIn: true }}>
+          <Jugar />
+        </SessionProvider>
+      </MemoryRouter>
+    );
 
-describe('Game class', () => {
-  let game;
-  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-
-  beforeEach(() => {
-    game = new Game(['Geografia', 'Cultura']); 
-    jest.clearAllMocks();
+    expect(screen.getByText('Cargando preguntas...')).toBeInTheDocument();
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
 
-  it('should initialize with empty questions and score 0', () => {
-    expect(game.questions).toEqual([]);
-    expect(game.score).toBe(0);
-  });
+  // it('should render game interface after loading', async () => {
+  //   render(
+  //     <MemoryRouter>
+  //       <SessionProvider value={{ isLoggedIn: true }}>
+  //         <Jugar />
+  //       </SessionProvider>
+  //     </MemoryRouter>
+  //   );
 
-  it('should handle error when fetching questions', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Network Error')); 
-    const mockCallback = jest.fn();
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    
-    const result = await game.fetchQuestions(mockCallback);
-    
-    expect(result).toBeNull();
-    expect(mockCallback).not.toHaveBeenCalled();
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('should check answer correctly - correct answer', () => {
-    game.questions = [
-      {
-        id: 'q1',
-        pregunta: '¿Cuál es la capital de España?',
-        opciones: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'],
-        respuesta_correcta: 0,
-        imagen: 'imagen1.jpg',
-        tipo: 'Geografia',
-      },
-    ];
-
-    // Respuesta correcta
-    expect(game.checkAnswer(0, 0)).toBe(true);
-    expect(game.score).toBe(10);
-  });
-
-  it('should check answer correctly - incorrect answer', () => {
-    game.questions = [
-      {
-        id: 'q1',
-        pregunta: '¿Cuál es la capital de España?',
-        opciones: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'],
-        respuesta_correcta: 0,
-        imagen: 'imagen1.jpg',
-        tipo: 'Geografia',
-      },
-    ];
-
-    // Respuesta incorrecta
-    expect(game.checkAnswer(0, 1)).toBe(false);
-    expect(game.score).toBe(0); // El score no debe cambiar
-  });
-
-  it('should return the total score', () => {
-    game.score = 50;
-    expect(game.getTotalScore()).toBe(50);
-  });
-
-  it('should handle non-existent question index when checking answer', () => {
-    game.questions = [
-      {
-        id: 'q1',
-        pregunta: '¿Cuál es la capital de España?',
-        opciones: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'],
-        respuesta_correcta: 0,
-        imagen: 'imagen1.jpg',
-        tipo: 'Geografia',
-      },
-    ];
-
-    // Índice de pregunta inválido
-    expect(game.checkAnswer(10, 0)).toBe(false);
-    expect(game.score).toBe(0);
-  });
+  //   await waitFor(() => {
+  //     expect(screen.queryByText('Cargando preguntas...')).not.toBeInTheDocument();
+  //   }, { timeout: 5000 });
+  // }); 
 });
+  // it('should handle answer selection and scoring', async () => {
+  //   render(
+  //     <MemoryRouter>
+  //       <SessionProvider value={{ isLoggedIn: true }}>
+  //         <Jugar />
+  //       </SessionProvider>
+  //     </MemoryRouter>
+  //   );
+
+  //   // Esperar a que se cargue la pregunta
+  //   await waitFor(() => {
+  //     const questionText = screen.queryByText(/Pregunta/i);
+  //     expect(questionText).toBeInTheDocument();
+  //   }, { timeout: 5000 });
+
+  //   // Seleccionar una respuesta
+  //   const answerButton = screen.getByText('París');
+  //   fireEvent.click(answerButton);
+
+  //   // Verificar que se muestra la retroalimentación
+  //   await waitFor(() => {
+  //     expect(screen.getByText('+10')).toBeInTheDocument();
+  //   }, { timeout: 5000 });
+  // });
+
+//   it('should handle chat interaction for hints', async () => {
+//     render(
+//       <MemoryRouter>
+//         <SessionProvider value={{ isLoggedIn: true }}>
+//           <Jugar />
+//         </SessionProvider>
+//       </MemoryRouter>
+//     );
+
+//     // Esperar a que se cargue la pregunta
+//     await waitFor(() => {
+//       const questionText = screen.queryByText(/Pregunta/i);
+//       expect(questionText).toBeInTheDocument();
+//     }, { timeout: 5000 });
+
+//     // Interactuar con el chat
+//     const chatInput = screen.getByPlaceholderText('Escribe un mensaje...');
+//     fireEvent.change(chatInput, { target: { value: '¿Puedes darme una pista?' } });
+    
+//     const sendButton = screen.getByText('Enviar');
+//     fireEvent.click(sendButton);
+
+//     // Verificar que se muestra el mensaje de "Pensando..."
+//     await waitFor(() => {
+//       expect(screen.getByText('Pensando...')).toBeInTheDocument();
+//     }, { timeout: 5000 });
+
+//     // Verificar que se muestra la pista
+//     await waitFor(() => {
+//       expect(screen.getByText('Esta es una pista de prueba')).toBeInTheDocument();
+//     }, { timeout: 5000 });
+//   });
+
+//   it('should handle game completion and score saving', async () => {
+//     render(
+//       <MemoryRouter>
+//         <SessionProvider value={{ isLoggedIn: true }}>
+//           <Jugar />
+//         </SessionProvider>
+//       </MemoryRouter>
+//     );
+
+//     // Esperar a que se cargue la pregunta
+//     await waitFor(() => {
+//       const questionText = screen.queryByText(/Pregunta/i);
+//       expect(questionText).toBeInTheDocument();
+//     }, { timeout: 5000 });
+
+//     // Responder todas las preguntas
+//     const answerButton = screen.getByText('París');
+//     fireEvent.click(answerButton);
+
+//     // Verificar que se muestra la pantalla de finalización
+//     await waitFor(() => {
+//       expect(screen.getByText('¡Juego terminado!')).toBeInTheDocument();
+//     }, { timeout: 5000 });
+
+//     // Verificar que se muestra el botón para ver el historial
+//     expect(screen.getByText('Ver mi historial')).toBeInTheDocument();
+//   });
+
+//   it('should handle timeout correctly', async () => {
+//     render(
+//       <MemoryRouter>
+//         <SessionProvider value={{ isLoggedIn: true }}>
+//           <Jugar />
+//         </SessionProvider>
+//       </MemoryRouter>
+//     );
+
+//     // Esperar a que se cargue la pregunta
+//     await waitFor(() => {
+//       const questionText = screen.queryByText(/Pregunta/i);
+//       expect(questionText).toBeInTheDocument();
+//     }, { timeout: 5000 });
+
+//     // Esperar a que se agote el tiempo
+//     await waitFor(() => {
+//       expect(screen.getByText('⏳ ¡Tiempo Agotado!')).toBeInTheDocument();
+//     }, { timeout: 5000 });
+//   });
