@@ -1020,37 +1020,27 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <h3 id="_business_context">3.1. Business Context</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
+<col style="width: 50%;">
+<col style="width: 50%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Communication Partner</th>
-<th class="tableblock halign-left valign-top">Inputs</th>
-<th class="tableblock halign-left valign-top">Outputs</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Client</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Username, password</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Game score, questions retrieved from Wikidata</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Database</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Username, password, score of each game</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Credential validation, score storage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A normal user, that interacts with the app, playing the game, setting the profile picture&#8230;&#8203;</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Wikidata</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Request for information about the game question</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Generated question with relevant information</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provide a list of questions with an array of answers(one of them the right one), and provides a link related to the question.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Empathy/Gemini</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Game question and correct answer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Hints to help the user answer better</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Gemini</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An llm, to give hints to help the user answer better the questions, in the game.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1671,7 +1661,7 @@ You will mainly capture scenarios in your documentation to communicate your arch
 <h3 id="_question_generation">6.3. Question Generation</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/question_generation.png" alt="question generation" width="995" height="590">
+<img src="./images/question_generation.png" alt="question generation" width="983" height="529">
 </div>
 </div>
 </div>
@@ -1679,7 +1669,7 @@ You will mainly capture scenarios in your documentation to communicate your arch
 <h3 id="_answering_a_question">6.4. Answering a Question</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/question_response.png" alt="question response" width="1799" height="1441">
+<img src="./images/question_response.png" alt="question response" width="1750" height="1317">
 </div>
 </div>
 </div>
@@ -2516,7 +2506,7 @@ This endpoint also showed the highest response time when the number of concurren
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-05-01 16:59:42 +0200
+Last updated 2025-05-01 13:19:35 +0200
 </div>
 </div>
 </body>
