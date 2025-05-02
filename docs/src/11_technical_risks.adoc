@@ -36,13 +36,12 @@ endif::arc42help[]
 | External service failure | An external service like Wikidata or Azure may fail temporarily. | Stay updated on service changes and work to restore functionality quickly.
 |===
 
-[options="header",cols="1,2,2"]
+[options="header",cols="1,2"]
 |===
-| **Technical Debt** | **Explanation** | **Solution**
-| Insufficient documentation | Lack of proper documentation can make future system understanding and maintenance challenging. | Ensure thorough and clear documentation is created.
-| Suboptimal database design | A poorly designed database can create scalability issues as the system grows. | Plan and design the database carefully before implementation or modification.
-| Dependence on AI-generated code | AI-generated code may have inaccuracies, potentially leading to difficulties when revisiting or updating it. | Review, adjust, and validate AI-generated code before integration.
-| LLM performance issues | The language model may cause slow response times and irrelevant answers, impacting user experience. | Optimize prompts and continuously monitor the model's performance for improvements.
-|===
+| **Technical Debt** | **Description** 
 
+| Usability errors | The application has usability issues, such as the ranking table not adapting well to smaller screen sizes or limited space. This can lead to a poor user experience, especially on mobile devices.
+| Button disabling issues | There is a risk of all buttons being disabled simultaneously, which can block user interaction and disrupt the flow of the application.
+| Misplaced settings tab | The settings tab was added to the navigation bar, but it should also have been included when starting a game. This inconsistency can confuse users and reduce accessibility to important settings.
+|===
 
