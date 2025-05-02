@@ -8,9 +8,7 @@
 <img src="https://blog.wildix.com/wp-content/uploads/2020/06/react-logo.jpg" height="100">
 <img src="https://miro.medium.com/max/365/1*Jr3NFSKTfQWRUyjblBSKeg.png" height="100">
 </p>
-## IP to try the application
 
-http://20.0.153.228:3000
 
 ## Contributors
 <div align="center">
@@ -36,7 +34,8 @@ This is a project for the Software Architecture course in 2024/2025. It is a bas
 
 Both the user and auth service share a Mongo database that is accessed with mongoose.
 
-
+## IP to try the application
+http://20.0.153.228:3000
 
 ## Quick start guide
 
